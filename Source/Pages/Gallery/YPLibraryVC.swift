@@ -88,6 +88,28 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
     
+    //TGP
+    private func multiSelectionCount(){
+        DispatchQueue.main.async {
+            if self.multipleSelectionEnabled{
+                if self.selection.count > 1
+                {
+//                    self.v.cropImageButton.isHidden = true
+//                    self.v.clickImageButton.isHidden = true
+//                    self.v.multiselectCountLabel.text = String(format: "%02d", self.selection.count)
+                }else{
+//                    self.v.cropImageButton.isHidden = false
+//                    self.v.clickImageButton.isHidden = false
+//                    self.v.multiselectCountLabel.text = String(format: "%02d", 1)
+                }
+            }else{
+//                self.v.cropImageButton.isHidden = false
+//                self.v.clickImageButton.isHidden = false
+            }
+
+        }
+    }
+    
     // MARK: - View Lifecycle
     
     public override func loadView() {
