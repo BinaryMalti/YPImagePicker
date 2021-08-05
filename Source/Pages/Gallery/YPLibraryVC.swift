@@ -27,6 +27,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     public required init(items: [YPMediaItem]?) {
         super.init(nibName: nil, bundle: nil)
         title = YPConfig.wordings.libraryTitle
+        view.backgroundColor = UIColor.white
     }
     
     public convenience init() {
@@ -50,17 +51,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     func initialize() {
         mediaManager.initialize()
         mediaManager.v = v
-
         setupCollectionView()
         registerForLibraryChanges()
         panGestureHelper.registerForPanGesture(on: v)
         registerForTapOnPreview()
         refreshMediaRequest()
-
         v.assetViewContainer.multipleSelectionButton.isHidden = !(YPConfig.library.maxNumberOfItems > 1)
+        v.assetViewContainer.squareCropButton.isHidden = true
+        v.assetViewContainer.multipleSelectionButton.isHidden = true
         v.maxNumberWarningLabel.text = String(format: YPConfig.wordings.warningMaxItemsLimit,
-											  YPConfig.library.maxNumberOfItems)
-        
+                                              YPConfig.library.maxNumberOfItems)
         if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
             selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
                 var itemAsset: PHAsset?
@@ -88,28 +88,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
     
-    //TGP
-    private func multiSelectionCount(){
-        DispatchQueue.main.async {
-            if self.multipleSelectionEnabled{
-                if self.selection.count > 1
-                {
-//                    self.v.cropImageButton.isHidden = true
-//                    self.v.clickImageButton.isHidden = true
-//                    self.v.multiselectCountLabel.text = String(format: "%02d", self.selection.count)
-                }else{
-//                    self.v.cropImageButton.isHidden = false
-//                    self.v.clickImageButton.isHidden = false
-//                    self.v.multiselectCountLabel.text = String(format: "%02d", 1)
-                }
-            }else{
-//                self.v.cropImageButton.isHidden = false
-//                self.v.clickImageButton.isHidden = false
-            }
-
-        }
-    }
-    
     // MARK: - View Lifecycle
     
     public override func loadView() {
@@ -134,7 +112,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        v.cropImageButton.addTarget(self,
+                                    action: #selector(squareCropButtonTapped),
+                                    for: .touchUpInside)
+        v.multiselectImageButton.addTarget(self,
+                                           action: #selector(multipleSelectionButtonTapped),
+                                           for: .touchUpInside)
         v.assetViewContainer.squareCropButton
             .addTarget(self,
                        action: #selector(squareCropButtonTapped),
@@ -143,7 +126,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             .addTarget(self,
                        action: #selector(multipleSelectionButtonTapped),
                        for: .touchUpInside)
-        
+        v.clickImageButton.addTarget(self,
+                                       action: #selector(openCameraButtonTapped),
+                                       for: .touchUpInside)
         // Forces assetZoomableView to have a contentSize.
         // otherwise 0 in first selection triggering the bug : "invalid image size 0x0"
         // Also fits the first element to the square if the onlySquareFromLibrary = true
@@ -167,6 +152,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     // MARK: - Crop control
     
+    
     @objc
     func squareCropButtonTapped() {
         doAfterPermissionCheck { [weak self] in
@@ -182,8 +168,19 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             if let self = self {
                 if !self.multipleSelectionEnabled {
                     self.selection.removeAll()
+                }else{
                 }
                 self.showMultipleSelection()
+            }
+        }
+    }
+    
+    @objc
+    func openCameraButtonTapped() {
+        doAfterPermissionCheck { [weak self] in
+            if let self = self {
+                let pickerVC = YPPickerVC()
+                pickerVC.selectPage(2)
             }
         }
     }
@@ -199,8 +196,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         
         if multipleSelectionEnabled {
             if selection.isEmpty && YPConfig.library.preSelectItemOnMultipleSelection,
-				delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0),
-														  numSelections: selection.count) ?? true {
+                delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0),
+                                                          numSelections: selection.count) ?? true {
+
                 let asset = mediaManager.fetchResult[currentlySelectedIndex]
                 selection = [
                     YPLibrarySelection(index: currentlySelectedIndex,
@@ -209,16 +207,20 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                                        scrollViewZoomScale: v.assetZoomableView!.zoomScale,
                                        assetIdentifier: asset.localIdentifier)
                 ]
+                v.multiselectCountLabel.text = String(format: "%02d", selection.count)
+
             }
         } else {
             selection.removeAll()
             addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
+            self.v.multiselectCountLabel.text = ""
         }
         
         v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
+        v.toggleMultiselectButton(isOn: multipleSelectionEnabled)
         v.collectionView.reloadData()
         checkLimit()
-        delegate?.libraryViewDidToggleMultipleSelection(enabled: multipleSelectionEnabled)
+        delegate?.libraryViewDidToggleMultipleSelection(enabled: false)
     }
     
     // MARK: - Tap Preview
@@ -339,7 +341,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     func changeAsset(_ asset: PHAsset) {
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
-        
+//        if currentlySelectedIndex > 1 {
+//                v.cropImageButton.isHidden = true
+//                v.clickImageButton.isHidden = true
+//        }else{
+//            v.cropImageButton.isHidden = false
+//            v.clickImageButton.isHidden = false
+//        }
         let completion = { (isLowResIntermediaryImage: Bool) in
             self.v.hideOverlayView()
             self.v.assetViewContainer.refreshSquareCropButton()
@@ -353,7 +361,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         let updateCropInfo = {
             self.updateCropInfo()
         }
-		
+        
         // MARK: add a func(updateCropInfo) after crop multiple
         DispatchQueue.global(qos: .userInitiated).async {
             switch asset.mediaType {
@@ -419,8 +427,30 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         selection.remove(at: selectedAssetIndex)
         selection.insert(selectedAsset, at: selectedAssetIndex)
     }
+    //TGP
+    private func multiSelectionCount(){
+        DispatchQueue.main.async {
+            if self.multipleSelectionEnabled{
+                if self.selection.count > 1
+                {
+                    self.v.cropImageButton.isHidden = true
+                    self.v.clickImageButton.isHidden = true
+                    self.v.multiselectCountLabel.text = String(format: "%02d", self.selection.count)
+                }else{
+                    self.v.cropImageButton.isHidden = false
+                    self.v.clickImageButton.isHidden = false
+                    self.v.multiselectCountLabel.text = String(format: "%02d", 1)
+                }
+            }else{
+                self.v.cropImageButton.isHidden = false
+                self.v.clickImageButton.isHidden = false
+            }
+
+        }
+    }
     
     internal func fetchStoredCrop() -> YPLibrarySelection? {
+        multiSelectionCount()
         if self.multipleSelectionEnabled,
             self.selection.contains(where: { $0.index == self.currentlySelectedIndex }) {
             guard let selectedAssetIndex = self.selection
@@ -493,14 +523,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             
             let selectedAssets: [(asset: PHAsset, cropRect: CGRect?)] = self.selection.map {
                 guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier],
-													  options: PHFetchOptions()).firstObject else { fatalError() }
+                                                      options: PHFetchOptions()).firstObject else { fatalError() }
                 return (asset, $0.cropRect)
             }
             
             // Multiple selection
             if self.multipleSelectionEnabled && self.selection.count > 1 {
                 
-                // Check video length
                 for asset in selectedAssets {
                     if self.fitsVideoLengthLimits(asset: asset.asset) == false {
                         return
@@ -524,7 +553,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     case .image:
                         self.fetchImageAndCrop(for: asset.asset, withCropRect: asset.cropRect) { image, exifMeta in
                             let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(),
-													 exifMeta: exifMeta, asset: asset.asset)
+                                                     exifMeta: exifMeta, asset: asset.asset)
                             resultMediaItems.append(YPMediaItem.photo(p: photo))
                             asyncGroup.leave()
                         }
@@ -579,6 +608,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     self.delegate?.libraryViewFinishedLoading()
                 }
             } else {
+//                self.v.cropImageButton.isHidden = false
+//                self.v.clickImageButton.isHidden = false
+                if selectedAssets.count > 0 {
                 let asset = selectedAssets.first!.asset
                 switch asset.mediaType {
                 case .audio, .unknown:
@@ -608,6 +640,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     }
                 @unknown default:
                     fatalError()
+                  }
                 }
                 return
             }

@@ -12,12 +12,14 @@ import Stevia
 class YPSelectionsGalleryView: UIView {
     
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: YPGalleryCollectionViewFlowLayout())
+    let viewB = UIView(frame: .zero)
     
     convenience init() {
         self.init(frame: .zero)
     
         sv(
-            collectionView
+            collectionView,
+            viewB
         )
         
         // Layout collectionView
@@ -25,11 +27,17 @@ class YPSelectionsGalleryView: UIView {
         if #available(iOS 11.0, *) {
             collectionView.Right == safeAreaLayoutGuide.Right
             collectionView.Left == safeAreaLayoutGuide.Left
+            viewB.Right == safeAreaLayoutGuide.Right
+            viewB.Left == safeAreaLayoutGuide.Left
+            viewB.Bottom == safeAreaLayoutGuide.Bottom
+            viewB.Top == collectionView.Bottom
         } else {
             |collectionView|
+            |viewB|
         }
         collectionView.CenterY == CenterY - 30
-        
+        alignVertically(viewB, with: collectionView)
+        viewB.backgroundColor = UIColor.red
         // Apply style
         backgroundColor = YPConfig.colors.selectionsBackgroundColor
         collectionView.backgroundColor = .clear
@@ -60,9 +68,9 @@ class YPGalleryCollectionViewFlowLayout: UICollectionViewFlowLayout {
     // This makes so that Scrolling the collection view always stops with a centered image.
     // This is heavily inpired form :
     // https://stackoverflow.com/questions/13492037/targetcontentoffsetforproposedcontentoffsetwithscrollingvelocity
-	// -without-subcla
+    // -without-subcla
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint,
-									  withScrollingVelocity velocity: CGPoint) -> CGPoint {
+                                      withScrollingVelocity velocity: CGPoint) -> CGPoint {
         let spacing: CGFloat = 12
         let overlapppingNextPhoto: CGFloat = 37
         var offsetAdjustment = CGFloat.greatestFiniteMagnitude// MAXFLOAT
@@ -72,9 +80,9 @@ class YPGalleryCollectionViewFlowLayout: UICollectionViewFlowLayout {
             return proposedContentOffset
         }
         let targetRect = CGRect(x: proposedContentOffset.x,
-								y: 0,
-								width: collectionView.bounds.size.width,
-								height: collectionView.bounds.size.height)
+                                y: 0,
+                                width: collectionView.bounds.size.width,
+                                height: collectionView.bounds.size.height)
         guard let array = super.layoutAttributesForElements(in: targetRect) else {
             return proposedContentOffset
         }

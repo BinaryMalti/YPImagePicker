@@ -25,6 +25,11 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         super.init(nibName: nil, bundle: nil)
         self.items = items
         self.didFinishHandler = didFinishHandler
+        let bundle = Bundle(for: YPPickerVC.self)
+        let nib = UINib(nibName: "YPGalleryBottomView", bundle: bundle)
+        let bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
+        self.v.viewB.addSubview(bottomView)
+        bottomView.frame = CGRect(x:0, y: 0, width: self.v.viewB.frame.width, height: self.v.viewB.frame.height)
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -38,7 +43,11 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
-        
+        if #available(iOS 11.0, *) {
+            v.collectionView.dragInteractionEnabled = true
+            v.collectionView.dragDelegate = self
+            v.collectionView.dropDelegate = self
+        }
         // Setup navigation bar
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
                                                             style: .done,
@@ -93,6 +102,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
         switch item {
         case .photo(let photo):
             cell.imageView.image = photo.image
+            cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
         case .video(let video):
             cell.imageView.image = video.thumbnail
@@ -104,7 +114,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
 }
 
 extension YPSelectionsGalleryVC: UICollectionViewDelegate {
-    
+        
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = items[indexPath.row]
         var mediaFilterVC: IsMediaFilterVC?
@@ -144,4 +154,58 @@ extension YPSelectionsGalleryVC: UICollectionViewDelegate {
             : UIScrollView.DecelerationRate.normal
         lastContentOffsetX = scrollView.contentOffset.x
     }
+}
+extension YPSelectionsGalleryVC: UICollectionViewDragDelegate, UICollectionViewDropDelegate {
+    @available(iOS 11.0, *)
+    public func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        var destinationIndexPath:IndexPath
+        if let indexPath = coordinator.destinationIndexPath{
+            destinationIndexPath = indexPath
+        }else{
+            let row = collectionView.numberOfItems(inSection: 0)
+            destinationIndexPath = IndexPath(item: row-1, section: 0)
+        }
+        if coordinator.proposal.operation == .move{
+            self.reorderItems(coordinator: coordinator, desinationIndexpath: destinationIndexPath, collectionView: collectionView)
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    func reorderItems(coordinator:UICollectionViewDropCoordinator,desinationIndexpath : IndexPath, collectionView:UICollectionView){
+        if let item = coordinator.items.first,
+           let sourceIndexPath = item.sourceIndexPath{
+            collectionView.performBatchUpdates({
+                self.items.remove(at: sourceIndexPath.item)
+                self.items.insert(item.dragItem.localObject as! YPMediaItem, at: desinationIndexpath.item)
+                collectionView.deleteItems(at: [sourceIndexPath])
+                collectionView.insertItems(at: [desinationIndexpath])
+            }, completion: nil)
+            coordinator.drop(item.dragItem, toItemAt:desinationIndexpath)
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    public func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        if collectionView.hasActiveDrag {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
+        return UICollectionViewDropProposal(operation: .forbidden)
+    }
+    
+    @available(iOS 11.0, *)
+    public func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let item = items[indexPath.row]
+        var itemData = UIImage()
+        switch item {
+        case .photo(let photo):
+            itemData = photo.image
+        case .video(v: _): break
+        }
+        let itemProvider = NSItemProvider(object: itemData)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = item
+        return [dragItem]
+    }
+    
+    
 }

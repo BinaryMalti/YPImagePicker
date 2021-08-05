@@ -18,6 +18,13 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var assetZoomableView: YPAssetZoomableView!
     @IBOutlet weak var assetViewContainer: YPAssetViewContainer!
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
+    @IBOutlet weak var clickImageButton: UIButton!
+    @IBOutlet weak var cropImageButton: UIButton!
+    @IBOutlet weak var dropdownButton: UIButton!
+    @IBOutlet weak var forwardbutton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var multiselectCountLabel: UILabel!
+    @IBOutlet weak var multiselectImageButton: UIButton!
     
     let maxNumberWarningView = UIView()
     let maxNumberWarningLabel = UILabel()
@@ -27,7 +34,7 @@ final class YPLibraryView: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         sv(
             line
         )
@@ -38,7 +45,8 @@ final class YPLibraryView: UIView {
         )
         
         line.backgroundColor = .ypSystemBackground
-        
+        dropdownButton.titleLabel?.font = YPConfig.fonts.pickerTitleFont
+        multiselectCountLabel.font = YPConfig.fonts.multipleSelectionIndicatorFont
         setupMaxNumberOfItemsView()
         setupProgressBarView()
     }
@@ -66,6 +74,15 @@ final class YPLibraryView: UIView {
         maxNumberWarningView.backgroundColor = .ypSecondarySystemBackground
         maxNumberWarningLabel.font = YPConfig.fonts.libaryWarningFont
         maxNumberWarningView.isHidden = true
+    }
+    
+    //TGP
+    func toggleMultiselectButton(isOn:Bool){
+        if isOn{
+            multiselectImageButton.tintColor = YPConfig.colors.tintColor
+        }else{
+            multiselectImageButton.tintColor = YPConfig.colors.grayColor
+        }
     }
     
     /// When video is processing this bar appears

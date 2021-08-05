@@ -16,6 +16,7 @@ public protocol YPSelectionsGalleryCellDelegate: class {
 public class YPSelectionsGalleryCell: UICollectionViewCell {
     
     weak var delegate: YPSelectionsGalleryCellDelegate?
+    let countLabel = UILabel()
     let imageView = UIImageView()
     let editIcon = UIView()
     let editSquare = UIView()
@@ -25,10 +26,10 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
         super.init(frame: frame)
     
         sv(
+            countLabel,
             imageView,
             editIcon,
-            editSquare,
-            removeButton
+            editSquare
         )
         
         imageView.fillContainer()
@@ -36,17 +37,22 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
         editSquare.size(16)
         editSquare.CenterY == editIcon.CenterY
         editSquare.CenterX == editIcon.CenterX
-        
+        countLabel.style{ c in
+            c.font = YPConfig.fonts.albumCellTitleFont
+            c.textColor = UIColor.black
+        }
+        countLabel.top(-40)
         removeButton.top(12).trailing(12)
-        
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.2
-        layer.shadowOffset = CGSize(width: 4, height: 7)
-        layer.shadowRadius = 5
+        removeButton.isHidden = true
+//        layer.shadowColor = UIColor.black.cgColor
+//        layer.shadowOpacity = 0.2
+//        layer.shadowOffset = CGSize(width: 4, height: 7)
+//        layer.shadowRadius = 5
         layer.backgroundColor = UIColor.clear.cgColor
         imageView.style { i in
             i.clipsToBounds = true
-            i.contentMode = .scaleAspectFill
+            i.contentMode = .scaleAspectFit
+            imageView.backgroundColor = .offWhiteOrBlack
         }
         editIcon.style { v in
             v.backgroundColor = UIColor.ypSystemBackground

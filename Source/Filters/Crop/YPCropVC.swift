@@ -30,7 +30,7 @@ class YPCropVC: UIViewController {
         v = YPCropView(image: image, ratio: ratio)
         originalImage = image
         super.init(nibName: nil, bundle: nil)
-        self.title = YPConfig.wordings.crop
+        //self.title = YPConfig.wordings.crop
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -39,8 +39,24 @@ class YPCropVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpNavigationBar()
         setupToolbar()
         setupGestureRecognizers()
+    }
+    
+    func setUpNavigationBar(){
+        let button = UIButton(type: .system)
+        if #available(iOS 13.0, *) {
+            button.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+        }
+        button.setTitle(YPConfig.wordings.crop, for: .normal)
+        button.sizeToFit()
+        button.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
+        button.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 9)
+        button.titleEdgeInsets = UIEdgeInsets(top: 2, left: 5, bottom: 2, right: 0)
+        button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+            navigationController?.navigationItem.title = ""
     }
     
     func setupToolbar() {

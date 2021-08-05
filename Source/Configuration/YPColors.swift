@@ -15,6 +15,8 @@ public struct YPColors {
     /// The common tint color which is used for done buttons in navigation bar, multiple items selection and so on.
     public var tintColor = UIColor.ypSystemBlue
     
+    public var grayColor = UIColor.ypSystemGray
+    
     /// A color for navigation bar spinner.
     /// Default is nil, which is default iOS gray UIActivityIndicator.
     public var navigationBarActivityIndicatorColor: UIColor?
@@ -27,19 +29,19 @@ public struct YPColors {
     public var photoVideoScreenBackgroundColor: UIColor = .offWhiteOrBlack
 
     /// The background color of the library and space between collection view cells.
-    public var libraryScreenBackgroundColor: UIColor = .offWhiteOrBlack
+    public var libraryScreenBackgroundColor: UIColor = .white
 
     /// The background color of safe area. For example under the menu items.
-    public var safeAreaBackgroundColor: UIColor = .offWhiteOrBlack
+    public var safeAreaBackgroundColor: UIColor = .white
 
     /// A color for background of the asset container. You can see it when bouncing the image.
-    public var assetViewBackgroundColor: UIColor = .offWhiteOrBlack
+    public var assetViewBackgroundColor: UIColor = .white
     
     /// A color for background in filters.
-    public var filterBackgroundColor: UIColor = .offWhiteOrBlack
+    public var filterBackgroundColor: UIColor = .white
 
     /// A color for background in selections gallery. When multiple items selected.
-    public var selectionsBackgroundColor: UIColor = .offWhiteOrBlack
+    public var selectionsBackgroundColor: UIColor = .white
 
     /// A color for bottom buttons (photo, video, all photos).
     public var bottomMenuItemBackgroundColor: UIColor = .clear

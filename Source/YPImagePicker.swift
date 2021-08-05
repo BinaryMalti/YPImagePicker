@@ -78,7 +78,7 @@ override open func viewDidLoad() {
             self?.view.layer.add(transition, forKey: nil)
             
             // Multiple items flow
-            if items.count > 1 {
+            if items.count > 0 {
                 if YPConfig.library.skipSelectionsGallery {
                     self?.didSelect(items: items)
                     return
@@ -169,6 +169,6 @@ extension YPImagePicker: ImagePickerDelegate {
     
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return self.imagePickerDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections)
-			?? true
+            ?? true
     }
 }

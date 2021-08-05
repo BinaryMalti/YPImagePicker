@@ -30,6 +30,7 @@ class YPAssetViewContainer: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.backgroundColor = .offWhiteOrBlack
         
         switch itemOverlayType {
         case .grid:
@@ -106,6 +107,7 @@ class YPAssetViewContainer: UIView {
     }
     
     public func refreshSquareCropButton() {
+        if(!squareCropButton.isHidden){
         if onlySquare {
             squareCropButton.isHidden = true
         } else {
@@ -114,7 +116,7 @@ class YPAssetViewContainer: UIView {
                 squareCropButton.isHidden = isImageASquare
             }
         }
-        
+        }
         let shouldFit = YPConfig.library.onlySquare ? true : shouldCropToSquare
         zoomableView?.fitImage(shouldFit)
         zoomableView?.layoutSubviews()

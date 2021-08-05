@@ -126,7 +126,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         cameraVC?.v.shotButton.isEnabled = true
-        
+        libraryVC?.v.clickImageButton.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
+        libraryVC?.v.forwardbutton.addTarget(self, action: #selector(done), for: .touchUpInside)
         updateMode(with: currentController)
     }
     
@@ -256,29 +257,40 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         label.firstBaselineAnchor.constraint(equalTo: titleView.bottomAnchor, constant: -14).isActive = true
         
         titleView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        navigationItem.titleView = titleView
+       // navigationItem.titleView = titleView
     }
-    
+ 
     func updateUI() {
-		if !YPConfig.hidesCancelButton {
-			// Update Nav Bar state.
-			navigationItem.leftBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.cancel,
-                                                           style: .plain,
-                                                           target: self,
-                                                           action: #selector(close))
-		}
+        if !YPConfig.hidesCancelButton {
+            // Update Nav Bar state.arrowtriangle.left.fill
+            let backMenu: UIButton = UIButton()
+            backMenu.setImage(YPConfig.icons.backButtonIcon, for: .normal)
+            backMenu.setTitle(YPConfig.wordings.cancel, for: .normal)
+            backMenu.sizeToFit()
+            backMenu.contentHorizontalAlignment = .left
+            backMenu.tintColor = .black
+            backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
+            backMenu.setTitleColor(.black, for: .normal)
+            backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
+            backMenu.titleLabel!.textColor = .black
+            backMenu.addTarget(self, action: #selector(close), for: .touchUpInside)
+            let barButton = UIBarButtonItem(customView: backMenu)
+            navigationItem.leftBarButtonItem = barButton
+            
+        }
         switch mode {
         case .library:
             setTitleViewWithTitle(aTitle: libraryVC?.title ?? "")
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
-                                                                style: .done,
-                                                                target: self,
-                                                                action: #selector(done))
-            navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
-
+           // navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
+//                                                                style: .done,
+//                                                                target: self,
+//                                                                action: #selector(done))
+         //   navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
+            navigationItem.rightBarButtonItem = nil
             // Disable Next Button until minNumberOfItems is reached.
-            navigationItem.rightBarButtonItem?.isEnabled =
-				libraryVC!.selection.count >= YPConfig.library.minNumberOfItems
+          //  navigationItem.rightBarButtonItem?.isEnabled =
+           //     libraryVC!.selection.count >= YPConfig.library.minNumberOfItems
 
         case .camera:
             navigationItem.titleView = nil
@@ -293,6 +305,13 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
         navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .disabled)
         navigationItem.leftBarButtonItem?.setFont(font: YPConfig.fonts.leftBarButtonFont, forState: .normal)
+        self.navigationController!.navigationBar.shadowImage = UIImage()
+        self.navigationController!.navigationBar.isTranslucent = false
+        self.navigationController!.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+    }
+    
+    @objc func openCamera(){
+        cameraVC?.start()
     }
     
     @objc
@@ -342,7 +361,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
     }
     
     public func libraryViewStartedLoadingImage() {
-		//TODO remove to enable changing selection while loading but needs cancelling previous image requests.
+        //TODO remove to enable changing selection while loading but needs cancelling previous image requests.
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
             self.libraryVC?.v.fadeInLoader()
@@ -378,4 +397,60 @@ extension YPPickerVC: YPLibraryViewDelegate {
     public func libraryViewShouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return imagePickerDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections) ?? true
     }
+}
+extension UIViewController {
+
+    func addBackButtonItem(title:String,saveAsDraft:Bool) {
+        navigationController?.isNavigationBarHidden = false
+        let backMenu: UIButton = UIButton()
+        let image = UIImage(named: "ic_left_black_arrow");
+        backMenu.setImage(image, for: .normal)
+        backMenu.setTitle(title, for: .normal);
+        backMenu.sizeToFit()
+        backMenu.contentHorizontalAlignment = .left
+        backMenu.tintColor = .black
+        backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 9, bottom: 0, right: 0)
+        backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        backMenu.setTitleColor(.black, for: .normal)
+        backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
+        backMenu.titleLabel!.textColor = .black
+        backMenu.addTarget(self, action: #selector (backButtonClick(sender:)), for: .touchUpInside)
+        let barButton = UIBarButtonItem(customView: backMenu)
+        if(saveAsDraft){
+            addSaveAsDraftButton()
+        }
+        self.navigationItem.leftBarButtonItem = barButton
+        self.navigationController?.navigationBar.tintColor = .black
+        self.navigationController?.navigationBar.backgroundColor = .white
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+    }
+    
+    func addSaveAsDraftButton(){
+        let saveDraftMenu: UIButton = UIButton()
+        let image = UIImage(named: "ic_arrow_right_small");
+        saveDraftMenu.setImage(image, for: .normal)
+        saveDraftMenu.setTitle("Save as draft", for: .normal);
+        saveDraftMenu.width(150)
+        saveDraftMenu.contentHorizontalAlignment = .right
+        saveDraftMenu.tintColor = YPConfig.colors.tintColor
+        saveDraftMenu.imageEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 15)
+        saveDraftMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 9)
+        saveDraftMenu.setTitleColor(YPConfig.colors.tintColor, for: .normal)
+        saveDraftMenu.titleLabel?.font = YPConfig.fonts.saveAsDraftFont
+        saveDraftMenu.titleLabel!.textColor = YPConfig.colors.tintColor
+        saveDraftMenu.addTarget(self, action: #selector (saveAsDraftClick(sender:)), for: .touchUpInside)
+        let barButton = UIBarButtonItem(customView: saveDraftMenu)
+        self.navigationItem.rightBarButtonItem = barButton
+    }
+
+    @objc func backButtonClick(sender : UIButton) {
+        self.navigationController?.popViewController(animated: true);
+    }
+    @objc func saveAsDraftClick(sender : UIButton) {
+        //action
+    }
+    
+    
 }
