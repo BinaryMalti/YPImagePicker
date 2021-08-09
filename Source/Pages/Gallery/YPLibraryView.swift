@@ -18,9 +18,10 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var assetZoomableView: YPAssetZoomableView!
     @IBOutlet weak var assetViewContainer: YPAssetViewContainer!
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
+    @IBOutlet weak var dropdownPickerView: UIPickerView!
     @IBOutlet weak var clickImageButton: UIButton!
+    @IBOutlet weak var imageDropDownTextField: UITextField!
     @IBOutlet weak var cropImageButton: UIButton!
-    @IBOutlet weak var dropdownButton: UIButton!
     @IBOutlet weak var forwardbutton: UIButton!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var multiselectCountLabel: UILabel!
@@ -30,6 +31,8 @@ final class YPLibraryView: UIView {
     let maxNumberWarningLabel = UILabel()
     let progressView = UIProgressView()
     let line = UIView()
+    var draftImages:[UIImage] = []
+    var showDraftImages = false
     var shouldShowLoader = false
     
     override func awakeFromNib() {
@@ -45,12 +48,12 @@ final class YPLibraryView: UIView {
         )
         
         line.backgroundColor = .ypSystemBackground
-        dropdownButton.titleLabel?.font = YPConfig.fonts.pickerTitleFont
+        imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         multiselectCountLabel.font = YPConfig.fonts.multipleSelectionIndicatorFont
         setupMaxNumberOfItemsView()
         setupProgressBarView()
     }
-    
+
     /// At the bottom there is a view that is visible when selected a limit of items with multiple selection
     func setupMaxNumberOfItemsView() {
         // View Hierarchy

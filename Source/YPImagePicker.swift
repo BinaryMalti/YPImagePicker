@@ -22,8 +22,12 @@ open class YPImagePicker: UINavigationController {
     }
     
     private var _didFinishPicking: (([YPMediaItem], Bool) -> Void)?
+    private var _didLoadDraftImages: (([UIImage], Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
         _didFinishPicking = completion
+    }
+    public func loadDraftImage(completion: @escaping (_ items: [UIImage], _ cancelled: Bool) -> Void) {
+        _didLoadDraftImages = completion
     }
     public weak var imagePickerDelegate: YPImagePickerDelegate?
     
@@ -35,7 +39,7 @@ open class YPImagePicker: UINavigationController {
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem]) {
-        _didFinishPicking?(items, false)
+            _didFinishPicking?(items, false)
     }
     
     let loadingView = YPLoadingView()
@@ -82,12 +86,18 @@ override open func viewDidLoad() {
                 if YPConfig.library.skipSelectionsGallery {
                     self?.didSelect(items: items)
                     return
-                } else {
-                    let selectionsGalleryVC = YPSelectionsGalleryVC(items: items) { _, items in
+                }else {
+                    if self?.picker.libraryVC?.v.showDraftImages == true{
                         self?.didSelect(items: items)
+                        return
+                    }else{
+                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: items) { _, items in
+                            self?.didSelect(items: items)
+                        }
+                        self?.pushViewController(selectionsGalleryVC, animated: true)
+                        return
                     }
-                    self?.pushViewController(selectionsGalleryVC, animated: true)
-                    return
+                    
                 }
             }
             
@@ -167,6 +177,7 @@ extension YPImagePicker: ImagePickerDelegate {
         self.imagePickerDelegate?.noPhotos()
     }
     
+
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return self.imagePickerDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections)
             ?? true

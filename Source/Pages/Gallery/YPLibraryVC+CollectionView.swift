@@ -7,8 +7,31 @@
 //
 
 import UIKit
+import Photos
 
 extension YPLibraryVC {
+    
+    func loadDrafts(draftImages:[UIImage],showDraft:Bool){
+        v.draftImages = draftImages
+        v.showDraftImages = showDraft
+        setupCollectionView()
+        if showDraft{
+            v.clickImageButton.isHidden = true
+            v.cropImageButton.isHidden = true
+            v.multiselectImageButton.isHidden = true
+            v.multiselectCountLabel.text = ""
+            v.collectionView.reloadData()
+            v.assetZoomableView.photoImageView.image = v.draftImages[0]
+            currentlySelectedIndex = 0
+        }else{
+            v.clickImageButton.isHidden = false
+            v.cropImageButton.isHidden = false
+            v.multiselectImageButton.isHidden = false
+            v.collectionView.reloadData()
+            refreshMediaRequest()
+        }
+    }
+    
     var isLimitExceeded: Bool { return selection.count >= YPConfig.library.maxNumberOfItems }
     
     func setupCollectionView() {
@@ -16,15 +39,17 @@ extension YPLibraryVC {
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.register(YPLibraryViewCell.self, forCellWithReuseIdentifier: "YPLibraryViewCell")
-        
+        if !v.showDraftImages {
         // Long press on cell to enable multiple selection
         let longPressGR = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(longPressGR:)))
         longPressGR.minimumPressDuration = 0.5
         v.collectionView.addGestureRecognizer(longPressGR)
+        }
     }
     
     /// When tapping on the cell with long press, clear all previously selected cells.
     @objc func handleLongPress(longPressGR: UILongPressGestureRecognizer) {
+       
         if multipleSelectionEnabled || isProcessing || YPConfig.library.maxNumberOfItems <= 1 {
             return
         }
@@ -114,6 +139,9 @@ extension YPLibraryVC {
 
 extension YPLibraryVC: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if v.showDraftImages{
+            return v.draftImages.count
+        }
         return mediaManager.fetchResult.count
     }
 }
@@ -130,6 +158,27 @@ extension YPLibraryVC: UICollectionViewDelegate {
         cell.representedAssetIdentifier = asset.localIdentifier
         cell.multipleSelectionIndicator.selectionColor =
             YPConfig.colors.multipleItemsSelectedCircleColor ?? YPConfig.colors.tintColor
+        if v.showDraftImages{
+            cell.imageView.image = v.draftImages[indexPath.row]
+            cell.multipleSelectionIndicator.isHidden = !multipleSelectionEnabled
+            
+            cell.isSelected = currentlySelectedIndex == indexPath.row
+            
+            // Set correct selection number
+            if let index = selection.firstIndex(where: { $0.assetIdentifier == asset.localIdentifier }) {
+                let currentSelection = selection[index]
+                if currentSelection.index < 0 {
+                    selection[index] = YPLibrarySelection(index: indexPath.row,
+                                                          cropRect: currentSelection.cropRect,
+                                                           scrollViewContentOffset: currentSelection.scrollViewContentOffset,
+                                                          scrollViewZoomScale: currentSelection.scrollViewZoomScale,
+                                                          assetIdentifier: currentSelection.assetIdentifier)
+                }
+                cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
+            } else {
+                cell.multipleSelectionIndicator.set(number: nil)
+            }
+        }else{
         mediaManager.imageManager?.requestImage(for: asset,
                                    targetSize: v.cellSize(),
                                    contentMode: .aspectFill,
@@ -139,8 +188,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                     if cell.representedAssetIdentifier == asset.localIdentifier && image != nil {
                                         cell.imageView.image = image
                                     }
-        }
-        
+            }
+   
         let isVideo = (asset.mediaType == .video)
         cell.durationLabel.isHidden = !isVideo
         cell.durationLabel.text = isVideo ? YPHelper.formattedStrigFrom(asset.duration) : ""
@@ -161,7 +210,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         } else {
             cell.multipleSelectionIndicator.set(number: nil)
         }
-
+        }
         // Prevent weird animation where thumbnail fills cell on first scrolls.
         UIView.performWithoutAnimation {
             cell.layoutIfNeeded()
@@ -172,8 +221,11 @@ extension YPLibraryVC: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
         currentlySelectedIndex = indexPath.row
-
+        if v.showDraftImages{
+            v.assetZoomableView.photoImageView.image = v.draftImages[indexPath.row]
+        }else{
         changeAsset(mediaManager.fetchResult[indexPath.row])
+        }
         panGestureHelper.resetToOriginalState()
         
         // Only scroll cell to top if preview is hidden.

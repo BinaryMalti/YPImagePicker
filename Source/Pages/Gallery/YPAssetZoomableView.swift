@@ -101,10 +101,10 @@ final class YPAssetZoomableView: UIScrollView {
                          storedCropPosition: YPLibrarySelection?,
                          completion: @escaping (Bool) -> Void,
                          updateCropInfo: @escaping () -> Void) {
-        guard currentAsset != photo else {
-            DispatchQueue.main.async { completion(false) }
-            return
-        }
+//        guard currentAsset != photo else {
+//            DispatchQueue.main.async { completion(false) }
+//            return
+//        }
         currentAsset = photo
         
         mediaManager.imageManager?.fetch(photo: photo) { [weak self] image, isLowResIntermediaryImage in
@@ -116,7 +116,6 @@ final class YPAssetZoomableView: UIScrollView {
                 strongSelf.videoView.showPlayImage(show: false)
                 strongSelf.videoView.deallocate()
                 strongSelf.addSubview(strongSelf.photoImageView)
-            
                 strongSelf.photoImageView.contentMode = .scaleAspectFill
                 strongSelf.photoImageView.clipsToBounds = true
             }

@@ -20,11 +20,11 @@ public struct YPImagePickerConfiguration {
     public static var widthOniPad: CGFloat = -1
     
     public static var screenWidth: CGFloat {
-		var screenWidth: CGFloat = UIScreen.main.bounds.width
-		if UIDevice.current.userInterfaceIdiom == .pad && YPImagePickerConfiguration.widthOniPad > 0 {
-			screenWidth =  YPImagePickerConfiguration.widthOniPad
-		}
-		return screenWidth
+        var screenWidth: CGFloat = UIScreen.main.bounds.width
+        if UIDevice.current.userInterfaceIdiom == .pad && YPImagePickerConfiguration.widthOniPad > 0 {
+            screenWidth =  YPImagePickerConfiguration.widthOniPad
+        }
+        return screenWidth
     }
     
     public init() {}
@@ -47,11 +47,17 @@ public struct YPImagePickerConfiguration {
     /// Use this property to modify the default icons provided.
     public var icons = YPIcons()
     
+    /// Use this property to modify the default icons provided.
+    public var dropdownArray :[String] = []
+    
     /// Use this property to modify the default colors provided.
     public var colors = YPColors()
 
     /// Use this property to modify the default fonts provided
     public var fonts = YPFonts()
+    
+    /// Use this property to add draft images
+    public var draftImages : [UIImage] = []
     
     /// Set this to true if you want to force the camera output to be a squared image. Defaults to true
     public var onlySquareImagesFromCamera = true
@@ -187,7 +193,7 @@ public struct YPConfigLibrary {
     /// Sets the cropping style to square or not. Ignored if `onlySquare` is true. Defaults to true.
     public var isSquareByDefault = true
     
-	/// Minimum width, to prevent selectiong too high images. Have sense if onlySquare is true and the image is portrait.
+    /// Minimum width, to prevent selectiong too high images. Have sense if onlySquare is true and the image is portrait.
     public var minWidthForItem: CGFloat?
     
     /// Choose what media types are available in the library. Defaults to `.photo`

@@ -59,6 +59,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         v.assetViewContainer.multipleSelectionButton.isHidden = !(YPConfig.library.maxNumberOfItems > 1)
         v.assetViewContainer.squareCropButton.isHidden = true
         v.assetViewContainer.multipleSelectionButton.isHidden = true
+        createImagePicker()
         v.maxNumberWarningLabel.text = String(format: YPConfig.wordings.warningMaxItemsLimit,
                                               YPConfig.library.maxNumberOfItems)
         if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
@@ -88,6 +89,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
     }
     
+    func createImagePicker() {
+        let picker = UIPickerView()
+        v.imageDropDownTextField.tintColor = UIColor.clear
+        picker.dataSource = self
+        picker.delegate = self
+        v.imageDropDownTextField.inputView = picker
+    }
+    
     // MARK: - View Lifecycle
     
     public override func loadView() {
@@ -97,7 +106,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         // When crop area changes in multiple selection mode,
         // we need to update the scrollView values in order to restore
         // them when user selects a previously selected item.
@@ -150,6 +158,15 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
     
+    
+    @objc
+    func showPickerView(){
+        v.dropdownPickerView.delegate = self
+        v.dropdownPickerView.dataSource = self
+        v.dropdownPickerView.backgroundColor = .white
+        v.dropdownPickerView.isHidden = false
+    }
+    
     // MARK: - Crop control
     
     
@@ -178,7 +195,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     @objc
     func openCameraButtonTapped() {
         doAfterPermissionCheck { [weak self] in
-            if let self = self {
+            if self != nil {
                 let pickerVC = YPPickerVC()
                 pickerVC.selectPage(2)
             }
@@ -212,6 +229,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
             }
         } else {
             selection.removeAll()
+            self.v.cropImageButton.isHidden = false
+            self.v.clickImageButton.isHidden = false
             addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
             self.v.multiselectCountLabel.text = ""
         }
@@ -658,6 +677,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
         return CGSize(width: width, height: height)
     }
     
+    
     // MARK: - Player
     
     func pausePlayer() {
@@ -669,4 +689,33 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
+    
+}
+extension  YPLibraryVC:  UIPickerViewDelegate, UIPickerViewDataSource {
+
+public func numberOfComponents(in pickerView: UIPickerView) -> Int {
+    return 1
+}
+    public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return YPConfig.dropdownArray[row]
+}
+    public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+
+    return YPConfig.dropdownArray.count
+}
+    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.v.imageDropDownTextField.text = YPConfig.dropdownArray[row]
+        if (YPConfig.dropdownArray[row] == "Draft"){
+            if (YPConfig.draftImages.count > 0){
+                loadDrafts(draftImages: YPConfig.draftImages, showDraft: true)
+             //   setAlbum(YPAlbum(thumbnail: YPConfig.draftImages[0], title:YPConfig.dropdownArray[row], numberOfItems: YPConfig.draftImages.count, collection: )
+            }else{
+                delegate?.noPhotosForOptions()
+            }
+        }else{
+           loadDrafts(draftImages: [], showDraft: false)
+        }
+        view.endEditing(true)
+}
+    
 }

@@ -117,8 +117,8 @@ class YPAssetViewContainer: UIView {
             }
         }
         }
-        let shouldFit = YPConfig.library.onlySquare ? true : shouldCropToSquare
-        zoomableView?.fitImage(shouldFit)
+       // let shouldFit = YPConfig.library.onlySquare ? true : shouldCropToSquare
+       // zoomableView?.fitImage(shouldFit)
         zoomableView?.layoutSubviews()
     }
     

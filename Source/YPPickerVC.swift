@@ -29,6 +29,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     /// Private callbacks to YPImagePicker
     public var didClose:(() -> Void)?
     public var didSelectItems: (([YPMediaItem]) -> Void)?
+    public var didSelectDraftItems: (([UIImage]) -> Void)?
     
     enum Mode {
         case library
@@ -36,7 +37,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         case video
     }
     
-    private var libraryVC: YPLibraryVC?
+    public var libraryVC: YPLibraryVC?
     private var cameraVC: YPCameraVC?
     private var videoVC: YPVideoCaptureVC?
     
@@ -327,19 +328,19 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     @objc
     func done() {
         guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
-        
-        if mode == .library {
-            libraryVC.doAfterPermissionCheck { [weak self] in
-                libraryVC.selectedMedia(photoCallback: { photo in
-                    self?.didSelectItems?([YPMediaItem.photo(p: photo)])
-                }, videoCallback: { video in
-                    self?.didSelectItems?([YPMediaItem
-                        .video(v: video)])
-                }, multipleItemsCallback: { items in
-                    self?.didSelectItems?(items)
-                })
+            if mode == .library {
+                libraryVC.doAfterPermissionCheck { [weak self] in
+                    libraryVC.selectedMedia(photoCallback: { photo in
+                        self?.didSelectItems?([YPMediaItem.photo(p: photo)])
+                    }, videoCallback: { video in
+                        self?.didSelectItems?([YPMediaItem
+                            .video(v: video)])
+                    }, multipleItemsCallback: { items in
+                        self?.didSelectItems?(items)
+                    })
+                }
             }
-        }
+
     }
     
     func stopAll() {
@@ -350,7 +351,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 }
 
 extension YPPickerVC: YPLibraryViewDelegate {
-    
+
     public func libraryViewDidTapNext() {
         libraryVC?.isProcessing = true
         DispatchQueue.main.async {
