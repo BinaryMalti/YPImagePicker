@@ -39,7 +39,7 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
         editSquare.CenterX == editIcon.CenterX
         countLabel.style{ c in
             c.font = YPConfig.fonts.albumCellTitleFont
-            c.textColor = UIColor.black
+            c.textColor = YPConfig.colors.grayColor
         }
         countLabel.top(-40)
         removeButton.top(12).trailing(12)

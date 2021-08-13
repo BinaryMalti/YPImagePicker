@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Custom Camera View Controller-->
+        <scene sceneID="Adc-5M-mhj">
+            <objects>
+                <viewController storyboardIdentifier="CustomCameraViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yal-2V-URY" customClass="CustomCameraViewController" customModule="YPImagePicker" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TqJ-ba-KOk">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zhz-QA-viM">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="86"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="86" id="SIo-Cx-rXk"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o2W-qI-ZUj">
+                                <rect key="frame" x="167" y="782" width="80" height="80"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjQ-0K-RVM">
+                                        <rect key="frame" x="5" y="5" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="35"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EA6-l0-MU0">
+                                        <rect key="frame" x="10" y="10" width="60" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="oSB-VQ-s1a"/>
+                                    <constraint firstAttribute="width" constant="80" id="zVA-5F-qZR"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="40"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dWw-HA-58y">
+                                <rect key="frame" x="264" y="807" width="130" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="dWw-HA-58y" secondAttribute="height" multiplier="13:3" id="MQW-1O-dU4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                                <state key="normal" title="🎬Video"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="tappedChangeButton:" destination="yal-2V-URY" eventType="touchDown" id="C7I-6e-tRb"/>
+                                </connections>
+                            </button>
+                            <view alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OlN-Qc-LCR">
+                                <rect key="frame" x="0.0" y="862" width="414" height="34"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="P2J-1X-8fM"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="OlN-Qc-LCR" secondAttribute="bottom" id="0mR-sR-G18"/>
+                            <constraint firstItem="zhz-QA-viM" firstAttribute="centerX" secondItem="P2J-1X-8fM" secondAttribute="centerX" id="FTG-hJ-zUD"/>
+                            <constraint firstItem="o2W-qI-ZUj" firstAttribute="bottom" secondItem="P2J-1X-8fM" secondAttribute="bottom" id="FnL-Qh-wyq"/>
+                            <constraint firstItem="P2J-1X-8fM" firstAttribute="top" secondItem="zhz-QA-viM" secondAttribute="top" constant="44" id="NbM-Yx-29z"/>
+                            <constraint firstItem="OlN-Qc-LCR" firstAttribute="leading" secondItem="TqJ-ba-KOk" secondAttribute="leading" id="Obw-IF-dpY"/>
+                            <constraint firstItem="OlN-Qc-LCR" firstAttribute="centerX" secondItem="TqJ-ba-KOk" secondAttribute="centerX" id="PZz-dt-fyS"/>
+                            <constraint firstItem="P2J-1X-8fM" firstAttribute="trailing" secondItem="dWw-HA-58y" secondAttribute="trailing" constant="20" id="Q5X-Wv-Gaa"/>
+                            <constraint firstItem="o2W-qI-ZUj" firstAttribute="centerX" secondItem="TqJ-ba-KOk" secondAttribute="centerX" id="TE2-oa-56M"/>
+                            <constraint firstItem="dWw-HA-58y" firstAttribute="leading" secondItem="o2W-qI-ZUj" secondAttribute="trailing" constant="17" id="W58-D9-fbz"/>
+                            <constraint firstItem="zhz-QA-viM" firstAttribute="leading" secondItem="P2J-1X-8fM" secondAttribute="leading" id="YBW-iJ-P3L"/>
+                            <constraint firstAttribute="trailing" secondItem="OlN-Qc-LCR" secondAttribute="trailing" id="ZAU-pw-Pxe"/>
+                            <constraint firstItem="OlN-Qc-LCR" firstAttribute="top" secondItem="P2J-1X-8fM" secondAttribute="bottom" id="tkJ-BR-Yo3"/>
+                            <constraint firstItem="P2J-1X-8fM" firstAttribute="bottom" secondItem="dWw-HA-58y" secondAttribute="bottom" constant="25" id="zLh-Il-sBB"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Wvh-4R-c2x"/>
+                    <connections>
+                        <outlet property="cameraButton" destination="o2W-qI-ZUj" id="4TB-cy-MqS"/>
+                        <outlet property="changeButton" destination="dWw-HA-58y" id="zeZ-Ud-niB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3U2-Qo-gUV" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1341" y="-779"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

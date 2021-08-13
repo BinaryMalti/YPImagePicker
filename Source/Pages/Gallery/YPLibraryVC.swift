@@ -9,7 +9,7 @@
 import UIKit
 import Photos
 
-public class YPLibraryVC: UIViewController, YPPermissionCheckable {
+public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     internal weak var delegate: YPLibraryViewDelegate?
     internal var v: YPLibraryView!
@@ -21,6 +21,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal let mediaManager = LibraryMediaManager()
     internal var latestImageTapped = ""
     internal let panGestureHelper = PanGestureHelper()
+    internal var fromCamera = false
+    internal var fromCropClick = false
+    private weak var cameraPicker: UIImagePickerController?
+    public var didCapturePhoto: ((UIImage) -> Void)?
 
     // MARK: - Init
     
@@ -120,9 +124,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        v.cropImageButton.addTarget(self,
-                                    action: #selector(squareCropButtonTapped),
-                                    for: .touchUpInside)
+//        v.cropImageButton.addTarget(self,
+//                                    action: #selector(squareCropButtonTapped),
+//                                    for: .touchUpInside)
         v.multiselectImageButton.addTarget(self,
                                            action: #selector(multipleSelectionButtonTapped),
                                            for: .touchUpInside)
@@ -194,13 +198,33 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     @objc
     func openCameraButtonTapped() {
-        doAfterPermissionCheck { [weak self] in
-            if self != nil {
-                let pickerVC = YPPickerVC()
-                pickerVC.selectPage(2)
-            }
-        }
+        // doAfterPermissionCheck { [weak self] in
+        //    if self != nil {
+        self.fromCamera = true
+        self.didCapturePhoto?(UIImage(named: "img_dummy")!.resizedImageIfNeeded())
+//                let sourceType:UIImagePickerController.SourceType = UIImagePickerController.SourceType.camera
+//
+//                if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera){
+//                    self?.cameraPicker = UIImagePickerController()
+//                    self?.cameraPicker?.sourceType = sourceType
+//                    self?.cameraPicker?.delegate = self
+//                    self?.present((self?.cameraPicker)!, animated: true, completion: nil)
+//                }
+    //        }
+        //}
     }
+    
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let pickedImage = info[.originalImage] as? UIImage {
+            self.fromCamera = true
+            self.didCapturePhoto?(pickedImage.resizedImageIfNeeded())
+            //            cameraView.contentMode = .scaleAspectFit
+//            cameraView.image = pickedImage
+        }
+        self.cameraPicker?.dismiss(animated: true, completion: nil)
+    }
+    
     
     func showMultipleSelection() {
 
@@ -358,15 +382,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable {
     }
     
     func changeAsset(_ asset: PHAsset) {
+//        let targetImageSize : CGSize
+//        if (multipleSelectionEnabled && selection.count > 1){
+//
+//            targetImageSize = CGSize(width: selection[0].cropRect!.width,
+//                                    height:selection[0].cropRect!.height)
+//        }
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
-//        if currentlySelectedIndex > 1 {
-//                v.cropImageButton.isHidden = true
-//                v.clickImageButton.isHidden = true
-//        }else{
-//            v.cropImageButton.isHidden = false
-//            v.clickImageButton.isHidden = false
-//        }
         let completion = { (isLowResIntermediaryImage: Bool) in
             self.v.hideOverlayView()
             self.v.assetViewContainer.refreshSquareCropButton()

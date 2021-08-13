@@ -72,6 +72,15 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             }
         }
         
+        // Camera
+        if YPConfig.screens.contains(.photo) {
+            libraryVC = YPLibraryVC()
+            libraryVC?.didCapturePhoto = { [weak self] img in
+                self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
+                                                                        fromCamera: true))])
+            }
+        }
+        
         // Video
         if YPConfig.screens.contains(.video) {
             videoVC = YPVideoCaptureVC()
@@ -127,7 +136,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         cameraVC?.v.shotButton.isEnabled = true
-        libraryVC?.v.clickImageButton.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
+//        libraryVC?.v.clickImageButton.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
+        libraryVC?.v.cropImageButton.addTarget(self, action: #selector(crop), for: .touchUpInside)
         libraryVC?.v.forwardbutton.addTarget(self, action: #selector(done), for: .touchUpInside)
         updateMode(with: currentController)
     }
@@ -327,6 +337,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     // When pressing "Next"
     @objc
     func done() {
+        libraryVC?.fromCropClick = false
         guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
             if mode == .library {
                 libraryVC.doAfterPermissionCheck { [weak self] in
@@ -340,7 +351,24 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
                     })
                 }
             }
-
+    }
+    
+    @objc
+    func crop() {
+        libraryVC?.fromCropClick = true
+        guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
+            if mode == .library {
+                libraryVC.doAfterPermissionCheck { [weak self] in
+                    libraryVC.selectedMedia(photoCallback: { photo in
+                        self?.didSelectItems?([YPMediaItem.photo(p: photo)])
+                    }, videoCallback: { video in
+                        self?.didSelectItems?([YPMediaItem
+                            .video(v: video)])
+                    }, multipleItemsCallback: { items in
+                        self?.didSelectItems?(items)
+                    })
+                }
+            }
     }
     
     func stopAll() {

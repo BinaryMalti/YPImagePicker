@@ -13,21 +13,25 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     override public var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
     
     public var items: [YPMediaItem] = []
-    public var didFinishHandler: ((_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
+    public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
     
     var v = YPSelectionsGalleryView()
+    var bottomView = YPGalleryBottomView()
+    public var targetHeight : CGFloat = 200.0
     public override func loadView() { view = v }
 
     public required init(items: [YPMediaItem],
+                         
                          didFinishHandler:
-        @escaping ((_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)) {
+                            @escaping ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC,
+                                        _ items: [YPMediaItem]) -> Void)) {
         super.init(nibName: nil, bundle: nil)
         self.items = items
         self.didFinishHandler = didFinishHandler
         let bundle = Bundle(for: YPPickerVC.self)
         let nib = UINib(nibName: "YPGalleryBottomView", bundle: bundle)
-        let bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
+        bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
         self.v.viewB.addSubview(bottomView)
         bottomView.frame = CGRect(x:0, y: 0, width: self.v.viewB.frame.width, height: self.v.viewB.frame.height)
     }
@@ -48,20 +52,60 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
             v.collectionView.dragDelegate = self
             v.collectionView.dropDelegate = self
         }
+
+        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true)
         // Setup navigation bar
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
-                                                            style: .done,
-                                                            target: self,
-                                                            action: #selector(done))
-        navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
-        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .disabled)
-        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
-        navigationController?.navigationBar.setTitleFont(font: YPConfig.fonts.navigationBarTitleFont)
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
+//                                                            style: .done,
+//                                                            target: self,
+//                                                            action: #selector(done))
+//        navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
+//        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .disabled)
+//        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
+//        navigationController?.navigationBar.setTitleFont(font: YPConfig.fonts.navigationBarTitleFont)
+        if (items.count > 1){
+            bottomView.deleteButton.isHidden = false
+        }else{
+            bottomView.deleteButton.isHidden = true
+        }
+        bottomView.editButton.addTarget(self, action: #selector(editImage), for: .touchUpInside)
+        bottomView.deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
         
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
     }
-
+    
+    @objc
+    private func editImage(){
+        let indexPathCenter = findCenterIndex()
+        for i in 0..<items.count {
+            if (i == indexPathCenter.row){
+                switch items[i] {
+                case .photo(let photo):
+                    photo.modifiedImage = photo.originalImage
+                case .video(v: _): break
+                }
+            }
+        }
+//        let element = items.remove(at: indexPathCenter.row)
+//        items.insert(element, at: 0)
+        didFinishHandler?(2,self, items)
+    }
+    
+    @objc
+    private func deleteImage(){
+        let indexPathCenter = findCenterIndex()
+        let cellDelete:YPSelectionsGalleryCell = v.collectionView.cellForItem(at: indexPathCenter) as! YPSelectionsGalleryCell
+        selectionsGalleryCellDidTapRemove(cell: cellDelete)
+    }
+    
+    private func findCenterIndex() -> IndexPath {
+        let center = self.view.convert(v.collectionView.center, to: v.collectionView)
+        let index = v.collectionView.indexPathForItem(at: center)
+        print(index ?? "index not found")
+        return index ?? IndexPath()
+    }
+    
     @objc
     private func done() {
         // Save new images to the photo album.
@@ -72,15 +116,16 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
                 }
             }
         }
-        didFinishHandler?(self, items)
+        didFinishHandler?(0,self, items)
     }
     
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {
         if let indexPath = v.collectionView.indexPath(for: cell) {
             items.remove(at: indexPath.row)
-            v.collectionView.performBatchUpdates({
-                v.collectionView.deleteItems(at: [indexPath])
-            }, completion: { _ in })
+//            v.collectionView.performBatchUpdates({
+//                v.collectionView.deleteItems(at: [indexPath])
+//            }, completion: { _ in })
+            v.collectionView.reloadData()
         }
     }
 }
@@ -90,6 +135,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
+
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
