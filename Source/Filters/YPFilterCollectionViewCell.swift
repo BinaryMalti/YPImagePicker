@@ -5,7 +5,7 @@
 //  Created by Sacha Durand Saint Omer on 21/10/16.
 //  Copyright © 2016 octopepper. All rights reserved.
 //
-
+import UIKit
 import Stevia
 
 class YPFilterCollectionViewCell: UICollectionViewCell {

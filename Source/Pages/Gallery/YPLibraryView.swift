@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import Stevia
 import Photos
+import Stevia
 
 final class YPLibraryView: UIView {
     

@@ -3,12 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		188A24E626C768BA000B48E2 /* HorizontalDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A24E526C768BA000B48E2 /* HorizontalDial.swift */; };
 		18AE8C0126BC37510043FBB0 /* YPGalleryBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18AE8BFF26BC37510043FBB0 /* YPGalleryBottomView.swift */; };
 		18AE8C0226BC37510043FBB0 /* YPGalleryBottomView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18AE8C0026BC37510043FBB0 /* YPGalleryBottomView.xib */; };
+		18B43AF226C7A80700C942A9 /* PryntTrimmerView in Frameworks */ = {isa = PBXBuildFile; productRef = 18B43AF126C7A80700C942A9 /* PryntTrimmerView */; };
+		18B43AF826C7A8AD00C942A9 /* Stevia in Frameworks */ = {isa = PBXBuildFile; productRef = 18B43AF726C7A8AD00C942A9 /* Stevia */; };
+		18B43AFB26C7A9AC00C942A9 /* BrightroomUI in Frameworks */ = {isa = PBXBuildFile; productRef = 18B43AFA26C7A9AC00C942A9 /* BrightroomUI */; };
+		18B43AFD26C7A9AC00C942A9 /* BrightroomEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 18B43AFC26C7A9AC00C942A9 /* BrightroomEngine */; };
 		18E0E88626C70A7400C636D9 /* CustomCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E0E88426C70A7400C636D9 /* CustomCameraViewController.swift */; };
 		18E0E88726C70A7400C636D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18E0E88526C70A7400C636D9 /* Main.storyboard */; };
 		321E6D87240CFABC00D76CD8 /* UINavigationBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */; };
@@ -104,8 +109,14 @@
 /* Begin PBXFileReference section */
 		16550C5C214D5EE60090BADF /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		166695DE253EFF0100F6EF9E /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
+		188A24E526C768BA000B48E2 /* HorizontalDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDial.swift; sourceTree = "<group>"; };
 		18AE8BFF26BC37510043FBB0 /* YPGalleryBottomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPGalleryBottomView.swift; sourceTree = "<group>"; };
 		18AE8C0026BC37510043FBB0 /* YPGalleryBottomView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YPGalleryBottomView.xib; sourceTree = "<group>"; };
+		18B43AE226C7A36000C942A9 /* Brightroom.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Brightroom.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18B43AE626C7A36500C942A9 /* IGRPhotoTweaks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IGRPhotoTweaks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18B43AE926C7A36800C942A9 /* PryntTrimmerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PryntTrimmerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18B43AEC26C7A36B00C942A9 /* Stevia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Stevia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18B43AEF26C7A6BD00C942A9 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		18E0E88426C70A7400C636D9 /* CustomCameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCameraViewController.swift; sourceTree = "<group>"; };
 		18E0E88526C70A7400C636D9 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		2577138123B1E09300BB9C86 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
@@ -191,6 +202,9 @@
 		99D1DC2A1F9788930047F0E0 /* YPImagePickerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPImagePickerConfiguration.swift; sourceTree = "<group>"; };
 		A7FD716620755C2D0044A8E8 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		AA69BCF122E601D100FBB925 /* YPDeviceOrientationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPDeviceOrientationHelper.swift; sourceTree = "<group>"; };
+		AD5F55C63201398B8A3A31FD /* Pods-YPImagePicker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YPImagePicker.release.xcconfig"; path = "Target Support Files/Pods-YPImagePicker/Pods-YPImagePicker.release.xcconfig"; sourceTree = "<group>"; };
+		C858A9C284E23A81A3D37E9A /* Pods-YPImagePicker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YPImagePicker.debug.xcconfig"; path = "Target Support Files/Pods-YPImagePicker/Pods-YPImagePicker.debug.xcconfig"; sourceTree = "<group>"; };
+		C8D9B3E602896E7F610D071B /* Pods_YPImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YPImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E492BB2169012B002BA807 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		E5287F5820B908720052153D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		EB05F6E6214A7191002040AA /* YPVideoProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPVideoProcessor.swift; sourceTree = "<group>"; };
@@ -214,8 +228,6 @@
 		EB5ACE2B2620802A00C3288D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EB5B07C3209146F00099C1FA /* UIButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		EB65C4B4209321420037858B /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
-		EB84ADD522F35506003667B5 /* YPImagePicker.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = YPImagePicker.podspec; sourceTree = "<group>"; };
-		EB84ADD622F355E8003667B5 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		EB867BCE209134F100332A54 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EB94F28D208E3A140049F523 /* YPLoaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPLoaders.swift; sourceTree = "<group>"; };
 		EBB0FF7920877A7500C84E25 /* YPVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPVideoView.swift; sourceTree = "<group>"; };
@@ -230,22 +242,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18B43AF826C7A8AD00C942A9 /* Stevia in Frameworks */,
+				18B43AF226C7A80700C942A9 /* PryntTrimmerView in Frameworks */,
+				18B43AFD26C7A9AC00C942A9 /* BrightroomEngine in Frameworks */,
+				18B43AFB26C7A9AC00C942A9 /* BrightroomUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		482216A74E5F6600032B3090 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C858A9C284E23A81A3D37E9A /* Pods-YPImagePicker.debug.xcconfig */,
+				AD5F55C63201398B8A3A31FD /* Pods-YPImagePicker.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		52412A891CA6114A0073C4BE = {
 			isa = PBXGroup;
 			children = (
-				EB84ADD622F355E8003667B5 /* Cartfile */,
-				EB84ADD522F35506003667B5 /* YPImagePicker.podspec */,
+				18B43AEF26C7A6BD00C942A9 /* Package.swift */,
 				EB5ACE2B2620802A00C3288D /* README.md */,
 				99C6D69D1F1FB5C100711DB2 /* Source */,
 				99C6D6971F1FB5C100711DB2 /* Resources */,
 				52412A941CA6114A0073C4BE /* Products */,
 				EB3251DE20878D5900A6190D /* Frameworks */,
+				482216A74E5F6600032B3090 /* Pods */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -280,6 +305,7 @@
 				99019E502018CDED007325C2 /* YPImageSize.swift */,
 				99019E522018CE19007325C2 /* YPPickerScreen.swift */,
 				327D7B582409510300B9C368 /* YPFonts.swift */,
+				188A24E526C768BA000B48E2 /* HorizontalDial.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -407,6 +433,11 @@
 		EB3251DE20878D5900A6190D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				18B43AEC26C7A36B00C942A9 /* Stevia.framework */,
+				18B43AE926C7A36800C942A9 /* PryntTrimmerView.framework */,
+				18B43AE626C7A36500C942A9 /* IGRPhotoTweaks.framework */,
+				18B43AE226C7A36000C942A9 /* Brightroom.framework */,
+				C8D9B3E602896E7F610D071B /* Pods_YPImagePicker.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -511,6 +542,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 52412A9B1CA6114A0073C4BE /* Build configuration list for PBXNativeTarget "YPImagePicker" */;
 			buildPhases = (
+				7E9D06E66ACF82FA799DF449 /* [CP] Check Pods Manifest.lock */,
 				52412A8E1CA6114A0073C4BE /* Sources */,
 				52412A8F1CA6114A0073C4BE /* Frameworks */,
 				52412A901CA6114A0073C4BE /* Headers */,
@@ -522,6 +554,12 @@
 			dependencies = (
 			);
 			name = YPImagePicker;
+			packageProductDependencies = (
+				18B43AF126C7A80700C942A9 /* PryntTrimmerView */,
+				18B43AF726C7A8AD00C942A9 /* Stevia */,
+				18B43AFA26C7A9AC00C942A9 /* BrightroomUI */,
+				18B43AFC26C7A9AC00C942A9 /* BrightroomEngine */,
+			);
 			productName = Fusuma;
 			productReference = 52412A931CA6114A0073C4BE /* YPImagePicker.framework */;
 			productType = "com.apple.product-type.framework";
@@ -575,6 +613,11 @@
 				fa,
 			);
 			mainGroup = 52412A891CA6114A0073C4BE;
+			packageReferences = (
+				18B43AF026C7A80700C942A9 /* XCRemoteSwiftPackageReference "PryntTrimmerView" */,
+				18B43AF626C7A8AD00C942A9 /* XCRemoteSwiftPackageReference "Stevia" */,
+				18B43AF926C7A9AC00C942A9 /* XCRemoteSwiftPackageReference "Brightroom" */,
+			);
 			productRefGroup = 52412A941CA6114A0073C4BE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -601,6 +644,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7E9D06E66ACF82FA799DF449 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-YPImagePicker-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9945C1DD1E8141AB00AE1C57 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -699,6 +764,7 @@
 				99CD962720D179FD009F5084 /* YPSelectionsGalleryView.swift in Sources */,
 				99C6D6BE1F1FB5C100711DB2 /* YPLibraryViewCell.swift in Sources */,
 				99C6D6C41F1FB5C100711DB2 /* YPFilter.swift in Sources */,
+				188A24E626C768BA000B48E2 /* HorizontalDial.swift in Sources */,
 				99C6D6C91F1FB5C100711DB2 /* YPBottomPager.swift in Sources */,
 				99CF6D2B201CB96700487F77 /* YPVideoCaptureHelper.swift in Sources */,
 				99019E4E2018CD31007325C2 /* YPPagerMenu.swift in Sources */,
@@ -860,7 +926,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -871,6 +938,7 @@
 		};
 		52412A9C1CA6114A0073C4BE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C858A9C284E23A81A3D37E9A /* Pods-YPImagePicker.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -890,7 +958,11 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 4.5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
@@ -905,6 +977,7 @@
 		};
 		52412A9D1CA6114A0073C4BE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD5F55C63201398B8A3A31FD /* Pods-YPImagePicker.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -924,7 +997,11 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 4.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
@@ -958,6 +1035,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		18B43AF026C7A80700C942A9 /* XCRemoteSwiftPackageReference "PryntTrimmerView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/HHK1/PryntTrimmerView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
+		18B43AF626C7A8AD00C942A9 /* XCRemoteSwiftPackageReference "Stevia" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/freshOS/Stevia";
+			requirement = {
+				kind = exactVersion;
+				version = 4.7.3;
+			};
+		};
+		18B43AF926C7A9AC00C942A9 /* XCRemoteSwiftPackageReference "Brightroom" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BinaryMalti/Brightroom.git";
+			requirement = {
+				kind = revision;
+				revision = eb8e8b2c9c19e874ef6043dd8ad0cfacd975af2e;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		18B43AF126C7A80700C942A9 /* PryntTrimmerView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B43AF026C7A80700C942A9 /* XCRemoteSwiftPackageReference "PryntTrimmerView" */;
+			productName = PryntTrimmerView;
+		};
+		18B43AF726C7A8AD00C942A9 /* Stevia */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B43AF626C7A8AD00C942A9 /* XCRemoteSwiftPackageReference "Stevia" */;
+			productName = Stevia;
+		};
+		18B43AFA26C7A9AC00C942A9 /* BrightroomUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B43AF926C7A9AC00C942A9 /* XCRemoteSwiftPackageReference "Brightroom" */;
+			productName = BrightroomUI;
+		};
+		18B43AFC26C7A9AC00C942A9 /* BrightroomEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B43AF926C7A9AC00C942A9 /* XCRemoteSwiftPackageReference "Brightroom" */;
+			productName = BrightroomEngine;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 52412A8A1CA6114A0073C4BE /* Project object */;
 }
