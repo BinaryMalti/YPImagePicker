@@ -117,6 +117,7 @@
 		18B43AE926C7A36800C942A9 /* PryntTrimmerView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PryntTrimmerView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		18B43AEC26C7A36B00C942A9 /* Stevia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Stevia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		18B43AEF26C7A6BD00C942A9 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		18B43AFE26C7B21900C942A9 /* YPImagePicker.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = YPImagePicker.podspec; sourceTree = "<group>"; };
 		18E0E88426C70A7400C636D9 /* CustomCameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCameraViewController.swift; sourceTree = "<group>"; };
 		18E0E88526C70A7400C636D9 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		2577138123B1E09300BB9C86 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
@@ -264,6 +265,7 @@
 		52412A891CA6114A0073C4BE = {
 			isa = PBXGroup;
 			children = (
+				18B43AFE26C7B21900C942A9 /* YPImagePicker.podspec */,
 				18B43AEF26C7A6BD00C942A9 /* Package.swift */,
 				EB5ACE2B2620802A00C3288D /* README.md */,
 				99C6D69D1F1FB5C100711DB2 /* Source */,
