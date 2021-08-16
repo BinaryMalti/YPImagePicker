@@ -6,7 +6,7 @@
 //  Copyright © 2016 Yummypets. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 @objc
 public protocol YPLibraryViewDelegate: class {
