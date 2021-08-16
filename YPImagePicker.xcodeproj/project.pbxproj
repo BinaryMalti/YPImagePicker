@@ -539,6 +539,7 @@
 			isa = PBXGroup;
 			children = (
 				185622B326CA1B6F006771C5 /* IGRPhotoTweaks */,
+				1856230026CA1D15006771C5 /* CustomCropViewController.swift */,
 				18E0E88426C70A7400C636D9 /* CustomCameraViewController.swift */,
 				18E0E88526C70A7400C636D9 /* Main.storyboard */,
 				99C6D6B81F1FB5C100711DB2 /* YPImagePicker.swift */,
@@ -551,7 +552,6 @@
 				EBD2B63D207B7D4E00E711C2 /* Models */,
 				99C6D6B31F1FB5C100711DB2 /* Info.plist */,
 				99C6D6B21F1FB5C100711DB2 /* YPImagePickerHeader.h */,
-				1856230026CA1D15006771C5 /* CustomCropViewController.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
