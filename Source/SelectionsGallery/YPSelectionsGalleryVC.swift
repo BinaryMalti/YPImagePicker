@@ -17,6 +17,8 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     private var lastContentOffsetX: CGFloat = 0
     
     var v = YPSelectionsGalleryView()
+    var cropHeight : CGFloat = 0.0
+    var cropWidth : CGFloat = 0.0
     var bottomView = YPGalleryBottomView()
     public var targetHeight : CGFloat = 200.0
     public override func loadView() { view = v }
@@ -54,6 +56,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         }
 
         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true)
+        self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         // Setup navigation bar
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
 //                                                            style: .done,
@@ -89,7 +92,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         }
 //        let element = items.remove(at: indexPathCenter.row)
 //        items.insert(element, at: 0)
-        didFinishHandler?(2,self, items)
+       // didFinishHandler?(2,self, items)
     }
     
     @objc
@@ -109,24 +112,43 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     @objc
     private func done() {
         // Save new images to the photo album.
-        if YPConfig.shouldSaveNewPicturesToAlbum {
-            for m in items {
-                if case let .photo(p) = m, let modifiedImage = p.modifiedImage {
-                    YPPhotoSaver.trySaveImage(modifiedImage, inAlbumNamed: YPConfig.albumName)
-                }
-            }
-        }
+//        if YPConfig.shouldSaveNewPicturesToAlbum {
+//            for m in items {
+//                if case let .photo(p) = m, let modifiedImage = p.modifiedImage {
+//                    YPPhotoSaver.trySaveImage(modifiedImage, inAlbumNamed: YPConfig.albumName)
+//                }
+//            }
+//        }
         didFinishHandler?(0,self, items)
     }
     
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {
-        if let indexPath = v.collectionView.indexPath(for: cell) {
-            items.remove(at: indexPath.row)
-//            v.collectionView.performBatchUpdates({
-//                v.collectionView.deleteItems(at: [indexPath])
-//            }, completion: { _ in })
-            v.collectionView.reloadData()
-        }
+        let alert = UIAlertController(title: "Do you want to delete this artwork?", message: "You cannot undo this action", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
+            if let indexPath = self.v.collectionView.indexPath(for: cell) {
+                switch self.items[indexPath.row]{
+                        case .photo(p: let p):
+                            if let imagePath = p.url{
+                                do {
+                                    try FileManager.default.removeItem(at: imagePath)
+                                }catch{
+                                    print("selectionsGalleryCellDidTapRemove:","url not found")
+                                }
+                            }
+                        case .video(v: _):
+                            break
+                        }
+                self.items.remove(at: indexPath.row)
+            //            v.collectionView.performBatchUpdates({
+            //                v.collectionView.deleteItems(at: [indexPath])
+            //            }, completion: { _ in })
+                self.v.collectionView.reloadData()
+                    }
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -147,6 +169,8 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
         let item = items[indexPath.row]
         switch item {
         case .photo(let photo):
+            cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
+            cell.imageView.contentMode = .scaleAspectFill
             cell.imageView.image = photo.image
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
@@ -160,6 +184,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
 }
 
 extension YPSelectionsGalleryVC: UICollectionViewDelegate {
+    
         
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = items[indexPath.row]

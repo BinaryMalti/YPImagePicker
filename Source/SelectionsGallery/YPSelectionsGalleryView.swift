@@ -61,6 +61,7 @@ class YPGalleryCollectionViewFlowLayout: UICollectionViewFlowLayout {
         sectionInset = UIEdgeInsets(top: 0, left: sideMargin, bottom: 0, right: sideMargin)
     }
     
+        
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

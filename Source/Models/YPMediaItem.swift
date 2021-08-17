@@ -19,14 +19,20 @@ public class YPMediaPhoto {
     public let fromCamera: Bool
     public let exifMeta: [String: Any]?
     public var asset: PHAsset?
+    public var imageName: String?
+    public var widthRatio: CGFloat?
+    public var heightRatio: CGFloat?
     public var url: URL?
     
-    public init(image: UIImage, exifMeta: [String: Any]? = nil, fromCamera: Bool = false, asset: PHAsset? = nil, url: URL? = nil) {
+    public init(image: UIImage, exifMeta: [String: Any]? = nil, fromCamera: Bool = false, asset: PHAsset? = nil, url: URL? = nil, widthRatio: CGFloat? = 0.0, heightRatio: CGFloat? = 0.0,imageName: String? = nil) {
         self.originalImage = image
         self.modifiedImage = nil
         self.fromCamera = fromCamera
         self.exifMeta = exifMeta
         self.asset = asset
+        self.widthRatio = widthRatio
+        self.imageName = imageName
+        self.heightRatio = heightRatio
         self.url = url
     }
 }

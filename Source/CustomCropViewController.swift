@@ -7,35 +7,62 @@
 //
 
 import UIKit
+import Stevia
 
-class CropArtworkViewController: IGRPhotoTweakViewController {
+class CustomCropViewController: IGRPhotoTweakViewController {
 
-    @IBOutlet weak var rotateRightButton: UIButton!
-    @IBOutlet weak var rotateLeftButton: UIButton!
-    @IBOutlet weak fileprivate var angleSlider: UISlider?
-    @IBOutlet weak var cancelEditButton: UIButton!
-    @IBOutlet weak var saveEditButton: UIButton!
-    @IBOutlet weak fileprivate var angleLabel: UILabel?
-    @IBOutlet weak fileprivate var straightenImageSlider: HorizontalDial? {
-        didSet {
-            self.straightenImageSlider?.enableRange = true
-            self.straightenImageSlider?.maximumValue = 100
-            self.straightenImageSlider?.minimumValue = -100
-            self.straightenImageSlider?.migneticOption = .none
-        }
+    internal var v: CustomCropView!
+    var fromCamera = false
+    public var didFinishCropping: ((UIImage) -> Void)?
+    weak var delegateYP : YPLibraryDelegate?
+    // MARK: - Init
+    
+    public required init(item: UIImage) {
+        super.init(nibName: nil, bundle: nil)
+        image = item
+        title = ""
+        view.backgroundColor = UIColor.white
+        v = CustomCropView.xibView()
+        let frameHeight : CGFloat = self.view.frame.height - 195
+        v.frame = CGRect(x: 0, y: frameHeight, width: self.view.frame.width, height: 130)
+        view.insertSubview(self.v, belowSubview: photoView)
+        view.bringSubviewToFront(self.v)
+        v.straightenImageSlider.delegate = self
+        self.tapGesutures()
+
     }
     
-    // MARK: - Life Cycle
+    public convenience init() {
+        self.init()
+    }
     
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    // MARK: - Life Cycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController!.setNavigationBarHidden(false, animated: false)
-       // self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false)
         self.delegate = self
+         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false)
         //self.lockAspectRatio(true)
         //FIXME: Zoom setup
 //        self.photoView.minimumZoomScale = 1.0;
 //        self.photoView.maximumZoomScale = 10.0;
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+    }
+    
+    private func tapGesutures(){
+        v.saveEditButton.addTarget(self, action: #selector(saveCropArtwork(_:)), for: .touchUpInside)
+        v.cancelEditButton.addTarget(self, action: #selector(cancelCropArtwork(_:)), for: .touchUpInside)
+        v.rotateLeftButton.addTarget(self, action: #selector(rotateLeft(_:)), for: .touchUpInside)
+        v.rotateRightButton.addTarget(self, action: #selector(rotateRight(_:)), for: .touchUpInside)
     }
     
     //FIXME: Themes Preview
@@ -50,17 +77,17 @@ class CropArtworkViewController: IGRPhotoTweakViewController {
 //        IGRPhotoTweakView.appearance().backgroundColor = UIColor.brown
 //    }
     
-    fileprivate func setupSlider() {
-        self.angleSlider?.minimumValue = -Float(IGRRadianAngle.toRadians(90))
-        self.angleSlider?.maximumValue = Float(IGRRadianAngle.toRadians(90))
-        self.angleSlider?.value = 0.0
-        
-        setupAngleLabelValue(radians: CGFloat((self.angleSlider?.value)!))
-    }
+//    fileprivate func setupSlider() {
+//        self.v.angleSlider?.minimumValue = -Float(IGRRadianAngle.toRadians(90))
+//        self.v.angleSlider?.maximumValue = Float(IGRRadianAngle.toRadians(90))
+//        self.v.angleSlider?.value = 0.0
+//
+//        setupAngleLabelValue(radians: CGFloat((self.v.angleSlider?.value)!))
+//    }
     
     fileprivate func setupAngleLabelValue(radians: CGFloat) {
         let intDegrees: Int = Int(IGRRadianAngle.toDegrees(radians))
-        self.angleLabel?.text = "\(intDegrees)"
+        self.v.angleLabel.text = "\(intDegrees)"
     }
     
     // MARK: - Rotation
@@ -76,37 +103,39 @@ class CropArtworkViewController: IGRPhotoTweakViewController {
     }
     
     // MARK: - Actions
+//
+//    @IBAction func onChandeAngleSliderValue(_ sender: UISlider) {
+//        let radians: CGFloat = CGFloat(sender.value)
+//        setupAngleLabelValue(radians: radians)
+//        self.changeAngle(radians: radians)
+//    }
+//
+//    @IBAction func onEndTouchAngleControl(_ sender: UIControl) {
+//        self.stopChangeAngle()
+//    }
     
-    @IBAction func onChandeAngleSliderValue(_ sender: UISlider) {
-        let radians: CGFloat = CGFloat(sender.value)
-        setupAngleLabelValue(radians: radians)
-        self.changeAngle(radians: radians)
-    }
-    
-    @IBAction func onEndTouchAngleControl(_ sender: UIControl) {
-        self.stopChangeAngle()
-    }
-    
-    var rotateLeft:CGFloat = 0.5
-    @IBAction func rotateLeft(_ sender: Any) {
-        self.photoView.changeAngle(radians: -rotateLeft * CGFloat.pi)
-        rotateLeft = rotateLeft + 0.5
+    var rotateLft:CGFloat = 0.5
+    @objc
+     func rotateLeft(_ sender: Any) {
+       self.photoView.changeAngle(radians: -rotateLft * CGFloat.pi)
+        rotateLft = rotateLft + 0.5
         
     }
     
-    var rotateRight:CGFloat = 0.5
-    @IBAction func rotateRight(_ sender: Any) {
-        self.photoView.changeAngle(radians: rotateRight * CGFloat.pi)
-        rotateRight = rotateRight + 0.5
+    var rotateRght:CGFloat = 0.5
+    @objc
+     func rotateRight(_ sender: Any) {
+        self.photoView.changeAngle(radians: rotateRght * CGFloat.pi)
+        rotateRght = rotateRght + 0.5
     }
 
-    @IBAction func saveCropArtwork(_ sender: Any) {
+    @objc
+    func saveCropArtwork(_ sender: Any) {
         cropAction()
     }
 
-    
-    @IBAction func cancelCropArtwork(_ sender: UIButton) {
-     
+    @objc
+    func cancelCropArtwork(_ sender: UIButton) {
         self.dismissAction()
     }
     
@@ -122,6 +151,13 @@ class CropArtworkViewController: IGRPhotoTweakViewController {
         } else {
             print("No items selected yet.")
         }
+    }
+    
+    func fetchImagePreview(previewImage : UIImage){
+        self.delegateYP?.showCroppedImage(image: previewImage)
+            didFinishCropping?(previewImage)
+        self.dismiss(animated: true, completion: nil)
+
     }
  
     
@@ -142,14 +178,14 @@ class CropArtworkViewController: IGRPhotoTweakViewController {
 //        return 3
 //    }
 //
-//    override open func customGridLinesCount() -> Int {
-//        return 4
-//    }
-//
-//    override open func customCornerBorderLength() -> CGFloat {
-//        return 30.0
-//    }
-//
+    override open func customGridLinesCount() -> Int {
+        return 4
+    }
+
+    override open func customCornerBorderLength() -> CGFloat {
+        return 30.0
+    }
+
     override open func customIsHighlightMask() -> Bool {
         return true
     }
@@ -157,16 +193,16 @@ class CropArtworkViewController: IGRPhotoTweakViewController {
     override open func customHighlightMaskAlphaValue() -> CGFloat {
         return 0.3
     }
-    
+
     override open func customCanvasInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: UIDevice.current.orientation.isLandscape ? 40.0 : 70.0,
+        return UIEdgeInsets(top: UIDevice.current.orientation.isLandscape ? 40.0 : 0.0,
                             left: 0,
                             bottom: 0,
                             right: 0)
     }
 }
 
-extension CropArtworkViewController: HorizontalDialDelegate {
+extension CustomCropViewController: HorizontalDialDelegate {
     func horizontalDialDidValueChanged(_ horizontalDial: HorizontalDial) {
         let degrees = horizontalDial.value
         let radians = IGRRadianAngle.toRadians(CGFloat(degrees))
@@ -182,13 +218,17 @@ extension CropArtworkViewController: HorizontalDialDelegate {
 
 
 // MARK: IGRPhotoTweak Delegate
-extension CropArtworkViewController: IGRPhotoTweakViewControllerDelegate{
+extension CustomCropViewController: IGRPhotoTweakViewControllerDelegate{
     func photoTweaksController(_ controller: IGRPhotoTweakViewController, didFinishWithCroppedImage croppedImage: UIImage) {
-        self.showArtworks(imageCrop: croppedImage)
+        if fromCamera {
+            self.showArtworks(imageCrop: croppedImage)
+        }else{
+            self.fetchImagePreview(previewImage: croppedImage)
+        }
     }
     
     func photoTweaksControllerDidCancel(_ controller: IGRPhotoTweakViewController) {
-       
+        self.dismiss(animated: true, completion: nil)
     }
     
     

@@ -22,7 +22,6 @@ class YPCropVC: UIViewController {
     private let originalImage: UIImage
     private let pinchGR = UIPinchGestureRecognizer()
     private let panGR = UIPanGestureRecognizer()
-    
     private let v: YPCropView
     override func loadView() { view = v }
     

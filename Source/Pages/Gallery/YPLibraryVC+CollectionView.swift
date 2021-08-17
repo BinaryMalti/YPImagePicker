@@ -118,7 +118,9 @@ extension YPLibraryVC {
         selection.append(
             YPLibrarySelection(
                 index: indexPath.row,
-                assetIdentifier: asset.localIdentifier
+                assetIdentifier: asset.localIdentifier,
+                cutWidth: v.leftMaskHeight.constant,
+                cutHeight: v.topMaskHeight.constant
             )
         )
 
@@ -172,7 +174,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                           cropRect: currentSelection.cropRect,
                                                            scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                           scrollViewZoomScale: currentSelection.scrollViewZoomScale,
-                                                          assetIdentifier: currentSelection.assetIdentifier)
+                                                          assetIdentifier: currentSelection.assetIdentifier,
+                                                          cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
                 }
                 cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
             } else {
@@ -204,7 +207,9 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                       cropRect: currentSelection.cropRect,
                                                       scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
-                                                      assetIdentifier: currentSelection.assetIdentifier)
+                                                      assetIdentifier: currentSelection.assetIdentifier,
+                                                      cutWidth: v.leftMaskHeight.constant,
+                                                      cutHeight: v.topMaskHeight.constant)
             }
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
         } else {

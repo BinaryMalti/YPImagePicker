@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="IM9-UI-uX9" customClass="CustomCameraView" customModule="YPImagePicker" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mrd-z5-uMy">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="86"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="86" id="0Mb-if-BSs"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fxx-Hc-SxR">
+                    <rect key="frame" x="167" y="782" width="80" height="80"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NpW-cg-zon">
+                            <rect key="frame" x="5" y="5" width="70" height="70"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="35"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DR7-gF-EPe">
+                            <rect key="frame" x="10" y="10" width="60" height="60"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="30"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="80" id="7h4-of-fc1"/>
+                        <constraint firstAttribute="height" constant="80" id="Prw-SX-JxA"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="40"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8WB-e0-m8Y">
+                    <rect key="frame" x="264" y="807" width="130" height="30"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="8WB-e0-m8Y" secondAttribute="height" multiplier="13:3" id="FzQ-DU-cc3"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                    <state key="normal" title="🎬Video"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </button>
+                <view alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eF6-pr-zEF">
+                    <rect key="frame" x="0.0" y="862" width="414" height="34"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="miF-k1-L8u"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="8WB-e0-m8Y" firstAttribute="leading" secondItem="fxx-Hc-SxR" secondAttribute="trailing" constant="17" id="HrG-1B-nja"/>
+                <constraint firstItem="mrd-z5-uMy" firstAttribute="leading" secondItem="miF-k1-L8u" secondAttribute="leading" id="L5p-ep-s7Y"/>
+                <constraint firstItem="eF6-pr-zEF" firstAttribute="centerX" secondItem="IM9-UI-uX9" secondAttribute="centerX" id="NrE-dj-O8L"/>
+                <constraint firstItem="mrd-z5-uMy" firstAttribute="centerX" secondItem="miF-k1-L8u" secondAttribute="centerX" id="PCf-AG-t68"/>
+                <constraint firstItem="miF-k1-L8u" firstAttribute="trailing" secondItem="8WB-e0-m8Y" secondAttribute="trailing" constant="20" id="aIW-aI-7Dl"/>
+                <constraint firstItem="miF-k1-L8u" firstAttribute="top" secondItem="mrd-z5-uMy" secondAttribute="top" constant="44" id="gG2-b0-N49"/>
+                <constraint firstItem="eF6-pr-zEF" firstAttribute="top" secondItem="miF-k1-L8u" secondAttribute="bottom" id="ifB-3K-rbF"/>
+                <constraint firstAttribute="bottom" secondItem="eF6-pr-zEF" secondAttribute="bottom" id="m8Z-fT-7i1"/>
+                <constraint firstItem="fxx-Hc-SxR" firstAttribute="bottom" secondItem="miF-k1-L8u" secondAttribute="bottom" id="tZg-oq-Yfy"/>
+                <constraint firstAttribute="trailing" secondItem="eF6-pr-zEF" secondAttribute="trailing" id="urm-nF-giP"/>
+                <constraint firstItem="fxx-Hc-SxR" firstAttribute="centerX" secondItem="IM9-UI-uX9" secondAttribute="centerX" id="vYu-o1-DKo"/>
+                <constraint firstItem="miF-k1-L8u" firstAttribute="bottom" secondItem="8WB-e0-m8Y" secondAttribute="bottom" constant="25" id="vga-aY-fwj"/>
+                <constraint firstItem="eF6-pr-zEF" firstAttribute="leading" secondItem="IM9-UI-uX9" secondAttribute="leading" id="xPn-6U-SjB"/>
+            </constraints>
+            <connections>
+                <outlet property="cameraButton" destination="fxx-Hc-SxR" id="nPA-CU-nFT"/>
+                <outlet property="changeButton" destination="8WB-e0-m8Y" id="ZbC-xU-ueH"/>
+            </connections>
+            <point key="canvasLocation" x="129" y="-536"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

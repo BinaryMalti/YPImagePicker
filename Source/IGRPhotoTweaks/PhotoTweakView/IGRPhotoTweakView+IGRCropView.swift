@@ -28,6 +28,10 @@ extension IGRPhotoTweakView : IGRCropViewDelegate {
     }
     
     public func cropViewDidStopCrop(_ cropView: IGRCropView) {
+        if (cropView.bounds.size.width < cropView.bounds.size.height) {
+            cropView.bounds.size.width = self.originalSize.width
+            print("TGP - width cannot be less than height")
+        }
         let scaleX: CGFloat = self.originalSize.width / cropView.bounds.size.width
         let scaleY: CGFloat = self.originalSize.height / cropView.bounds.size.height
         let scale: CGFloat = min(scaleX, scaleY)

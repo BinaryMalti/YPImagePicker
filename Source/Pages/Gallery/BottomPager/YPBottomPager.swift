@@ -93,6 +93,11 @@ open class YPBottomPager: UIViewController, UIScrollViewDelegate {
         v.scrollView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
         selectPage(page)
     }
+    
+    func selectLirbary()
+    {
+        delegate?.pagerDidSelectController(controllers[0])
+    }
 
     func selectPage(_ page: Int) {
         guard page != currentPage && page >= 0 && page < controllers.count else {

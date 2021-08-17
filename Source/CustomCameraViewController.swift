@@ -21,7 +21,6 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     //TODO: Must be tested AVCaptureVideoDataOutput too
     private var videoOutput: AVCaptureMovieFileOutput?
     private var isRecording: Bool = false
-    
     private var photoOutput : AVCapturePhotoOutput?
     private var cameraPreviewLayer : AVCaptureVideoPreviewLayer?
     private var isVideoMode: Bool = false
@@ -29,10 +28,31 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     private let videoText = "🎬VideoMode now"
     private let photoText = "🤷‍♀️PhotoMode now"
     
+    internal var v: CustomCameraView!
+
+   
     
-    @IBOutlet weak var cameraButton: UIView!
-    @IBOutlet weak var changeButton: UIButton!
+    // MARK: - Init
     
+    public required init(items: [YPMediaItem]?) {
+        super.init(nibName: nil, bundle: nil)
+        title = YPConfig.wordings.libraryTitle
+        view.backgroundColor = UIColor.white
+    }
+    
+    public convenience init() {
+        self.init(items: nil)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    public override func loadView() {
+        v = CustomCameraView.xibView()
+        view = v
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +64,7 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         captureSession.startRunning()
         setupTapGesture()
         
-        self.changeButton.setTitle(photoText, for: .normal)
+        self.v.changeButton.setTitle(photoText, for: .normal)
     }
     
     @objc func tapGesture(_: UITapGestureRecognizer){
@@ -125,15 +145,9 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     func setupTapGesture() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapGesture(_:)))
         tapGestureRecognizer.delegate = self
-        self.cameraButton.addGestureRecognizer(tapGestureRecognizer)
+        self.v.cameraButton.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    @IBAction func tappedChangeButton(_ sender: Any) {
-        guard let titleLabel = self.changeButton.titleLabel else { return }
-        
-        self.isVideoMode = titleLabel.text! != videoText
-        self.changeButton.setTitle(self.isVideoMode ? videoText : photoText, for: .normal)
-    }
 
 }
 

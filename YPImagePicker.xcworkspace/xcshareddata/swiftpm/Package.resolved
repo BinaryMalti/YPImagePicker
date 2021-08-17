@@ -1,0 +1,61 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Brightroom",
+        "repositoryURL": "https://github.com/BinaryMalti/Brightroom.git",
+        "state": {
+          "branch": null,
+          "revision": "eb8e8b2c9c19e874ef6043dd8ad0cfacd975af2e",
+          "version": null
+        }
+      },
+      {
+        "package": "PryntTrimmerView",
+        "repositoryURL": "https://github.com/HHK1/PryntTrimmerView.git",
+        "state": {
+          "branch": null,
+          "revision": "ac1b60a22c7e6a6514de7a66d2f3d5b537c956d5",
+          "version": "4.0.2"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "7c17a6ccca06b5c107cfa4284e634562ddaf5951",
+          "version": "6.2.0"
+        }
+      },
+      {
+        "package": "Stevia",
+        "repositoryURL": "https://github.com/freshOS/Stevia",
+        "state": {
+          "branch": null,
+          "revision": "ebf7ef05c70aaca1d97492de0bbee2c587df031d",
+          "version": "4.7.3"
+        }
+      },
+      {
+        "package": "TransitionPatch",
+        "repositoryURL": "https://github.com/muukii/TransitionPatch.git",
+        "state": {
+          "branch": null,
+          "revision": "1f2e5930a68b11dae764ee7ffda14b2b7ffa8fce",
+          "version": "1.0.3"
+        }
+      },
+      {
+        "package": "Verge",
+        "repositoryURL": "https://github.com/VergeGroup/Verge.git",
+        "state": {
+          "branch": null,
+          "revision": "80fa0ac4b384c74fa4a03d4322c6643c6dbedb3d",
+          "version": "8.12.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

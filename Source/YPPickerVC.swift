@@ -136,8 +136,6 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         cameraVC?.v.shotButton.isEnabled = true
-//        libraryVC?.v.clickImageButton.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
-        libraryVC?.v.cropImageButton.addTarget(self, action: #selector(crop), for: .touchUpInside)
         libraryVC?.v.forwardbutton.addTarget(self, action: #selector(done), for: .touchUpInside)
         updateMode(with: currentController)
     }

@@ -91,16 +91,47 @@ override open func viewDidLoad() {
                         self?.didSelect(items: items,
                                         draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 0)
                         return
-                    }else if self?.picker.libraryVC?.fromCamera == true ||
+                    }
+                    else if self?.picker.libraryVC?.fromCamera == true ||
                                 self?.picker.libraryVC?.fromCropClick == true{
-                        self?.didSelect(items: items,
-                                        draftItem: [], clickType: 3)
+                        let item = items.first!
+                        switch item {
+                        case .photo(let photo):
+                            let completion = { (photo: YPMediaPhoto) in
+                                let mediaItem = YPMediaItem.photo(p: photo)
+                                self?.didSelect(items: [mediaItem], draftItem: [], clickType: 3)
+                            }
+                            func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
+                                    let cropVC = CustomCropViewController(item: photo.image)
+                                cropVC.fromCamera = self!.picker.libraryVC!.fromCamera
+                                    cropVC.didFinishCropping = { croppedImage in
+                                        photo.modifiedImage = croppedImage
+                                        completion(photo)
+                                    }
+                                let navVC = UINavigationController(rootViewController: cropVC)
+                                navVC.view.backgroundColor = .white
+                                navVC.toolbar.isHidden = true
+                                navVC.navigationBar.tintColor = .black
+                                navVC.navigationBar.backgroundColor = .white
+                                navVC.navigationBar.shadowImage = UIImage()
+                                navVC.navigationBar.isTranslucent = false
+                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+                                navVC.modalPresentationStyle = .fullScreen
+                               // cropVC.modalPresentationStyle = .fullScreen
+                                self?.present(navVC, animated: true, completion: nil)
+                            }
+                            showCropVC(photo: photo, completion: completion)
+                        case .video(_):
+                            break
+                        }
                         return
-                    }else{
-                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: items) { _, _, items in
+                    }
+                    else{
+                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
                             self?.didSelect(items: items, draftItem: [], clickType: 2)
                         }
-                    
+                        selectionsGalleryVC.cropWidth =  self?.picker.libraryVC?.targetWidth ?? 0.0
+                        selectionsGalleryVC.cropHeight =  self?.picker.libraryVC?.targetHeight ?? 0.0
                         self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
@@ -169,6 +200,34 @@ override open func viewDidLoad() {
         print("Picker deinited 👍")
     }
     
+    private func arrangeArtworkData(items:[YPMediaItem]) -> [YPMediaItem]{
+        var artworkArray : [YPMediaItem] = []
+        for (position,item) in items.enumerated(){
+            switch item {
+            case .photo(let photo):
+                let currentTimeStamp = NSDate().timeIntervalSince1970.toInt()
+                let imageName = "\(position)image\(currentTimeStamp).jpeg"
+               if let imagePath = saveImage(image: photo.image, imageName: imageName)
+               {
+                let artwork = YPMediaPhoto(image: photo.image, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: YPLibraryVC().targetWidth, heightRatio: YPLibraryVC().targetHeight, imageName: imageName)
+                let artworkMedia = YPMediaItem.photo(p: artwork)
+                artworkArray.append(artworkMedia)
+               }
+            case .video(v:):break
+            }
+        }
+        return artworkArray
+    }
+    
+    private func saveImage(image:UIImage,imageName:String) -> URL?{
+      if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: "ArtWorkUpload")
+      {
+        return imagePath
+      }else{
+        return nil
+      }
+    }
+    
     private func setupLoadingView() {
         view.sv(
             loadingView
@@ -188,5 +247,26 @@ extension YPImagePicker: ImagePickerDelegate {
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {
         return self.imagePickerDelegate?.shouldAddToSelection(indexPath: indexPath, numSelections: numSelections)
             ?? true
+    }
+}
+extension UIImage {
+    var jpeg: Data? { jpegData(compressionQuality: 0) }  // QUALITY min = 0 / max = 1
+    var png: Data? { pngData() }
+}
+extension Data {
+    var uiImage: UIImage? { UIImage(data: self) }
+}
+extension Double {
+    func format(f: String) -> String {
+        return NSString(format: "%\(f)f" as NSString, self) as String
+    }
+
+    func toString() -> String {
+        return String(format: "%.1f",self)
+    }
+
+    func toInt() -> Int{
+        var temp:Int64 = Int64(self)
+        return Int(temp)
     }
 }
