@@ -73,7 +73,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         }
         
         // Camera
-        if YPConfig.screens.contains(.photo) {
+        if YPConfig.screens.contains(.library) {
             libraryVC = YPLibraryVC()
             libraryVC?.didCapturePhoto = { [weak self] img in
                 self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
@@ -393,6 +393,10 @@ extension YPPickerVC: YPLibraryViewDelegate {
             self.libraryVC?.v.hideLoader()
             self.updateUI()
         }
+    }
+    
+    override func backButtonClick(sender: UIButton) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     public func libraryViewDidToggleMultipleSelection(enabled: Bool) {

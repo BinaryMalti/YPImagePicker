@@ -174,8 +174,14 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
         switch item {
         case .photo(let photo):
            // cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
-            cell.imageView.backgroundColor = .clear
-            cell.imageView.contentMode = .scaleAspectFit
+           // cell.imageView.backgroundColor = .clear
+            if indexPath.row == 0{
+                cell.imageView.contentMode = .scaleAspectFit
+
+            }else{
+                cell.imageView.contentMode = .scaleToFill
+
+            }
             cell.imageView.image = photo.originalImage
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)

@@ -125,16 +125,9 @@ override open func viewDidLoad() {
                         let item = items.first!
                         switch item {
                         case .photo(let photo):
-                            if photo.image.size.width > photo.image.size.height{
-                                selectionsGalleryVC.cropWidth = size - 50
-                                selectionsGalleryVC.cropHeight = size
-                            }else if photo.image.size.width < photo.image.size.height{
-                                selectionsGalleryVC.cropWidth = size
-                                selectionsGalleryVC.cropHeight = size + 50
-                            }else{
-                                selectionsGalleryVC.cropWidth = size
-                                selectionsGalleryVC.cropHeight = size
-                            }
+                          let imageRatio =  self!.calculateSingleImageSize(image: photo.image, size: size)
+                            selectionsGalleryVC.cropWidth = imageRatio.width
+                            selectionsGalleryVC.cropHeight = imageRatio.height
                         case .video(_):break
                         }
                         self?.pushViewController(selectionsGalleryVC, animated: true)
@@ -165,7 +158,6 @@ override open func viewDidLoad() {
                                 navVC.navigationBar.isTranslucent = false
                                 navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
                                 navVC.modalPresentationStyle = .fullScreen
-                               // cropVC.modalPresentationStyle = .fullScreen
                                 self?.present(navVC, animated: true, completion: nil)
                             }
                             showCropVC(photo: photo, completion: completion)
@@ -182,7 +174,16 @@ override open func viewDidLoad() {
                         var size = CGSize()
                         switch item {
                         case .photo(let photo):
-                            size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
+                            if items.count > 1 {
+                                size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
+                            }else{
+                                let sideMargin: CGFloat = 24
+                                let overlapppingNextPhoto: CGFloat = 37
+                                let screenWidth = YPImagePickerConfiguration.screenWidth
+                                let s = screenWidth - (sideMargin + overlapppingNextPhoto)
+                                size = self!.calculateSingleImageSize(image: photo.image, size: s)
+                            }
+                          
                         case .video(_):break
                         }
                         selectionsGalleryVC.cropWidth = size.width
@@ -295,15 +296,30 @@ override open func viewDidLoad() {
     func calculateSize(width:Int,height:Int) -> CGSize{
             if width > height {
                 let ratio = CGFloat(Double(height) / Double(width))
-                let setLength = self.view.frame.width - 100.0
+                let setLength = self.view.frame.width - 50.0
                     let setHeight = setLength * ratio
                     return CGSize(width: setLength, height: setHeight)
             } else {
                 let ratio = CGFloat(Double(height) / Double(width))
-                let setLength = self.view.frame.width - 200.0
+                let setLength = self.view.frame.width - 100.0
                 let setHeight = setLength * ratio
                 return CGSize(width: setLength, height: setHeight)
             }
+    }
+    func calculateSingleImageSize(image:UIImage,size:CGFloat) -> CGSize{
+        var width : CGFloat = 0.0
+        var height : CGFloat  = 0.0
+        if image.size.width > image.size.height{
+             width = size
+             height = size
+        }else if image.size.width < image.size.height{
+             width = size
+            height = size - 24
+        }else{
+            width = size
+            height = size
+        }
+        return CGSize(width: width, height: height)
     }
 }
 
