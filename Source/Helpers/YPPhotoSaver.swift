@@ -104,7 +104,7 @@ public class YPPhotoSaver {
    static func getImageURL(imageName:String,folderName:String) -> URL?{
         let fileManager = FileManager.default
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let imagePath = documentsDirectory!.appendingPathComponent("/\(folderName)/\(imageName)")
+        let imagePath = documentsDirectory!.appendingPathComponent("\(folderName)/\(imageName)")
         if fileManager.fileExists(atPath: imagePath.path){
             return imagePath
         }else{
