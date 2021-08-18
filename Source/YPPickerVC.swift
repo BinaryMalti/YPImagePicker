@@ -272,7 +272,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     func updateUI() {
         if !YPConfig.hidesCancelButton {
             // Update Nav Bar state.arrowtriangle.left.fill
-            self.addBackButtonItem(title:YPConfig.wordings.cancel, saveAsDraft: false)
+            self.addBackButtonItem(title:YPConfig.wordings.cancel, saveAsDraft: false, isFromcrop: false)
         }
         switch mode {
         case .library:
