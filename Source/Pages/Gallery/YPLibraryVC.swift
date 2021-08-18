@@ -84,6 +84,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         refreshMediaRequest()
     }
+    public func selectDraftMedia() -> [UIImage]{
+        return [singleImage!]
+    }
     
     func initialize() {
         mediaManager.initialize()
