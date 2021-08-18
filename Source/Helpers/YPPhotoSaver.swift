@@ -68,12 +68,12 @@ public class YPPhotoSaver {
 
 
     class func saveImageToDirectory(imageName: String, image: UIImage, folderName: String) -> URL? {
- 
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil}
+         guard var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil}
         let fileName = imageName
         let artworkURL: URL
-        if FileManager.default.fileExists(atPath: documentsDirectory.path+"/"+folderName) {
-            artworkURL = documentsDirectory.appendingPathComponent("/"+folderName)
+        documentsDirectory.appendPathComponent(folderName)
+        if FileManager.default.fileExists(atPath: documentsDirectory.path) {
+            artworkURL = documentsDirectory
         } else {
             artworkURL = self.createFolder(folderName: folderName)!
         }
