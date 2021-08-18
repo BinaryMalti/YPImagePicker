@@ -31,18 +31,13 @@ extension PHCachingImageManager {
         // Fetch Highiest quality image possible.
         requestImageData(for: asset, options: options) { data, _, _, _ in
             if let data = data, let image = UIImage(data: data)?.resetOrientation() {
-            
                 // Crop the high quality image manually.
                 let xCrop: CGFloat = cropRect.origin.x * CGFloat(asset.pixelWidth)
                 let yCrop: CGFloat = cropRect.origin.y * CGFloat(asset.pixelHeight)
                 let scaledCropRect = CGRect(x: xCrop + cutWidth,
                                             y: yCrop + cutHeight,
-                                            width: targetSize.width,
-                                            height: targetSize.height)
-                let scaledCropRect2 = CGRect(x: cutWidth,
-                                            y: cutHeight,
-                                            width: targetSize.width,
-                                            height: targetSize.height)
+                                            width: targetSize.width - (cutWidth * 2),
+                                            height: targetSize.height - (cutHeight * 2))
                 if let imageRef = image.cgImage?.cropping(to: scaledCropRect) {
                     let croppedImage = UIImage(cgImage: imageRef)
                     let exifs = self.metadataForImageData(data: data)

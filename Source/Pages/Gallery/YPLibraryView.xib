@@ -73,9 +73,14 @@
                                 <constraint firstAttribute="height" id="FZf-Uv-xbJ" userLabel="bottomMaskHeight"/>
                             </constraints>
                         </view>
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bAn-iC-mmF" userLabel="cropRect">
+                            <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" systemColor="labelColor"/>
                     <constraints>
+                        <constraint firstItem="bAn-iC-mmF" firstAttribute="top" secondItem="Ncf-s3-D8c" secondAttribute="bottom" id="0l9-pi-8Vo"/>
                         <constraint firstItem="SO8-sF-VjT" firstAttribute="top" secondItem="Gfa-cf-nhz" secondAttribute="top" id="4xv-No-rfY"/>
                         <constraint firstItem="TJo-hT-cXu" firstAttribute="leading" secondItem="Ncf-s3-D8c" secondAttribute="trailing" id="6a6-4B-w92"/>
                         <constraint firstItem="fY4-rn-jEa" firstAttribute="leading" secondItem="Gfa-cf-nhz" secondAttribute="leading" id="6ng-bl-bNx"/>
@@ -86,11 +91,14 @@
                         <constraint firstAttribute="bottom" secondItem="w9i-p2-efm" secondAttribute="bottom" id="AJk-tI-KJl"/>
                         <constraint firstItem="TJo-hT-cXu" firstAttribute="top" secondItem="Gfa-cf-nhz" secondAttribute="top" id="FzS-Ny-jpt"/>
                         <constraint firstAttribute="bottom" secondItem="SO8-sF-VjT" secondAttribute="bottom" id="I9z-l3-4gk"/>
+                        <constraint firstItem="fY4-rn-jEa" firstAttribute="top" secondItem="bAn-iC-mmF" secondAttribute="bottom" id="Q3K-2M-ErS"/>
                         <constraint firstAttribute="trailing" secondItem="fY4-rn-jEa" secondAttribute="trailing" id="Z5X-lC-Yi7"/>
+                        <constraint firstItem="bAn-iC-mmF" firstAttribute="leading" secondItem="w9i-p2-efm" secondAttribute="trailing" id="aih-9c-t8l"/>
                         <constraint firstAttribute="bottom" secondItem="TJo-hT-cXu" secondAttribute="bottom" id="cBz-k9-882"/>
                         <constraint firstAttribute="bottom" secondItem="fY4-rn-jEa" secondAttribute="bottom" id="fXO-FM-QhD"/>
                         <constraint firstItem="Ncf-s3-D8c" firstAttribute="top" secondItem="Gfa-cf-nhz" secondAttribute="top" id="na9-FW-uQF"/>
                         <constraint firstItem="SO8-sF-VjT" firstAttribute="leading" secondItem="Gfa-cf-nhz" secondAttribute="leading" id="rHJ-nr-Y0m"/>
+                        <constraint firstItem="TJo-hT-cXu" firstAttribute="leading" secondItem="bAn-iC-mmF" secondAttribute="trailing" id="rfa-ug-pkY"/>
                         <constraint firstAttribute="trailing" secondItem="TJo-hT-cXu" secondAttribute="trailing" id="vls-AU-GGy"/>
                         <constraint firstItem="Ncf-s3-D8c" firstAttribute="leading" secondItem="w9i-p2-efm" secondAttribute="trailing" id="w5g-VK-BZn"/>
                     </constraints>
@@ -226,6 +234,7 @@
                 <outlet property="clickImageButton" destination="ibr-pU-YZj" id="gx4-BS-qbx"/>
                 <outlet property="collectionView" destination="zEE-ji-UFo" id="Ji3-oJ-elj"/>
                 <outlet property="cropImageButton" destination="cND-XS-PtA" id="mCt-UV-HpO"/>
+                <outlet property="cropRect" destination="bAn-iC-mmF" id="1SL-Qs-VkX"/>
                 <outlet property="dropdownPickerView" destination="zLo-M9-LhG" id="Umr-fo-493"/>
                 <outlet property="forwardbutton" destination="hjm-CE-one" id="FT8-QA-aGV"/>
                 <outlet property="imageDropDownTextField" destination="dtQ-1X-iMo" id="4bD-Vt-j2G"/>

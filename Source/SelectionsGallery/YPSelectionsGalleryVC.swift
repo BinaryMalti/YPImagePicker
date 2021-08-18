@@ -55,7 +55,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
             v.collectionView.dropDelegate = self
         }
 
-        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true)
+        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false)
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         // Setup navigation bar
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
@@ -153,11 +153,15 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
 }
 
 // MARK: - Collection View
-extension YPSelectionsGalleryVC: UICollectionViewDataSource {
+extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
 
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize(width: cropWidth, height: cropHeight)
+    }
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -169,9 +173,10 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource {
         let item = items[indexPath.row]
         switch item {
         case .photo(let photo):
-            cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
-            cell.imageView.contentMode = .scaleAspectFill
-            cell.imageView.image = photo.image
+           // cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
+            cell.imageView.backgroundColor = .clear
+            cell.imageView.contentMode = .scaleAspectFit
+            cell.imageView.image = photo.originalImage
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
         case .video(let video):
@@ -279,4 +284,43 @@ extension YPSelectionsGalleryVC: UICollectionViewDragDelegate, UICollectionViewD
     }
     
     
+}
+class ScaledHeightImageView: UIImageView {
+
+    override var intrinsicContentSize: CGSize {
+
+        if let myImage = self.image {
+            let myImageWidth = myImage.size.width
+            let myImageHeight = myImage.size.height
+            let myViewWidth = self.frame.size.width
+ 
+            let ratio = myViewWidth/myImageWidth
+            let scaledHeight = myImageHeight * ratio
+
+            return CGSize(width: myViewWidth, height: scaledHeight)
+        }
+
+        return CGSize(width: -1.0, height: -1.0)
+    }
+
+}
+extension UIImageView {
+    var contentClippingRect: CGRect {
+        guard let image = image else { return bounds }
+        guard contentMode == .scaleAspectFit else { return bounds }
+        guard image.size.width > 0 && image.size.height > 0 else { return bounds }
+
+        let scale: CGFloat
+        if image.size.width > image.size.height {
+            scale = bounds.width / image.size.width
+        } else {
+            scale = bounds.height / image.size.height
+        }
+
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let x = (bounds.width - size.width) / 2.0
+        let y = (bounds.height - size.height) / 2.0
+
+        return CGRect(x: x, y: y, width: size.width, height: size.height)
+    }
 }

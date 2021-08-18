@@ -46,7 +46,7 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
-         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false)
+        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false, isFromcrop: true)
         //self.lockAspectRatio(true)
         //FIXME: Zoom setup
 //        self.photoView.minimumZoomScale = 1.0;
@@ -136,7 +136,14 @@ class CustomCropViewController: IGRPhotoTweakViewController {
 
     @objc
     func cancelCropArtwork(_ sender: UIButton) {
-        self.dismissAction()
+        let alert = UIAlertController(title: "Discard Changes", message: "You cannot undo this action", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
+            self.dismissAction()
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func showArtworks(imageCrop : UIImage){
@@ -154,8 +161,8 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
     
     func fetchImagePreview(previewImage : UIImage){
-        self.delegateYP?.showCroppedImage(image: previewImage)
-            didFinishCropping?(previewImage)
+        self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame)
+            //didFinishCropping?(previewImage)
         self.dismiss(animated: true, completion: nil)
 
     }

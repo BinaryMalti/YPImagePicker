@@ -15,12 +15,16 @@ public protocol YPImagePickerDelegate: AnyObject {
     func shouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool
 }
 
-open class YPImagePicker: UINavigationController {
-      
+open class YPImagePicker: UINavigationController,YPLibraryDelegate {
+ 
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
     
+    func showCroppedImage(rect: CGRect) {
+        self.picker.libraryVC?.updateImageCrop(cropRect: rect)
+    }
+
     private var _didFinishPicking: ((Int,[YPMediaItem], Bool) -> Void)?
     private var _didLoadDraftImages: (([UIImage], Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ clickType: Int,_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
@@ -108,11 +112,35 @@ override open func viewDidLoad() {
                 }else {
                     if self?.picker.libraryVC?.v.showDraftImages == true{
                         self?.didSelect(items: items,
-                                        draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 1)
+                                        draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 0)
+                        return
+                    }else if self?.picker.libraryVC?.fromCamera == true{
+                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
+                            self?.didSelect(items: items, draftItem: [], clickType: 2)
+                        }
+                        let sideMargin: CGFloat = 24
+                        let overlapppingNextPhoto: CGFloat = 37
+                        let screenWidth = YPImagePickerConfiguration.screenWidth
+                        let size = screenWidth - (sideMargin + overlapppingNextPhoto)
+                        let item = items.first!
+                        switch item {
+                        case .photo(let photo):
+                            if photo.image.size.width > photo.image.size.height{
+                                selectionsGalleryVC.cropWidth = size - 50
+                                selectionsGalleryVC.cropHeight = size
+                            }else if photo.image.size.width < photo.image.size.height{
+                                selectionsGalleryVC.cropWidth = size
+                                selectionsGalleryVC.cropHeight = size + 50
+                            }else{
+                                selectionsGalleryVC.cropWidth = size
+                                selectionsGalleryVC.cropHeight = size
+                            }
+                        case .video(_):break
+                        }
+                        self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
-                    else if self?.picker.libraryVC?.fromCamera == true ||
-                                self?.picker.libraryVC?.fromCropClick == true{
+                    else if self?.picker.libraryVC?.fromCropClick == true{
                         let item = items.first!
                         switch item {
                         case .photo(let photo):
@@ -127,6 +155,7 @@ override open func viewDidLoad() {
                                         photo.modifiedImage = croppedImage
                                         completion(photo)
                                     }
+                                cropVC.delegateYP = self
                                 let navVC = UINavigationController(rootViewController: cropVC)
                                 navVC.view.backgroundColor = .white
                                 navVC.toolbar.isHidden = true
@@ -149,8 +178,15 @@ override open func viewDidLoad() {
                         let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
                             self?.didSelect(items: items, draftItem: [], clickType: 2)
                         }
-                        selectionsGalleryVC.cropWidth =  self?.picker.libraryVC?.targetWidth ?? 0.0
-                        selectionsGalleryVC.cropHeight =  self?.picker.libraryVC?.targetHeight ?? 0.0
+                        let item = items.first!
+                        var size = CGSize()
+                        switch item {
+                        case .photo(let photo):
+                            size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
+                        case .video(_):break
+                        }
+                        selectionsGalleryVC.cropWidth = size.width
+                        selectionsGalleryVC.cropHeight = size.height
                         self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
@@ -226,7 +262,7 @@ override open func viewDidLoad() {
             switch item {
             case .photo(let photo):
                 let currentTimeStamp = NSDate().timeIntervalSince1970.toInt()
-                let imageName = "\(position)image\(currentTimeStamp).jpeg"
+                let imageName = "\(position)image\(currentTimeStamp).jpg"
                if let imagePath = saveImage(image: photo.image, imageName: imageName)
                {
                 let artwork = YPMediaPhoto(image: photo.image, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: YPLibraryVC().targetWidth, heightRatio: YPLibraryVC().targetHeight, imageName: imageName)
@@ -254,6 +290,20 @@ override open func viewDidLoad() {
         )
         loadingView.fillContainer()
         loadingView.alpha = 0
+    }
+    
+    func calculateSize(width:Int,height:Int) -> CGSize{
+            if width > height {
+                let ratio = CGFloat(Double(height) / Double(width))
+                let setLength = self.view.frame.width - 100.0
+                    let setHeight = setLength * ratio
+                    return CGSize(width: setLength, height: setHeight)
+            } else {
+                let ratio = CGFloat(Double(height) / Double(width))
+                let setLength = self.view.frame.width - 200.0
+                let setHeight = setLength * ratio
+                return CGSize(width: setLength, height: setHeight)
+            }
     }
 }
 

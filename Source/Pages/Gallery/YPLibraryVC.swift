@@ -10,14 +10,11 @@ import UIKit
 import Photos
 
 protocol YPLibraryDelegate :AnyObject {
-    func showCroppedImage(image:UIImage)
+    func showCroppedImage(rect: CGRect)
 }
 
-public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate, YPLibraryDelegate {
+public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    func showCroppedImage(image: UIImage) {
-        self.v.assetZoomableView.assetImageView.image = image
-    }
 
     internal weak var delegate: YPLibraryViewDelegate?
     internal var v: YPLibraryView!
@@ -62,6 +59,20 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateImageCrop(cropRect:CGRect){
+       let asset = mediaManager.fetchResult[currentlySelectedIndex]
+        selection = [
+            YPLibrarySelection(index: currentlySelectedIndex,
+                               cropRect: cropRect,
+                               scrollViewContentOffset: v.assetZoomableView!.contentOffset,
+                               scrollViewZoomScale: v.assetZoomableView!.zoomScale,
+                               assetIdentifier: asset.localIdentifier,
+                               cutWidth: v.leftMaskHeight.constant,
+                               cutHeight: v.topMaskHeight.constant)
+        ]
+        updateCropInfo()
     }
     
     func setAlbum(_ album: YPAlbum) {
@@ -265,14 +276,15 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     func openCameraButtonTapped() {
          doAfterPermissionCheck { [weak self] in
             if self != nil {
-      //  self.fromCamera = true
-      //  self.didCapturePhoto?(UIImage(named: "img_dummy")!.resizedImageIfNeeded())
+//                self?.fromCamera = true
+//                self!.didCapturePhoto?(UIImage(named: "img_dummy")!)
                 let sourceType:UIImagePickerController.SourceType = UIImagePickerController.SourceType.camera
                 if UIImagePickerController.isSourceTypeAvailable(
                     UIImagePickerController.SourceType.camera){
                     self!.cameraPicker.sourceType = sourceType
                     self!.cameraPicker.delegate = self
-                    self?.navigationController?.pushViewController(self!.cameraPicker, animated: false)
+                    self!.cameraPicker.modalPresentationStyle = .fullScreen
+                    self?.present(self!.cameraPicker, animated: false)
                 }
             }
         }
@@ -287,6 +299,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
 //            cropVC.fromCamera = true
 //            self.navigationController?.pushViewController(cropVC, animated: true)
         }
+        self.dismiss(animated: true, completion: nil)
     }
     
     
@@ -463,15 +476,26 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                 self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
-                print("offffsetttt:",self.v.assetZoomableView.assetImageView.frame.origin.y)
-                self.view.setNeedsLayout()
-                }
-                if self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height
+                    if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
                     {
-                        self.v.assetZoomableView.fitImage(true)
-                    self.v.assetZoomableView.layoutSubviews()
-                    
+                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+                    }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
+                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+                    }else{
+                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
                     }
+  
+                self.view.setNeedsLayout()
+                }else{
+                    if self.selection.count > 1{
+                            self.v.assetZoomableView.fitImage(true)
+                            self.v.assetZoomableView.layoutSubviews()
+                    }
+    
+                }
             }
 
             self.updateCropInfo()
@@ -643,10 +667,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                                       callback: callback)
     }
     
-    public func selectDraftMedia() -> [UIImage]{
-        return [singleImage!]
-    }
-    
     public func selectedMedia(photoCallback: @escaping (_ photo: YPMediaPhoto) -> Void,
                               videoCallback: @escaping (_ videoURL: YPMediaVideo) -> Void,
                               multipleItemsCallback: @escaping (_ items: [YPMediaItem]) -> Void) {
@@ -675,9 +695,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 for (index, assetPair) in selectedAssets.enumerated() {
                     assetDictionary[assetPair.asset] = index
                 }
-                
-                //self.targetWidth = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).width
-             //   self.targetHeight = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).height
+//                self.targetWidth = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect ?? DispatchQueue.main.sync { self.v.currentCropRect() }).width
+//                self.targetHeight = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect ?? DispatchQueue.main.sync { self.v.currentCropRect() }).height
+//                let ratio = self.targetWidth / self.targetHeight
+//                if self.targetWidth > self.targetHeight {
+//                    self.targetHeight = self.targetWidth / ratio
+//                    self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+//                }else{
+//                    self.targetWidth = self.targetWidth / ratio
+//                    self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width
+//                }
                 for asset in selectedAssets {
                     asyncGroup.enter()
                     

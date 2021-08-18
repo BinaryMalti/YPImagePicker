@@ -418,7 +418,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
 }
 extension UIViewController {
 
-    func addBackButtonItem(title:String,saveAsDraft:Bool) {
+    func addBackButtonItem(title:String,saveAsDraft:Bool,isFromcrop:Bool) {
         navigationController?.isNavigationBarHidden = false
         let backMenu: UIButton = UIButton()
         backMenu.setImage(YPConfig.icons.backButtonIcon, for: .normal)
@@ -431,12 +431,16 @@ extension UIViewController {
         backMenu.setTitleColor(.black, for: .normal)
         backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
         backMenu.titleLabel!.textColor = .black
-        backMenu.addTarget(self, action: #selector(backButtonClick(sender:)), for: .touchUpInside)
+        if isFromcrop{
+            backMenu.addTarget(self, action: #selector (backAlertButtonClick), for: .touchUpInside)
+        }else{
+            backMenu.addTarget(self, action: #selector (backButtonClick(sender:)), for: .touchUpInside)
+        }
         let barButton = UIBarButtonItem(customView: backMenu)
-        navigationItem.leftBarButtonItem = barButton
         if(saveAsDraft){
             addSaveAsDraftButton()
         }
+        self.navigationItem.leftBarButtonItem = barButton
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationController?.navigationBar.backgroundColor = .white
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -462,8 +466,23 @@ extension UIViewController {
         self.navigationItem.rightBarButtonItem = barButton
     }
 
+    @objc func backAlertButtonClick(){
+        let alert = UIAlertController(title: "Discard changes", message: "You will loose all the edits performed", preferredStyle: .actionSheet)
+          alert.addAction(UIAlertAction(title: "Discard", style: .destructive , handler:{ (UIAlertAction)in
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popViewController(animated: true);
+          }))
+          
+          alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler:{ (UIAlertAction)in
+            self.dismiss(animated: true, completion: nil)
+          }))
+          self.present(alert, animated: true, completion: {
+              print("completion block")
+          })
+    }
+    
     @objc func backButtonClick(sender : UIButton) {
-        self.navigationController?.popViewController(animated: true);
+            self.navigationController?.popViewController(animated: true);
     }
     @objc func saveAsDraftClick(sender : UIButton) {
         //action
