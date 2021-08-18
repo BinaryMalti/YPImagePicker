@@ -221,6 +221,7 @@ override open func viewDidLoad() {
     
     private func arrangeArtworkData(items:[YPMediaItem]) -> [YPMediaItem]{
         var artworkArray : [YPMediaItem] = []
+        YPPhotoSaver.clearAllFile()
         for (position,item) in items.enumerated(){
             switch item {
             case .photo(let photo):

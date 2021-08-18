@@ -272,21 +272,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     func updateUI() {
         if !YPConfig.hidesCancelButton {
             // Update Nav Bar state.arrowtriangle.left.fill
-            let backMenu: UIButton = UIButton()
-            backMenu.setImage(YPConfig.icons.backButtonIcon, for: .normal)
-            backMenu.setTitle(YPConfig.wordings.cancel, for: .normal)
-            backMenu.sizeToFit()
-            backMenu.contentHorizontalAlignment = .left
-            backMenu.tintColor = .black
-            backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
-            backMenu.setTitleColor(.black, for: .normal)
-            backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
-            backMenu.titleLabel!.textColor = .black
-            backMenu.addTarget(self, action: #selector(close), for: .touchUpInside)
-            let barButton = UIBarButtonItem(customView: backMenu)
-            navigationItem.leftBarButtonItem = barButton
-            
+            self.addBackButtonItem(title:YPConfig.wordings.cancel, saveAsDraft: false)
         }
         switch mode {
         case .library:
@@ -435,23 +421,22 @@ extension UIViewController {
     func addBackButtonItem(title:String,saveAsDraft:Bool) {
         navigationController?.isNavigationBarHidden = false
         let backMenu: UIButton = UIButton()
-        let image = UIImage(named: "ic_left_black_arrow");
-        backMenu.setImage(image, for: .normal)
-        backMenu.setTitle(title, for: .normal);
+        backMenu.setImage(YPConfig.icons.backButtonIcon, for: .normal)
+        backMenu.setTitle(title, for: .normal)
         backMenu.sizeToFit()
         backMenu.contentHorizontalAlignment = .left
         backMenu.tintColor = .black
-        backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 9, bottom: 0, right: 0)
-        backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
         backMenu.setTitleColor(.black, for: .normal)
         backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
         backMenu.titleLabel!.textColor = .black
-        backMenu.addTarget(self, action: #selector (backButtonClick(sender:)), for: .touchUpInside)
+        backMenu.addTarget(self, action: #selector(backButtonClick(sender:)), for: .touchUpInside)
         let barButton = UIBarButtonItem(customView: backMenu)
+        navigationItem.leftBarButtonItem = barButton
         if(saveAsDraft){
             addSaveAsDraftButton()
         }
-        self.navigationItem.leftBarButtonItem = barButton
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationController?.navigationBar.backgroundColor = .white
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -461,7 +446,7 @@ extension UIViewController {
     
     func addSaveAsDraftButton(){
         let saveDraftMenu: UIButton = UIButton()
-        let image = UIImage(named: "ic_arrow_right_small");
+        let image = YPConfig.icons.saveAsDratButtonIcon;
         saveDraftMenu.setImage(image, for: .normal)
         saveDraftMenu.setTitle("Save as draft", for: .normal);
         saveDraftMenu.width(150)
