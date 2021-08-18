@@ -114,6 +114,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
             showMultipleSelection()
         }
+        if v.showDraftImages{
+            multipleSelectionEnabled = false
+        }
     }
     
     func createImagePicker() {
@@ -640,6 +643,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                                       callback: callback)
     }
     
+    public func selectDraftMedia() -> [UIImage]{
+        return [singleImage!]
+    }
+    
     public func selectedMedia(photoCallback: @escaping (_ photo: YPMediaPhoto) -> Void,
                               videoCallback: @escaping (_ videoURL: YPMediaVideo) -> Void,
                               multipleItemsCallback: @escaping (_ items: [YPMediaItem]) -> Void) {
@@ -669,8 +676,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     assetDictionary[assetPair.asset] = index
                 }
                 
-                self.targetWidth = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).width
-                self.targetHeight = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).height
+                //self.targetWidth = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).width
+             //   self.targetHeight = self.targetSize(for: selectedAssets[0].asset, cropRect: selectedAssets[0].cropRect!).height
                 for asset in selectedAssets {
                     asyncGroup.enter()
                     
@@ -816,6 +823,8 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         self.v.imageDropDownTextField.text = YPConfig.dropdownArray[row]
         if (YPConfig.dropdownArray[row] == "Draft"){
             if (YPConfig.draftImages.count > 0){
+                multipleSelectionEnabled = false
+                singleImage = YPConfig.draftImages[0]
                 loadDrafts(draftImages: YPConfig.draftImages, showDraft: true)
              //   setAlbum(YPAlbum(thumbnail: YPConfig.draftImages[0], title:YPConfig.dropdownArray[row], numberOfItems: YPConfig.draftImages.count, collection: )
             }else{

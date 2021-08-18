@@ -53,14 +53,16 @@ extension YPLibraryVC {
         if multipleSelectionEnabled || isProcessing || YPConfig.library.maxNumberOfItems <= 1 {
             return
         }
-        
-        if longPressGR.state == .began {
-            let point = longPressGR.location(in: v.collectionView)
-            guard let indexPath = v.collectionView.indexPathForItem(at: point) else {
-                return
+        if !v.showDraftImages{
+            if longPressGR.state == .began {
+                let point = longPressGR.location(in: v.collectionView)
+                guard let indexPath = v.collectionView.indexPathForItem(at: point) else {
+                    return
+                }
+                startMultipleSelection(at: indexPath)
             }
-            startMultipleSelection(at: indexPath)
         }
+
     }
     
     func startMultipleSelection(at indexPath: IndexPath) {
@@ -227,6 +229,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
         currentlySelectedIndex = indexPath.row
         if v.showDraftImages{
+            self.singleImage = v.draftImages[indexPath.row]
             v.assetZoomableView.photoImageView.image = v.draftImages[indexPath.row]
         }else{
         changeAsset(mediaManager.fetchResult[indexPath.row])

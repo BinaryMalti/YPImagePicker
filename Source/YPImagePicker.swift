@@ -39,7 +39,11 @@ open class YPImagePicker: UINavigationController {
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem],draftItem: [UIImage], clickType:Int) {
+        if clickType == 1{
+            _didLoadDraftImages?(draftItem,false)
+        }else{
             _didFinishPicking?(clickType, items, false)
+        }
     }
     
     let loadingView = YPLoadingView()
@@ -72,7 +76,18 @@ override open func viewDidLoad() {
         viewControllers = [picker]
         setupLoadingView()
         navigationBar.isTranslucent = false
-
+    
+        picker.didSelectDraftItems = {[weak self] drafts in
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            transition.type = CATransitionType.fade
+            self?.view.layer.add(transition, forKey: nil)
+            if drafts.count > 0{
+                self?.didSelect(items: [], draftItem: drafts, clickType: 1)
+            }
+            
+        }
         picker.didSelectItems = { [weak self] items in
             // Use Fade transition instead of default push animation
             let transition = CATransition()
@@ -84,12 +99,16 @@ override open func viewDidLoad() {
             // Multiple items flow
             if items.count > 0 {
                 if YPConfig.library.skipSelectionsGallery {
+                    if self?.picker.libraryVC?.v.showDraftImages == true{
+                        self?.didSelect(items: items, draftItem: [], clickType: 1)
+                    }else{
                     self?.didSelect(items: items, draftItem: [], clickType: 0)
+                    }
                     return
                 }else {
                     if self?.picker.libraryVC?.v.showDraftImages == true{
                         self?.didSelect(items: items,
-                                        draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 0)
+                                        draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 1)
                         return
                     }
                     else if self?.picker.libraryVC?.fromCamera == true ||
@@ -220,7 +239,7 @@ override open func viewDidLoad() {
     }
     
     private func saveImage(image:UIImage,imageName:String) -> URL?{
-      if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: "ArtWorkUpload")
+        if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: YPConfig.albumName)
       {
         return imagePath
       }else{

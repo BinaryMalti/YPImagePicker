@@ -339,14 +339,19 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
             if mode == .library {
                 libraryVC.doAfterPermissionCheck { [weak self] in
-                    libraryVC.selectedMedia(photoCallback: { photo in
-                        self?.didSelectItems?([YPMediaItem.photo(p: photo)])
-                    }, videoCallback: { video in
-                        self?.didSelectItems?([YPMediaItem
-                            .video(v: video)])
-                    }, multipleItemsCallback: { items in
-                        self?.didSelectItems?(items)
-                    })
+                    if libraryVC.v.showDraftImages{
+                        let selectedDraft = libraryVC.selectDraftMedia()
+                        self?.didSelectDraftItems?(selectedDraft)
+                    }else{
+                        libraryVC.selectedMedia(photoCallback: { photo in
+                            self?.didSelectItems?([YPMediaItem.photo(p: photo)])
+                        }, videoCallback: { video in
+                            self?.didSelectItems?([YPMediaItem
+                                .video(v: video)])
+                        }, multipleItemsCallback: { items in
+                            self?.didSelectItems?(items)
+                        })
+                    }
                 }
             }
     }
