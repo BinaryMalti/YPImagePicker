@@ -14,6 +14,9 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/**/*.swift'
   s.dependency 'SteviaLayout', '~> 4.7.3'
   s.dependency 'PryntTrimmerView', '~> 4.0.2'
+  s.dependency 'Brightroom',
+  :git =>'https://github.com/BinaryMalti/YPImagePicker.git',
+  :commit => '6aa21e088692d9181c5c1c6e3ab46bae37d5734f'
   s.resources    = ['Resources/*', 'Source/**/*.xib']
   s.description  = "Instagram-like image picker & filters for iOS supporting videos and albums"
   s.swift_versions = ['3', '4.1', '4.2', '5.0', '5.1', '5.2', '5.3']
