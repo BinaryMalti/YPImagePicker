@@ -11,5 +11,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/HHK1/PryntTrimmerView.git", .upToNextMajor(from: "4.0.1"))
         .package(url: "https://github.com/freshOS/Stevia", .upToNextMajor(from: "4.7.3"))
+        .package(url: "https://github.com/BinaryMalti/Brightroom.git",
+            .revision("eb8e8b2c9c19e874ef6043dd8ad0cfacd975af2e"))
     ]
 )
