@@ -57,7 +57,8 @@ class YPGalleryCollectionViewFlowLayout: UICollectionViewFlowLayout {
         minimumInteritemSpacing = spacing
         let screenWidth = YPImagePickerConfiguration.screenWidth
         let size = screenWidth - (sideMargin + overlapppingNextPhoto)
-        itemSize = CGSize(width: size, height: size)
+        estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+       // itemSize = CGSize(width: size, height: size)
         sectionInset = UIEdgeInsets(top: 0, left: sideMargin, bottom: 0, right: sideMargin)
     }
     

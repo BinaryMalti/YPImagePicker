@@ -31,19 +31,15 @@ public class YPPhotoSaver {
     }
     
 
-    func loadImageFromDiskWith(fileName: String) -> UIImage? {
-        let documentDirectory = FileManager.SearchPathDirectory.documentDirectory
-
-        let userDomainMask = FileManager.SearchPathDomainMask.userDomainMask
-        let paths = NSSearchPathForDirectoriesInDomains(documentDirectory, userDomainMask, true)
-
-        if let dirPath = paths.first {
-            let imageUrl = URL(fileURLWithPath: dirPath).appendingPathComponent(fileName)
-            let image = UIImage(contentsOfFile: imageUrl.path)
-            return image
+ class func loadImage(withName name : String, from folderName: String) -> UIImage? {
+        do {
+            let documentsFolderURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            let imageURL = documentsFolderURL.appendingPathComponent(folderName).appendingPathComponent(name)
+            let data = try Data(contentsOf: imageURL)
+            return UIImage(data: data)
+        } catch {
+            return nil
         }
-
-        return nil
     }
     
    class func clearAllFile() {

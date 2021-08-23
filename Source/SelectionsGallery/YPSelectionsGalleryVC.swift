@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Brightroom
 
 public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDelegate {
     
@@ -83,13 +84,58 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         let indexPathCenter = findCenterIndex()
         for i in 0..<items.count {
             if (i == indexPathCenter.row){
-                switch items[i] {
+                let selectedItem = items[i]
+                switch selectedItem {
                 case .photo(let photo):
                     photo.modifiedImage = photo.originalImage
+                    if let name = photo.imageName{
+                        let imageProvidr: ImageProvider = .init(image: photo.image) // url, data supported.
+                        let controller = ClassicImageEditViewController(imageProvider: imageProvidr)
+                        controller.handlers.didEndEditing = { [weak self] controller, stack in
+                          guard let self = self else { return }
+                          controller.dismiss(animated: true, completion: nil)
+
+                          try! stack.makeRenderer().render { result in
+                            switch result {
+                            case let .success(rendered):
+                               let saved = YPPhotoSaver.saveImageToDirectory(imageName: name, image: rendered.uiImage, folderName: YPConfig.albumName)
+                                if saved != nil {
+                                    let editedImage =  YPPhotoSaver.loadImage(withName: name, from: YPConfig.albumName)
+                                    photo.modifiedImage = editedImage
+                                    self.items.remove(at: i)
+                                    self.items.insert(selectedItem, at: i)
+                                    self.v.collectionView.performBatchUpdates {
+                                        let cell = self.v.collectionView.cellForItem(at: indexPathCenter) as! YPSelectionsGalleryCell
+                                        cell.imageView.image = editedImage
+                                    }
+                                }
+                                
+                            case let .failure(error):
+                              print(error)
+                            }
+                          }
+                        }
+                        controller.handlers.didCancelEditing = { controller in
+                          controller.dismiss(animated: true, completion: nil)
+                        }
+                        let navVC = UINavigationController(rootViewController: controller)
+                        navVC.view.backgroundColor = .white
+                        navVC.toolbar.isHidden = true
+                        navVC.navigationBar.tintColor = .black
+                        navVC.navigationBar.backgroundColor = .white
+                        navVC.navigationBar.shadowImage = UIImage()
+                        navVC.navigationBar.isTranslucent = false
+                        navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+                        navVC.modalPresentationStyle = .fullScreen
+                        self.navigationController?.present(navVC, animated: true)
+                    }
+           
                 case .video(v: _): break
                 }
             }
         }
+        
+        
 //        let element = items.remove(at: indexPathCenter.row)
 //        items.insert(element, at: 0)
        // didFinishHandler?(2,self, items)
@@ -298,7 +344,14 @@ class ScaledHeightImageView: UIImageView {
         if let myImage = self.image {
             let myImageWidth = myImage.size.width
             let myImageHeight = myImage.size.height
-            let myViewWidth = self.frame.size.width
+            var myViewWidth = self.frame.size.width
+            if myImageWidth > myImageHeight{
+                myViewWidth = myViewWidth - 24
+            }else if myImageWidth < myImageHeight{
+                myViewWidth = myViewWidth - 24
+            }else{
+                myViewWidth = self.frame.size.width
+            }
  
             let ratio = myViewWidth/myImageWidth
             let scaledHeight = myImageHeight * ratio
