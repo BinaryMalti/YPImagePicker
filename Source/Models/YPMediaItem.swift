@@ -37,6 +37,17 @@ public class YPMediaPhoto {
     }
 }
 
+public class DraftItems {
+    var image : UIImage
+    var id : String
+    
+    public init(image:UIImage,id:String) {
+        self.image = image
+        self.id = id
+    }
+}
+
+
 public class YPMediaVideo {
     
     public var thumbnail: UIImage

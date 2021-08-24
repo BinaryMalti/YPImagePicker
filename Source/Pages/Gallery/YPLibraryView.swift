@@ -41,7 +41,7 @@ final class YPLibraryView: UIView {
     let maxNumberWarningLabel = UILabel()
     let progressView = UIProgressView()
     let line = UIView()
-    var draftImages:[UIImage] = []
+    var draftItem:[DraftItems] = []
     var showDraftImages = false
     var shouldShowLoader = false
     

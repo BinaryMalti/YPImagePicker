@@ -33,6 +33,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     private var cameraPicker: UIImagePickerController
     public var didCapturePhoto: ((UIImage) -> Void)?
     var singleImage : UIImage?
+    var selectedDraftItem : DraftItems?
     
     // MARK: - Init
     
@@ -84,8 +85,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         refreshMediaRequest()
     }
-    public func selectDraftMedia() -> [UIImage]{
-        return [singleImage!]
+    public func selectDraftMedia() -> DraftItems? {
+        return selectedDraftItem
     }
     
     func initialize() {
@@ -854,14 +855,13 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         if (YPConfig.dropdownArray[row] == "Draft"){
             if (YPConfig.draftImages.count > 0){
                 multipleSelectionEnabled = false
-                singleImage = YPConfig.draftImages[0]
-                loadDrafts(draftImages: YPConfig.draftImages, showDraft: true)
-             //   setAlbum(YPAlbum(thumbnail: YPConfig.draftImages[0], title:YPConfig.dropdownArray[row], numberOfItems: YPConfig.draftImages.count, collection: )
+                selectedDraftItem = YPConfig.draftImages[0]
+                loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
             }else{
                 delegate?.noPhotosForOptions()
             }
         }else{
-           loadDrafts(draftImages: [], showDraft: false)
+           loadDrafts(draftItem: [], showDraft: false)
         }
         view.endEditing(true)
 }

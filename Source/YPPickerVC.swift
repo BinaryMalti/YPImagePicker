@@ -29,7 +29,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     /// Private callbacks to YPImagePicker
     public var didClose:(() -> Void)?
     public var didSelectItems: (([YPMediaItem]) -> Void)?
-    public var didSelectDraftItems: (([UIImage]) -> Void)?
+    public var didSelectDraftItems: ((DraftItems) -> Void)?
     
     enum Mode {
         case library
@@ -326,8 +326,10 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             if mode == .library {
                 libraryVC.doAfterPermissionCheck { [weak self] in
                     if libraryVC.v.showDraftImages{
-                        let selectedDraft = libraryVC.selectDraftMedia()
+                       if let selectedDraft = libraryVC.selectDraftMedia()
+                       {
                         self?.didSelectDraftItems?(selectedDraft)
+                       }
                     }else{
                         libraryVC.selectedMedia(photoCallback: { photo in
                             self?.didSelectItems?([YPMediaItem.photo(p: photo)])

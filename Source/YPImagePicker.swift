@@ -26,11 +26,11 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
     }
 
     private var _didFinishPicking: ((Int,[YPMediaItem], Bool) -> Void)?
-    private var _didLoadDraftImages: (([UIImage], Bool) -> Void)?
+    private var _didLoadDraftImages: ((DraftItems, Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ clickType: Int,_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
         _didFinishPicking = completion
     }
-    public func loadDraftImage(completion: @escaping (_ items: [UIImage], _ cancelled: Bool) -> Void) {
+    public func loadDraftImage(completion: @escaping (_ items: DraftItems, _ cancelled: Bool) -> Void) {
         _didLoadDraftImages = completion
     }
     public weak var imagePickerDelegate: YPImagePickerDelegate?
@@ -42,9 +42,9 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
     // This nifty little trick enables us to call the single version of the callbacks.
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
-    private func didSelect(items: [YPMediaItem],draftItem: [UIImage], clickType:Int) {
+    private func didSelect(items: [YPMediaItem],draftItem: DraftItems?, clickType:Int) {
         if clickType == 1{
-            _didLoadDraftImages?(draftItem,false)
+            _didLoadDraftImages?(draftItem!,false)
         }else{
             _didFinishPicking?(clickType, items, false)
         }
@@ -87,10 +87,7 @@ override open func viewDidLoad() {
             transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             transition.type = CATransitionType.fade
             self?.view.layer.add(transition, forKey: nil)
-            if drafts.count > 0{
-                self?.didSelect(items: [], draftItem: drafts, clickType: 1)
-            }
-            
+            self?.didSelect(items: [], draftItem: drafts, clickType: 1)
         }
         picker.didSelectItems = { [weak self] items in
             // Use Fade transition instead of default push animation
@@ -103,20 +100,18 @@ override open func viewDidLoad() {
             // Multiple items flow
             if items.count > 0 {
                 if YPConfig.library.skipSelectionsGallery {
-                    if self?.picker.libraryVC?.v.showDraftImages == true{
-                        self?.didSelect(items: items, draftItem: [], clickType: 1)
-                    }else{
-                    self?.didSelect(items: items, draftItem: [], clickType: 0)
-                    }
+                    self?.didSelect(items: items, draftItem:nil, clickType: 0)
                     return
                 }else {
                     if self?.picker.libraryVC?.v.showDraftImages == true{
-                        self?.didSelect(items: items,
-                                        draftItem: self?.picker.libraryVC?.v.draftImages ?? [], clickType: 0)
+                        if  let draftItem = self?.picker.libraryVC?.selectedDraftItem
+                      {
+                        self?.didSelect(items: items, draftItem: draftItem, clickType: 1)
+                      }
                         return
                     }else if self?.picker.libraryVC?.fromCamera == true{
                         let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
-                            self?.didSelect(items: items, draftItem: [], clickType: 2)
+                            self?.didSelect(items: items, draftItem:nil, clickType: 2)
                         }
                         let sideMargin: CGFloat = 24
                         let overlapppingNextPhoto: CGFloat = 37
@@ -139,7 +134,7 @@ override open func viewDidLoad() {
                         case .photo(let photo):
                             let completion = { (photo: YPMediaPhoto) in
                                 let mediaItem = YPMediaItem.photo(p: photo)
-                                self?.didSelect(items: [mediaItem], draftItem: [], clickType: 3)
+                                self?.didSelect(items: [mediaItem], draftItem: nil, clickType: 3)
                             }
                             func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
                                     let cropVC = CustomCropViewController(item: photo.image)
@@ -168,7 +163,7 @@ override open func viewDidLoad() {
                     }
                     else{
                         let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
-                            self?.didSelect(items: items, draftItem: [], clickType: 2)
+                            self?.didSelect(items: items, draftItem:nil, clickType: 2)
                         }
                         let item = items.first!
                         var size = CGSize()
@@ -208,7 +203,7 @@ override open func viewDidLoad() {
                             YPPhotoSaver.trySaveImage(photo.image, inAlbumNamed: YPConfig.albumName)
                         }
                     }
-                    self?.didSelect(items: [mediaItem], draftItem: [], clickType: 0)
+                    self?.didSelect(items: [mediaItem], draftItem:nil, clickType: 0)
                 }
                 
                 func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
@@ -242,11 +237,11 @@ override open func viewDidLoad() {
                     let videoFiltersVC = YPVideoFiltersVC.initWith(video: video,
                                                                    isFromSelectionVC: false)
                     videoFiltersVC.didSave = { [weak self] outputMedia in
-                        self?.didSelect(items: [outputMedia], draftItem: [], clickType: 0)
+                        self?.didSelect(items: [outputMedia], draftItem:nil, clickType: 0)
                     }
                     self?.pushViewController(videoFiltersVC, animated: true)
                 } else {
-                    self?.didSelect(items: [YPMediaItem.video(v: video)], draftItem: [], clickType: 0)
+                    self?.didSelect(items: [YPMediaItem.video(v: video)], draftItem:nil, clickType: 0)
                 }
             }
         }

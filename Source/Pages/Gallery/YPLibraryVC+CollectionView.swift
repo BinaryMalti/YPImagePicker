@@ -11,8 +11,8 @@ import Photos
 
 extension YPLibraryVC {
     
-    func loadDrafts(draftImages:[UIImage],showDraft:Bool){
-        v.draftImages = draftImages
+    func loadDrafts(draftItem:[DraftItems],showDraft:Bool){
+        v.draftItem = draftItem
         v.showDraftImages = showDraft
         setupCollectionView()
         if showDraft{
@@ -21,7 +21,7 @@ extension YPLibraryVC {
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
             v.collectionView.reloadData()
-            v.assetZoomableView.photoImageView.image = v.draftImages[0]
+            v.assetZoomableView.photoImageView.image = self.selectedDraftItem?.image
             currentlySelectedIndex = 0
         }else{
             v.clickImageButton.isHidden = false
@@ -144,7 +144,8 @@ extension YPLibraryVC {
 extension YPLibraryVC: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if v.showDraftImages{
-            return v.draftImages.count
+            
+            return v.draftItem.count
         }
         return mediaManager.fetchResult.count
     }
@@ -163,7 +164,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         cell.multipleSelectionIndicator.selectionColor =
             YPConfig.colors.multipleItemsSelectedCircleColor ?? YPConfig.colors.tintColor
         if v.showDraftImages{
-            cell.imageView.image = v.draftImages[indexPath.row]
+            cell.imageView.image = v.draftItem[indexPath.row].image
             cell.multipleSelectionIndicator.isHidden = !multipleSelectionEnabled
             
             cell.isSelected = currentlySelectedIndex == indexPath.row
@@ -229,8 +230,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
         let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
         currentlySelectedIndex = indexPath.row
         if v.showDraftImages{
-            self.singleImage = v.draftImages[indexPath.row]
-            v.assetZoomableView.photoImageView.image = v.draftImages[indexPath.row]
+            self.singleImage = v.draftItem[indexPath.row].image
+            v.assetZoomableView.photoImageView.image = v.draftItem[indexPath.row].image
         }else{
         changeAsset(mediaManager.fetchResult[indexPath.row])
         }

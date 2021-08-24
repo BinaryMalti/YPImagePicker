@@ -57,7 +57,7 @@ public struct YPImagePickerConfiguration {
     public var fonts = YPFonts()
     
     /// Use this property to add draft images
-    public var draftImages : [UIImage] = []
+    public var draftImages : [DraftItems] = []
     
     /// Set this to true if you want to force the camera output to be a squared image. Defaults to true
     public var onlySquareImagesFromCamera = true
