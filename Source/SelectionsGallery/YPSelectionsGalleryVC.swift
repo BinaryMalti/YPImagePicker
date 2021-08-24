@@ -21,6 +21,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     var cropHeight : CGFloat = 0.0
     var cropWidth : CGFloat = 0.0
     var bottomView = YPGalleryBottomView()
+    internal var fromSaveAsDraft = false
     public var targetHeight : CGFloat = 200.0
     public override func loadView() { view = v }
 
@@ -43,6 +44,10 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func saveAsDraftClick(sender: UIButton) {
+        didFinishHandler?(4,self, items)
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -58,6 +63,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
 
         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false)
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        
         // Setup navigation bar
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
 //                                                            style: .done,

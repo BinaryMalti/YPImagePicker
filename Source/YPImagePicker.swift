@@ -49,6 +49,7 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
             _didFinishPicking?(clickType, items, false)
         }
     }
+
     
     let loadingView = YPLoadingView()
     private let picker: YPPickerVC!
@@ -162,8 +163,8 @@ override open func viewDidLoad() {
                         return
                     }
                     else{
-                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
-                            self?.didSelect(items: items, draftItem:nil, clickType: 2)
+                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { clickTyp, _, items in
+                            self?.didSelect(items: items, draftItem:nil, clickType: clickTyp)
                         }
                         let item = items.first!
                         var size = CGSize()
@@ -305,7 +306,7 @@ override open func viewDidLoad() {
         var width : CGFloat = 0.0
         var height : CGFloat  = 0.0
         if image.size.width > image.size.height{
-             width = size
+             width = size - 24
              height = size
         }else if image.size.width < image.size.height{
              width = size
