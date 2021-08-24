@@ -87,7 +87,6 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
                 let selectedItem = items[i]
                 switch selectedItem {
                 case .photo(let photo):
-                    photo.modifiedImage = photo.originalImage
                     if let name = photo.imageName{
                         let imageProvidr: ImageProvider = .init(image: photo.image) // url, data supported.
                         let controller = ClassicImageEditViewController(imageProvider: imageProvidr)
