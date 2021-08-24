@@ -38,8 +38,8 @@ public class YPMediaPhoto {
 }
 
 public class DraftItems {
-    var image : UIImage
-    var id : String
+public var image : UIImage
+   public  var id : String
     
     public init(image:UIImage,id:String) {
         self.image = image
