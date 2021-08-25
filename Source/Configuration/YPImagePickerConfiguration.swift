@@ -59,6 +59,9 @@ public struct YPImagePickerConfiguration {
     /// Use this property to add draft images
     public var draftImages : [DraftItems] = []
     
+    /// Use this property to add draft images
+    public var showDrafts = false
+    
     /// Set this to true if you want to force the camera output to be a squared image. Defaults to true
     public var onlySquareImagesFromCamera = true
     

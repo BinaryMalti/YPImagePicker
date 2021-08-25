@@ -398,7 +398,13 @@ extension YPPickerVC: YPLibraryViewDelegate {
     }
     
     override func backButtonClick(sender: UIButton) {
+        if sender.titleLabel?.text == "Dashboard" {
+            print("go to dashboard")
+            close()
+            
+        }else{
         self.dismiss(animated: true, completion: nil)
+        }
     }
     
     public func libraryViewDidToggleMultipleSelection(enabled: Bool) {
@@ -488,7 +494,7 @@ extension UIViewController {
     }
     
     @objc func backButtonClick(sender : UIButton) {
-            self.navigationController?.popViewController(animated: true);
+        self.navigationController?.popViewController(animated: true);
     }
     @objc func saveAsDraftClick(sender : UIButton) {
         //action

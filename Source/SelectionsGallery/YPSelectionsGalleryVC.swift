@@ -18,8 +18,8 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     private var lastContentOffsetX: CGFloat = 0
     
     var v = YPSelectionsGalleryView()
-    var cropHeight : CGFloat = 0.0
-    var cropWidth : CGFloat = 0.0
+    public var cropHeight : CGFloat = 0.0
+    public var cropWidth : CGFloat = 0.0
     var bottomView = YPGalleryBottomView()
     internal var fromSaveAsDraft = false
     public var targetHeight : CGFloat = 200.0
@@ -218,7 +218,6 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         return CGSize(width: cropWidth, height: cropHeight)
     }
     
@@ -236,10 +235,8 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
            // cell.imageView.backgroundColor = .clear
             if indexPath.row == 0{
                 cell.imageView.contentMode = .scaleAspectFit
-
             }else{
-                cell.imageView.contentMode = .scaleToFill
-
+                cell.imageView.contentMode = .scaleAspectFill
             }
             cell.imageView.image = photo.originalImage
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)

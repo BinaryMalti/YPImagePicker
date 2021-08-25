@@ -170,20 +170,33 @@ override open func viewDidLoad() {
                         var size = CGSize()
                         switch item {
                         case .photo(let photo):
+                            let sideMargin: CGFloat = 24
+                            let overlapppingNextPhoto: CGFloat = 37
+                            let screenWidth = YPImagePickerConfiguration.screenWidth
+                            let s = screenWidth - (sideMargin + overlapppingNextPhoto)
                             if items.count > 1 {
                                 size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
+                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
+                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
+                                    selectionsGalleryVC.cropWidth = s
+                                    selectionsGalleryVC.cropHeight = s * ratio
+                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
+                                    selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)!
+                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetWidth)! * ratio
+                                }else{
+                                    selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)! - 52
+                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetHeight)! - 52
+                                }
                             }else{
-                                let sideMargin: CGFloat = 24
-                                let overlapppingNextPhoto: CGFloat = 37
-                                let screenWidth = YPImagePickerConfiguration.screenWidth
-                                let s = screenWidth - (sideMargin + overlapppingNextPhoto)
+                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
                                 size = self!.calculateSingleImageSize(image: photo.image, size: s)
+                                selectionsGalleryVC.cropWidth = size.width
+                                selectionsGalleryVC.cropHeight = size.width * ratio
                             }
                           
                         case .video(_):break
                         }
-                        selectionsGalleryVC.cropWidth = size.width
-                        selectionsGalleryVC.cropHeight = size.height
+
                         self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
@@ -306,11 +319,11 @@ override open func viewDidLoad() {
         var width : CGFloat = 0.0
         var height : CGFloat  = 0.0
         if image.size.width > image.size.height{
-             width = size - 24
+             width = size
              height = size
         }else if image.size.width < image.size.height{
              width = size
-            height = size - 24
+            height = size
         }else{
             width = size
             height = size

@@ -21,6 +21,10 @@ extension YPLibraryVC {
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
             v.collectionView.reloadData()
+            v.leftMaskHeight.constant = 0
+            v.rightMaskHeight.constant = 0
+            v.bottomMaskHeight.constant = 0
+            v.topMaskHeight.constant = 0
             v.assetZoomableView.photoImageView.image = self.selectedDraftItem?.image
             currentlySelectedIndex = 0
         }else{
@@ -231,7 +235,6 @@ extension YPLibraryVC: UICollectionViewDelegate {
         currentlySelectedIndex = indexPath.row
         if v.showDraftImages{
             self.singleImage = v.draftItem[indexPath.row].image
-            v.assetZoomableView.photoImageView.image = v.draftItem[indexPath.row].image
         }else{
         changeAsset(mediaManager.fetchResult[indexPath.row])
         }

@@ -52,6 +52,22 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 break
             }
         }
+        if YPConfig.showDrafts{
+            v.cropImageButton.isHidden = true
+            v.clickImageButton.isHidden = true
+            v.assetZoomableView.photoImageView.image = YPConfig.draftImages[0].image
+                self.v.imageDropDownTextField.text = YPConfig.dropdownArray[1]
+                if (YPConfig.dropdownArray[1] == "Draft"){
+                    isFirstTime = true
+                    if (YPConfig.draftImages.count > 0){
+                        picker.selectRow(1, inComponent: 0, animated: true)
+                        pickerView(picker, didSelectRow: 1, inComponent: 0)
+                    }else{
+                        delegate?.noPhotosForOptions()
+                    }
+                }
+            
+        }
     }
     
     public convenience init() {
@@ -88,6 +104,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     public func selectDraftMedia() -> DraftItems? {
         return selectedDraftItem
     }
+    
     
     func initialize() {
         mediaManager.initialize()
@@ -129,13 +146,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
             showMultipleSelection()
         }
-        if v.showDraftImages{
-            multipleSelectionEnabled = false
+        if v.showDraftImages || YPConfig.showDrafts{
+            self.multipleSelectionEnabled = false
         }
+
     }
     
+    let picker = UIPickerView()
     func createImagePicker() {
-        let picker = UIPickerView()
         v.imageDropDownTextField.tintColor = UIColor.clear
         picker.dataSource = self
         picker.delegate = self
@@ -158,9 +176,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             guard let strongSelf = self else {
                 return
             }
-
             strongSelf.updateCropInfo()
         }
+  
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -337,8 +355,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         } else {
             self.isFirstTime = true
             selection.removeAll()
+            if !YPConfig.showDrafts{
             self.v.cropImageButton.isHidden = false
             self.v.clickImageButton.isHidden = false
+            }
             addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
             self.v.multiselectCountLabel.text = ""
         }
@@ -498,8 +518,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                             self.v.assetZoomableView.fitImage(true)
                             self.v.assetZoomableView.layoutSubviews()
                     }
-    
                 }
+            }else{
+                self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
             }
 
             self.updateCropInfo()
@@ -582,6 +604,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     }
     //TGP
     private func multiSelectionCount(){
+        if !YPConfig.showDrafts {
         DispatchQueue.main.async {
             if self.multipleSelectionEnabled{
                 if self.selection.count > 1
@@ -598,7 +621,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.v.cropImageButton.isHidden = false
                 self.v.clickImageButton.isHidden = false
             }
-
+        }
         }
     }
     
@@ -853,6 +876,7 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.v.imageDropDownTextField.text = YPConfig.dropdownArray[row]
         if (YPConfig.dropdownArray[row] == "Draft"){
+            isFirstTime = true
             if (YPConfig.draftImages.count > 0){
                 multipleSelectionEnabled = false
                 selectedDraftItem = YPConfig.draftImages[0]
@@ -861,7 +885,10 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
                 delegate?.noPhotosForOptions()
             }
         }else{
-           loadDrafts(draftItem: [], showDraft: false)
+            isFirstTime = true
+            var config = YPImagePickerConfiguration()
+            config.showDrafts = false
+            loadDrafts(draftItem: [], showDraft: false)
         }
         view.endEditing(true)
 }
