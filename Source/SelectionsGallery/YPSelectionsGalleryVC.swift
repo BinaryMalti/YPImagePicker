@@ -14,6 +14,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     override public var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
     
     public var items: [YPMediaItem] = []
+    public var finalItems: [YPMediaItem] = []
     public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
     
@@ -22,6 +23,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     public var cropWidth : CGFloat = 0.0
     var bottomView = YPGalleryBottomView()
     internal var fromSaveAsDraft = false
+    public var isFromEdit = false
     public var targetHeight : CGFloat = 200.0
     public override func loadView() { view = v }
 
@@ -47,7 +49,13 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
     override func saveAsDraftClick(sender: UIButton) {
         didFinishHandler?(4,self, items)
     }
-    
+
+    func cropImage(imageToCrop:UIImage, toRect rect:CGRect) -> UIImage{
+        let imageRef:CGImage = imageToCrop.cgImage!.cropping(to: rect)!
+        let cropped:UIImage = UIImage(cgImage:imageRef)
+        return cropped
+    }
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,8 +68,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
             v.collectionView.dragDelegate = self
             v.collectionView.dropDelegate = self
         }
-
-        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false)
+        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         
         // Setup navigation bar
@@ -83,6 +90,9 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
+        if !isFromEdit {
+            self.finalItems.append(items[0])
+        }
     }
     
     @objc
@@ -170,7 +180,12 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
 //                }
 //            }
 //        }
-        didFinishHandler?(2,self, items)
+        
+        if isFromEdit {
+            didFinishHandler?(2,self, items)
+        }else{
+            didFinishHandler?(2,self, finalItems)
+        }
     }
     
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {
@@ -231,6 +246,18 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
                 cell.imageView.contentMode = .scaleAspectFill
             }
             cell.imageView.image = photo.originalImage
+            if !isFromEdit {
+            if indexPath.row != 0 {
+                let cropRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
+                let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: cropRect)
+                if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
+               {
+                    let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
+                let artworkMedia = YPMediaItem.photo(p: artwork)
+                finalItems.append(artworkMedia)
+               }
+            }
+            }
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
         case .video(let video):
@@ -239,6 +266,15 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
         }
         cell.removeButton.isHidden = YPConfig.gallery.hidesRemoveButton
         return cell
+    }
+    
+    private func saveImage(image:UIImage,imageName:String) -> URL?{
+        if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: YPConfig.albumName)
+      {
+        return imagePath
+      }else{
+        return nil
+      }
     }
 }
 

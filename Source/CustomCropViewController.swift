@@ -46,7 +46,7 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
-        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false, isFromcrop: true)
+        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false, isFromcrop: true, isForEdit: false)
         //self.lockAspectRatio(true)
         //FIXME: Zoom setup
 //        self.photoView.minimumZoomScale = 1.0;

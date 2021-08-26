@@ -272,7 +272,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     func updateUI() {
         if !YPConfig.hidesCancelButton {
             // Update Nav Bar state.arrowtriangle.left.fill
-            self.addBackButtonItem(title:YPConfig.wordings.cancel, saveAsDraft: false, isFromcrop: false)
+            self.addBackButtonItem(title:YPConfig.wordings.cancel, saveAsDraft: false, isFromcrop: false, isForEdit: false)
         }
         switch mode {
         case .library:
@@ -430,7 +430,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
 }
 extension UIViewController {
 
-    func addBackButtonItem(title:String,saveAsDraft:Bool,isFromcrop:Bool) {
+    func addBackButtonItem(title:String,saveAsDraft:Bool,isFromcrop:Bool,isForEdit:Bool) {
         navigationController?.isNavigationBarHidden = false
         let backMenu: UIButton = UIButton()
         backMenu.setImage(YPConfig.icons.backButtonIcon, for: .normal)
@@ -450,7 +450,7 @@ extension UIViewController {
         }
         let barButton = UIBarButtonItem(customView: backMenu)
         if(saveAsDraft){
-            addSaveAsDraftButton()
+            addSaveAsDraftButton(isForEdit: isForEdit)
         }
         self.navigationItem.leftBarButtonItem = barButton
         self.navigationController?.navigationBar.tintColor = .black
@@ -460,12 +460,17 @@ extension UIViewController {
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
     }
     
-    func addSaveAsDraftButton(){
+    func addSaveAsDraftButton(isForEdit:Bool){
         let saveDraftMenu: UIButton = UIButton()
         let image = YPConfig.icons.saveAsDratButtonIcon;
         saveDraftMenu.setImage(image, for: .normal)
-        saveDraftMenu.setTitle("Save as draft", for: .normal);
-        saveDraftMenu.width(150)
+        if isForEdit {
+            saveDraftMenu.setTitle("Save", for: .normal);
+            saveDraftMenu.width(100)
+        }else{
+            saveDraftMenu.setTitle("Save as draft", for: .normal);
+            saveDraftMenu.width(150)
+        }
         saveDraftMenu.contentHorizontalAlignment = .right
         saveDraftMenu.tintColor = YPConfig.colors.tintColor
         saveDraftMenu.imageEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 15)

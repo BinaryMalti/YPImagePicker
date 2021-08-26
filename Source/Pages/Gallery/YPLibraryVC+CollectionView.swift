@@ -25,9 +25,12 @@ extension YPLibraryVC {
             v.rightMaskHeight.constant = 0
             v.bottomMaskHeight.constant = 0
             v.topMaskHeight.constant = 0
-            v.assetZoomableView.photoImageView.image = self.selectedDraftItem?.image
+            if self.selectedDraftItem?.image != nil {
+                changeAssetDraft(self.selectedDraftItem!.image)
+            }
             currentlySelectedIndex = 0
         }else{
+            currentlySelectedIndex = 0
             v.clickImageButton.isHidden = false
             v.cropImageButton.isHidden = false
             v.multiselectImageButton.isHidden = false
@@ -36,7 +39,7 @@ extension YPLibraryVC {
         }
     }
     
-    var isLimitExceeded: Bool { return selection.count >= YPConfig.library.maxNumberOfItems }
+    var isLimitExceeded: Bool { return selection.count > YPConfig.library.maxNumberOfItems }
     
     func setupCollectionView() {
         v.collectionView.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor

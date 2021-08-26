@@ -279,6 +279,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
 
     @objc
     func multipleSelectionButtonTapped() {
+        isFirstTime = true
         doAfterPermissionCheck { [weak self] in
             if let self = self {
                 if !self.multipleSelectionEnabled {
@@ -506,8 +507,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
 //                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
                         let ratio = self.v.assetZoomableView.assetImageView.frame.width / self.v.assetZoomableView.assetImageView.frame.height
                         if ratio < 1.25 {
-                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * 1.25
+                            self.targetWidth = self.v.assetZoomableView.frame.width
+                            self.targetHeight = self.v.assetZoomableView.frame.width * 1.25
                         }else{
                             self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
                             self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
@@ -957,7 +958,12 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
                 selectedDraftItem = YPConfig.draftImages[0]
                 loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
             }else{
-                delegate?.noPhotosForOptions()
+                view.endEditing(true)
+                let alert = UIAlertController(title: "No images available in drafts", message: "Draft gallery is empty.Add some artworks.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
+                self.present(alert, animated: true, completion: nil)
             }
         }else{
             isFirstTime = true
