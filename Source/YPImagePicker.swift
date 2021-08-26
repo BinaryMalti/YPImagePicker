@@ -180,8 +180,8 @@ override open func viewDidLoad() {
                                 let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
                                 if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
                                     selectionsGalleryVC.cropWidth = s
-                                    selectionsGalleryVC.cropHeight = s * ratio
-                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
+                                    selectionsGalleryVC.cropHeight = s/ratio
+                                    selectionsGalleryVC.v.collectionView.height((s / ratio) + 70)
                                 }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
                                     selectionsGalleryVC.cropWidth = size.width
                                     selectionsGalleryVC.cropHeight = size.height

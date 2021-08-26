@@ -170,7 +170,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
 //                }
 //            }
 //        }
-        didFinishHandler?(0,self, items)
+        didFinishHandler?(2,self, items)
     }
     
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {

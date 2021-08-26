@@ -235,6 +235,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
         currentlySelectedIndex = indexPath.row
         if v.showDraftImages{
             self.singleImage = v.draftItem[indexPath.row].image
+            self.selectedDraftItem = v.draftItem[indexPath.row]
+            changeAssetDraft(v.draftItem[indexPath.row].image)
         }else{
         changeAsset(mediaManager.fetchResult[indexPath.row])
         }

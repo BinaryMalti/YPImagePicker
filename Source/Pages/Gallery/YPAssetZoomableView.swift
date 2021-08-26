@@ -135,7 +135,35 @@ final class YPAssetZoomableView: UIScrollView {
         }
     }
     
-    fileprivate func setAssetFrame(`for` view: UIView, with image: UIImage) {
+    public func setDraftImage(_ photo: UIImage,
+                         completion: @escaping (Bool) -> Void,
+                         updateCropInfo: @escaping () -> Void) {
+            let strongSelf = self
+            if strongSelf.photoImageView.isDescendant(of: strongSelf) == false {
+                strongSelf.isVideoMode = false
+                strongSelf.videoView.removeFromSuperview()
+                strongSelf.videoView.showPlayImage(show: false)
+                strongSelf.videoView.deallocate()
+                strongSelf.addSubview(strongSelf.photoImageView)
+                strongSelf.photoImageView.contentMode = .scaleAspectFill
+                strongSelf.photoImageView.clipsToBounds = true
+            }
+            
+            strongSelf.photoImageView.image = photo
+           
+            strongSelf.setAssetFrame(for: strongSelf.photoImageView, with: photo)
+                
+            // Stored crop position in multiple selection
+//            if let scp173 = storedCropPosition {
+//                strongSelf.applyStoredCropPosition(scp173)
+//                // add update CropInfo after multiple
+//                updateCropInfo()
+//            }
+            
+            completion(false)
+        }
+    
+    private func setAssetFrame(`for` view: UIView, with image: UIImage) {
         // Reseting the previous scale
         self.minimumZoomScale = 1
         self.zoomScale = 1
