@@ -166,6 +166,7 @@ override open func viewDidLoad() {
                         let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { clickTyp, _, items in
                             self?.didSelect(items: items, draftItem:nil, clickType: clickTyp)
                         }
+                        
                         let item = items.first!
                         var size = CGSize()
                         switch item {
@@ -180,18 +181,31 @@ override open func viewDidLoad() {
                                 if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
                                     selectionsGalleryVC.cropWidth = s
                                     selectionsGalleryVC.cropHeight = s * ratio
+                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
                                 }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
-                                    selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)!
-                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetWidth)! * ratio
+                                    selectionsGalleryVC.cropWidth = size.width
+                                    selectionsGalleryVC.cropHeight = size.height
+                                    selectionsGalleryVC.v.collectionView.height(size.height + 70)
                                 }else{
                                     selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)! - 52
                                     selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetHeight)! - 52
                                 }
                             }else{
-                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
+//                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
                                 size = self!.calculateSingleImageSize(image: photo.image, size: s)
-                                selectionsGalleryVC.cropWidth = size.width
-                                selectionsGalleryVC.cropHeight = size.width * ratio
+                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
+                                    selectionsGalleryVC.cropWidth = size.width
+                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC!.targetHeight)! - 34
+                                    selectionsGalleryVC.v.collectionView.height((self?.picker.libraryVC?.targetHeight)! + 70)
+                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
+                                    selectionsGalleryVC.cropWidth = size.width
+                                    selectionsGalleryVC.cropHeight = size.height
+                                    selectionsGalleryVC.v.collectionView.height(size.height + 70)
+                                }else{
+                                    selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)! - 52
+                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetHeight)! - 52
+                                    selectionsGalleryVC.v.collectionView.heightEqualsWidth()
+                                }
                             }
                           
                         case .video(_):break

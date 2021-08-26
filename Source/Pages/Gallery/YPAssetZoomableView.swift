@@ -157,7 +157,9 @@ final class YPAssetZoomableView: UIScrollView {
             aspectRatio = w / h
             view.frame.size.width = screenWidth * aspectRatio
             view.frame.size.height = screenWidth
-            
+            if aspectRatio < 1.25 {
+                zoomScale = (h / w) * 1.25
+            }
             if let minWidth = minWidth {
                 let k = minWidth / screenWidth
                 zoomScale = (h / w) * k

@@ -23,7 +23,7 @@ class YPSelectionsGalleryView: UIView {
         )
         
         // Layout collectionView
-       // collectionView.hei
+      //  collectionView.height(300)
         if #available(iOS 11.0, *) {
             collectionView.Right == safeAreaLayoutGuide.Right
             collectionView.Left == safeAreaLayoutGuide.Left

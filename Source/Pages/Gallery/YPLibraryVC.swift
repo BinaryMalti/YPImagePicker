@@ -502,8 +502,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                     if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
                     {
-                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+//                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+//                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+                        let ratio = self.v.assetZoomableView.assetImageView.frame.height / self.v.assetZoomableView.assetImageView.frame.width
+                        if ratio < 1.25 {
+                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * 1.25
+                        }else{
+                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
+                        }
                     }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
                         self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
                         self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
@@ -520,8 +528,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     }
                 }
             }else{
-                self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+                self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
+                self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
             }
 
             self.updateCropInfo()

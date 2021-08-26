@@ -121,15 +121,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
                           }
                         }
                         controller.handlers.didCancelEditing = { controller in
-                            let alert = UIAlertController(title: "Discard Changes", message: "You cannot undo this action", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
-                                    alert.dismiss(animated: true, completion: nil)
-                                }))
-                            alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { (action: UIAlertAction!) in
-                                alert.dismiss(animated: true, completion: nil)
                                 controller.dismiss(animated: true, completion: nil)
-                            }))
-                            self.present(alert, animated: true, completion: nil)
                         }
                         let navVC = UINavigationController(rootViewController: controller)
                         navVC.view.backgroundColor = .white
