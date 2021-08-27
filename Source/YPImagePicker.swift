@@ -149,7 +149,30 @@ override open func viewDidLoad() {
                         case .photo(let photo):
                             let completion = { (photo: YPMediaPhoto) in
                                 let mediaItem = YPMediaItem.photo(p: photo)
-                                self?.didSelect(items: [mediaItem], draftItem: nil, clickType: 3)
+                                let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: [mediaItem])) { _, _, items in
+                                    self?.didSelect(items: items, draftItem:nil, clickType: 2)
+                                }
+                                let sideMargin: CGFloat = 24
+                                let overlapppingNextPhoto: CGFloat = 37
+                                let screenWidth = YPImagePickerConfiguration.screenWidth
+                                let size = screenWidth - (sideMargin + overlapppingNextPhoto)
+                                let item = items.first!
+                                switch item {
+                                case .photo(let photo):
+                                    if photo.image.size.width > photo.image.size.height{
+                                        selectionsGalleryVC.cropWidth = size - 50
+                                        selectionsGalleryVC.cropHeight = size
+                                    }else if photo.image.size.width < photo.image.size.height{
+                                        selectionsGalleryVC.cropWidth = size
+                                        selectionsGalleryVC.cropHeight = size + 50
+                                    }else{
+                                        selectionsGalleryVC.cropWidth = size
+                                        selectionsGalleryVC.cropHeight = size
+                                    }
+                                case .video(_):break
+                                }
+                                selectionsGalleryVC.v.collectionView.height(size + 70)
+                                self?.pushViewController(selectionsGalleryVC, animated: true)
                             }
                             func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
                                     let cropVC = CustomCropViewController(item: photo.image)

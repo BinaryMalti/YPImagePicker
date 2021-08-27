@@ -26,9 +26,17 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         let frameHeight : CGFloat = self.view.frame.height - 195
         v.frame = CGRect(x: 0, y: frameHeight, width: self.view.frame.width, height: 130)
         view.insertSubview(self.v, belowSubview: photoView)
-        view.bringSubviewToFront(self.v)
+        v.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+          v.topAnchor.constraint(equalTo: photoView.bottomAnchor,constant: 21),
+          v.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+          v.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+          v.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+        ])
         v.straightenImageSlider.delegate = self
         self.tapGesutures()
+        view.bringSubviewToFront(self.v)
+
 
     }
     
@@ -202,7 +210,7 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
 
     override open func customCanvasInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: UIDevice.current.orientation.isLandscape ? 40.0 : 0.0,
+        return UIEdgeInsets(top: UIDevice.current.orientation.isLandscape ? 40.0 : 50.0,
                             left: 0,
                             bottom: 0,
                             right: 0)
