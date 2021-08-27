@@ -20,7 +20,6 @@ extension YPLibraryVC {
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
-            v.collectionView.reloadData()
             v.leftMaskHeight.constant = 0
             v.rightMaskHeight.constant = 0
             v.bottomMaskHeight.constant = 0
@@ -28,6 +27,7 @@ extension YPLibraryVC {
             if self.selectedDraftItem?.image != nil {
                 changeAssetDraft(self.selectedDraftItem!.image)
             }
+            v.collectionView.reloadData()
             currentlySelectedIndex = 0
         }else{
             currentlySelectedIndex = 0
@@ -122,7 +122,15 @@ extension YPLibraryVC {
         if !(delegate?.libraryViewShouldAddToSelection(indexPath: indexPath, numSelections: selection.count) ?? true) {
             return
         }
-        
+        if v.showDraftImages {
+            let draftImage = v.draftItem[indexPath.row]
+            selection.append(YPLibrarySelection(index: indexPath.row,
+                                                assetIdentifier: nil,
+                                                cutWidth: v.leftMaskHeight.constant,
+                                                cutHeight: v.topMaskHeight.constant
+            )
+        )
+        }else{
         let asset = mediaManager.fetchResult[indexPath.item]
         selection.append(
             YPLibrarySelection(
@@ -132,8 +140,10 @@ extension YPLibraryVC {
                 cutHeight: v.topMaskHeight.constant
             )
         )
+            checkLimit()
 
-        checkLimit()
+        }
+
     }
     
     func isInSelectionPool(indexPath: IndexPath) -> Bool {
@@ -162,12 +172,11 @@ extension YPLibraryVC: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let asset = mediaManager.fetchResult[indexPath.item]
+        
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "YPLibraryViewCell",
                                                             for: indexPath) as? YPLibraryViewCell else {
                                                                 fatalError("unexpected cell in collection view")
         }
-        cell.representedAssetIdentifier = asset.localIdentifier
         cell.multipleSelectionIndicator.selectionColor =
             YPConfig.colors.multipleItemsSelectedCircleColor ?? YPConfig.colors.tintColor
         if v.showDraftImages{
@@ -177,7 +186,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
             cell.isSelected = currentlySelectedIndex == indexPath.row
             
             // Set correct selection number
-            if let index = selection.firstIndex(where: { $0.assetIdentifier == asset.localIdentifier }) {
+            if let index = selection.firstIndex(where: { $0.index == indexPath.row }) {
                 let currentSelection = selection[index]
                 if currentSelection.index < 0 {
                     selection[index] = YPLibrarySelection(index: indexPath.row,
@@ -192,6 +201,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                 cell.multipleSelectionIndicator.set(number: nil)
             }
         }else{
+            let asset = mediaManager.fetchResult[indexPath.item]
+            cell.representedAssetIdentifier = asset.localIdentifier
         mediaManager.imageManager?.requestImage(for: asset,
                                    targetSize: v.cellSize(),
                                    contentMode: .aspectFill,

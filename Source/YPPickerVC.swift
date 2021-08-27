@@ -398,10 +398,9 @@ extension YPPickerVC: YPLibraryViewDelegate {
     }
     
     override func backButtonClick(sender: UIButton) {
-        if sender.titleLabel?.text == "Dashboard" {
+        if sender.titleLabel?.text == YPConfig.wordings.cancel {
             print("go to dashboard")
             close()
-            
         }else{
         self.dismiss(animated: true, completion: nil)
         }

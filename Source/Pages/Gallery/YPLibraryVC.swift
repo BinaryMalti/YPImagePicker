@@ -482,7 +482,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == v.collectionView {
-            mediaManager.updateCachedAssets(in: self.v.collectionView)
+            if !v.showDraftImages{
+             mediaManager.updateCachedAssets(in: self.v.collectionView)
+            }
         }
     }
     
@@ -776,7 +778,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         DispatchQueue.global(qos: .userInitiated).async {
             
             let selectedAssets: [(asset: PHAsset, cropRect: CGRect?, cutHeight:CGFloat, cutWidth:CGFloat?)] = self.selection.map {
-                guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier],
+                guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
                                                       options: PHFetchOptions()).firstObject else { fatalError() }
                 return (asset, $0.cropRect,$0.cutHeight,$0.cutWidth)
             }
@@ -956,7 +958,10 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
             if (YPConfig.draftImages.count > 0){
                 multipleSelectionEnabled = false
                 selectedDraftItem = YPConfig.draftImages[0]
+               // panGestureHelper.registerForPanGesture(on: v)
+                registerForTapOnPreview()
                 loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
+                scrollToTop()
             }else{
                 view.endEditing(true)
                 let alert = UIAlertController(title: "No images available in drafts", message: "Draft gallery is empty.Add some artworks.", preferredStyle: .alert)

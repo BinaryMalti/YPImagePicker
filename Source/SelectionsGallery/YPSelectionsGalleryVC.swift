@@ -63,12 +63,20 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
+        if isFromEdit{
+            v.collectionView.height(cropHeight + 70)
+        }
         if #available(iOS 11.0, *) {
             v.collectionView.dragInteractionEnabled = true
             v.collectionView.dragDelegate = self
             v.collectionView.dropDelegate = self
         }
-        self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        if isFromEdit {
+            self.addBackButtonItem(title: "My Dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        }else{
+            self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        }
+       
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         
         // Setup navigation bar
@@ -90,8 +98,40 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
+//        if !isFromEdit {
+//            self.finalItems.append(items[0])
+//        }
+        
         if !isFromEdit {
-            self.finalItems.append(items[0])
+            finalItems.removeAll()
+            let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
+            let imageView = UIImageView(frame: ivRect)
+            let ivsize = imageView.bounds.size
+            for item in items{
+                switch item {
+                case .photo(let photo):
+                    imageView.image = photo.image
+                    var scale : CGFloat = ivsize.width / imageView.image!.size.width
+                    if imageView.image!.size.height * scale < ivsize.height {
+                        scale = ivsize.height / imageView.image!.size.height
+                    }
+                    let croppedImsize = CGSize(width:ivsize.width/scale, height:ivsize.height/scale)
+                    let croppedImrect =
+                        CGRect(origin: CGPoint(x: (imageView.image!.size.width-croppedImsize.width)/2.0,
+                                               y: (imageView.image!.size.height-croppedImsize.height)/2.0),
+                               size: croppedImsize)
+                    let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: croppedImrect)
+                    if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
+                   {
+                        let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
+                    let artworkMedia = YPMediaItem.photo(p: artwork)
+                    finalItems.append(artworkMedia)
+                   }
+                default:
+                    break
+                }
+            }
+            
         }
     }
     
@@ -240,24 +280,8 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
         case .photo(let photo):
            // cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
            // cell.imageView.backgroundColor = .clear
-            if indexPath.row == 0{
-                cell.imageView.contentMode = .scaleAspectFit
-            }else{
-                cell.imageView.contentMode = .scaleAspectFill
-            }
+            cell.imageView.contentMode = .scaleAspectFill
             cell.imageView.image = photo.originalImage
-            if !isFromEdit {
-            if indexPath.row != 0 {
-                let cropRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
-                let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: cropRect)
-                if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
-               {
-                    let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
-                let artworkMedia = YPMediaItem.photo(p: artwork)
-                finalItems.append(artworkMedia)
-               }
-            }
-            }
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
         case .video(let video):

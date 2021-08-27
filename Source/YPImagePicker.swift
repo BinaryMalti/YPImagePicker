@@ -111,22 +111,36 @@ override open func viewDidLoad() {
                       }
                         return
                     }else if self?.picker.libraryVC?.fromCamera == true{
-                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { _, _, items in
-                            self?.didSelect(items: items, draftItem:nil, clickType: 2)
-                        }
-                        let sideMargin: CGFloat = 24
-                        let overlapppingNextPhoto: CGFloat = 37
-                        let screenWidth = YPImagePickerConfiguration.screenWidth
-                        let size = screenWidth - (sideMargin + overlapppingNextPhoto)
                         let item = items.first!
                         switch item {
                         case .photo(let photo):
-                          let imageRatio =  self!.calculateSingleImageSize(image: photo.image, size: size)
-                            selectionsGalleryVC.cropWidth = imageRatio.width
-                            selectionsGalleryVC.cropHeight = imageRatio.height
-                        case .video(_):break
+                            let completion = { (photo: YPMediaPhoto) in
+                                let mediaItem = YPMediaItem.photo(p: photo)
+                                self?.didSelect(items: [mediaItem], draftItem: nil, clickType: 3)
+                            }
+                            func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
+                                    let cropVC = CustomCropViewController(item: photo.image)
+                                cropVC.fromCamera = true
+                                    cropVC.didFinishCropping = { croppedImage in
+                                        photo.modifiedImage = croppedImage
+                                        completion(photo)
+                                    }
+                                cropVC.delegateYP = self
+                                let navVC = UINavigationController(rootViewController: cropVC)
+                                navVC.view.backgroundColor = .white
+                                navVC.toolbar.isHidden = true
+                                navVC.navigationBar.tintColor = .black
+                                navVC.navigationBar.backgroundColor = .white
+                                navVC.navigationBar.shadowImage = UIImage()
+                                navVC.navigationBar.isTranslucent = false
+                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+                                navVC.modalPresentationStyle = .fullScreen
+                                self?.present(navVC, animated: true, completion: nil)
+                            }
+                            showCropVC(photo: photo, completion: completion)
+                        case .video(_):
+                            break
                         }
-                        self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
                     else if self?.picker.libraryVC?.fromCropClick == true{

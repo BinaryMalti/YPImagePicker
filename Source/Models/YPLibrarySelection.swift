@@ -15,13 +15,13 @@ struct YPLibrarySelection {
     var cutHeight: CGFloat
     var scrollViewContentOffset: CGPoint?
     var scrollViewZoomScale: CGFloat?
-    let assetIdentifier: String
+    let assetIdentifier: String?
     
     init(index: Int,
          cropRect: CGRect? = nil,
          scrollViewContentOffset: CGPoint? = nil,
          scrollViewZoomScale: CGFloat? = nil,
-         assetIdentifier: String,cutWidth: CGFloat, cutHeight:CGFloat) {
+         assetIdentifier: String?,cutWidth: CGFloat, cutHeight:CGFloat) {
         self.index = index
         self.cropRect = cropRect
         self.scrollViewContentOffset = scrollViewContentOffset

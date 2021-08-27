@@ -20,6 +20,7 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
     let editIcon = UIView()
     let editSquare = UIView()
     let removeButton = UIButton()
+    var imageCropped = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -161,9 +161,9 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
     
     func fetchImagePreview(previewImage : UIImage){
-        self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame)
-            //didFinishCropping?(previewImage)
-        self.dismiss(animated: true, completion: nil)
+       // self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame)
+        didFinishCropping?(previewImage)
+        //self.dismiss(animated: true, completion: nil)
 
     }
  
