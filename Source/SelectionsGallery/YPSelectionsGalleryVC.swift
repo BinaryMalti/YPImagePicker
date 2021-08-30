@@ -9,7 +9,7 @@
 import UIKit
 import Brightroom
 
-public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDelegate {
+open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDelegate {
     
     override public var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
     
@@ -35,19 +35,18 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         super.init(nibName: nil, bundle: nil)
         self.items = items
         self.didFinishHandler = didFinishHandler
-        let bundle = Bundle(for: YPPickerVC.self)
-        let nib = UINib(nibName: "YPGalleryBottomView", bundle: bundle)
-        bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
-        self.v.viewB.addSubview(bottomView)
-        bottomView.frame = CGRect(x:0, y: 0, width: self.v.viewB.frame.width, height: self.v.viewB.frame.height)
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     override func saveAsDraftClick(sender: UIButton) {
-        didFinishHandler?(4,self, items)
+        if isFromEdit {
+            didFinishHandler?(5,self, items)
+        }else{
+            didFinishHandler?(4,self, items)
+        }
     }
 
     func cropImage(imageToCrop:UIImage, toRect rect:CGRect) -> UIImage{
@@ -56,38 +55,30 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         return cropped
     }
 
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
-
+        let bundle = Bundle(for: YPPickerVC.self)
+        let nib = UINib(nibName: "YPGalleryBottomView", bundle: bundle)
+        bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
+        self.v.viewB.addSubview(bottomView)
+        bottomView.frame = CGRect(x:0, y: 0, width: self.v.viewB.frame.width, height: self.v.viewB.frame.height)
         // Register collection view cell
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
-        v.collectionView.dataSource = self
-        v.collectionView.delegate = self
         if isFromEdit{
             v.collectionView.height(cropHeight + 70)
         }
-        if #available(iOS 11.0, *) {
-            v.collectionView.dragInteractionEnabled = true
-            v.collectionView.dragDelegate = self
-            v.collectionView.dropDelegate = self
-        }
+        v.collectionView.dataSource = self
+        v.collectionView.delegate = self
+        v.collectionView.dragInteractionEnabled = true
+        v.collectionView.dragDelegate = self
+        v.collectionView.dropDelegate = self
+        v.collectionView.reloadData()
         if isFromEdit {
             self.addBackButtonItem(title: "My Dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
-       
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-        
-        // Setup navigation bar
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
-//                                                            style: .done,
-//                                                            target: self,
-//                                                            action: #selector(done))
-//        navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
-//        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .disabled)
-//        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
-//        navigationController?.navigationBar.setTitleFont(font: YPConfig.fonts.navigationBarTitleFont)
         if (items.count > 1){
             bottomView.deleteButton.isHidden = false
         }else{
@@ -95,13 +86,8 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
         }
         bottomView.editButton.addTarget(self, action: #selector(editImage), for: .touchUpInside)
         bottomView.deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
-        
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
-//        if !isFromEdit {
-//            self.finalItems.append(items[0])
-//        }
-        
         if !isFromEdit {
             finalItems.removeAll()
             let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
@@ -149,7 +135,6 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
                         controller.handlers.didEndEditing = { [weak self] controller, stack in
                           guard let self = self else { return }
                           controller.dismiss(animated: true, completion: nil)
-
                           try! stack.makeRenderer().render { result in
                             switch result {
                             case let .success(rendered):
@@ -157,6 +142,7 @@ public class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDel
                                 if saved != nil {
                                     let editedImage =  YPPhotoSaver.loadImage(withName: name, from: YPConfig.albumName)
                                     photo.modifiedImage = editedImage
+                                    photo.url = saved
                                     self.items.remove(at: i)
                                     self.items.insert(selectedItem, at: i)
                                     self.v.collectionView.performBatchUpdates {
