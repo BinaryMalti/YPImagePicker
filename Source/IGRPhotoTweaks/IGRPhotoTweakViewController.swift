@@ -46,8 +46,8 @@ open class IGRPhotoTweakViewController: UIViewController {
     //MARK: - Private VARs
     
     public lazy var photoView: IGRPhotoTweakView! = { [unowned self] by in
-        let bounds = CGRect(x: 0, y: -148, width: self.view.frame.width, height: self.view.frame.height)
-        let photoView = IGRPhotoTweakView(frame: bounds,
+        let rect = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height - 170.0)
+        let photoView = IGRPhotoTweakView(frame: rect,
                                           image: self.image,
                                           customizationDelegate: self)
         photoView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -60,10 +60,10 @@ open class IGRPhotoTweakViewController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        
         self.automaticallyAdjustsScrollViewInsets = false
         self.view.clipsToBounds = true
         self.setupSubviews()
+        self.view.backgroundColor = .black
         self.setupThemes()
     }
     

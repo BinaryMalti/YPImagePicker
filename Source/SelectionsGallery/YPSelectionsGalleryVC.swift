@@ -25,6 +25,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     internal var fromSaveAsDraft = false
     public var isFromEdit = false
     public var targetHeight : CGFloat = 200.0
+    var isReorderPerformed = false
     public override func loadView() { view = v }
 
     public required init(items: [YPMediaItem],
@@ -214,6 +215,22 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         }
     }
     
+    override func backButtonClick(sender: UIButton) {
+        if isReorderPerformed{
+            let alert = UIAlertController(title: "Discard Changes", message: "You will loose the changes performed", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+            alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { (action: UIAlertAction!) in
+                alert.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }else{
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {
         let alert = UIAlertController(title: "Do you want to delete this artwork?", message: "You cannot undo this action", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
@@ -350,12 +367,15 @@ extension YPSelectionsGalleryVC: UICollectionViewDragDelegate, UICollectionViewD
     func reorderItems(coordinator:UICollectionViewDropCoordinator,desinationIndexpath : IndexPath, collectionView:UICollectionView){
         if let item = coordinator.items.first,
            let sourceIndexPath = item.sourceIndexPath{
-            collectionView.performBatchUpdates({
+                collectionView.performBatchUpdates({
+                    isReorderPerformed = true
                 self.items.remove(at: sourceIndexPath.item)
                 self.items.insert(item.dragItem.localObject as! YPMediaItem, at: desinationIndexpath.item)
                 collectionView.deleteItems(at: [sourceIndexPath])
                 collectionView.insertItems(at: [desinationIndexpath])
-            }, completion: nil)
+            }, completion: {_ in
+                collectionView.reloadSections(IndexSet(integer: 0))
+            })
             coordinator.drop(item.dragItem, toItemAt:desinationIndexpath)
         }
     }

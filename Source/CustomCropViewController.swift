@@ -21,23 +21,23 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         super.init(nibName: nil, bundle: nil)
         image = item
         title = ""
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.black
         v = CustomCropView.xibView()
         let frameHeight : CGFloat = self.view.frame.height - 195
-        v.frame = CGRect(x: 0, y: frameHeight, width: self.view.frame.width, height: 130)
+        v.frame = CGRect(x: 0, y: frameHeight, width: self.view.frame.width, height: 170)
         view.insertSubview(self.v, belowSubview: photoView)
+        v.backgroundColor = .black
         v.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
           v.topAnchor.constraint(equalTo: photoView.bottomAnchor,constant: 21),
           v.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-          v.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+          v.bottomAnchor.constraint(equalTo: view.bottomAnchor),
           v.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
         ])
         v.straightenImageSlider.delegate = self
         self.tapGesutures()
         view.bringSubviewToFront(self.v)
-
-
+        view.setNeedsLayout()
     }
     
     public convenience init() {
@@ -55,6 +55,8 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         super.viewDidLoad()
         self.delegate = self
         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false, isFromcrop: true, isForEdit: false)
+        self.photoView.scrollView.contentInset.top = self.photoView.scrollView.contentInset.top - 44
+        self.view.backgroundColor = .black
         //self.lockAspectRatio(true)
         //FIXME: Zoom setup
 //        self.photoView.minimumZoomScale = 1.0;
@@ -73,26 +75,6 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         v.rotateRightButton.addTarget(self, action: #selector(rotateRight(_:)), for: .touchUpInside)
     }
     
-    //FIXME: Themes Preview
-//    override open func setupThemes() {
-//
-//        IGRCropLine.appearance().backgroundColor = UIColor.green
-//        IGRCropGridLine.appearance().backgroundColor = UIColor.yellow
-//        IGRCropCornerView.appearance().backgroundColor = UIColor.purple
-//        IGRCropCornerLine.appearance().backgroundColor = UIColor.orange
-//        IGRCropMaskView.appearance().backgroundColor = UIColor.blue
-//        IGRPhotoContentView.appearance().backgroundColor = UIColor.gray
-//        IGRPhotoTweakView.appearance().backgroundColor = UIColor.brown
-//    }
-    
-//    fileprivate func setupSlider() {
-//        self.v.angleSlider?.minimumValue = -Float(IGRRadianAngle.toRadians(90))
-//        self.v.angleSlider?.maximumValue = Float(IGRRadianAngle.toRadians(90))
-//        self.v.angleSlider?.value = 0.0
-//
-//        setupAngleLabelValue(radians: CGFloat((self.v.angleSlider?.value)!))
-//    }
-    
     fileprivate func setupAngleLabelValue(radians: CGFloat) {
         let intDegrees: Int = Int(IGRRadianAngle.toDegrees(radians))
         self.v.angleLabel.text = "\(intDegrees)"
@@ -110,31 +92,18 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         }
     }
     
-    // MARK: - Actions
-//
-//    @IBAction func onChandeAngleSliderValue(_ sender: UISlider) {
-//        let radians: CGFloat = CGFloat(sender.value)
-//        setupAngleLabelValue(radians: radians)
-//        self.changeAngle(radians: radians)
-//    }
-//
-//    @IBAction func onEndTouchAngleControl(_ sender: UIControl) {
-//        self.stopChangeAngle()
-//    }
+    var rotate = IGRRadianAngle.toRadians(0)
     
-    var rotateLft:CGFloat = 0.5
     @objc
      func rotateLeft(_ sender: Any) {
-       self.photoView.changeAngle(radians: -rotateLft * CGFloat.pi)
-        rotateLft = rotateLft + 0.5
-        
+        rotate =  rotate - IGRRadianAngle.toRadians(90)
+       self.photoView.changeRotateAngle(radians:rotate)
     }
     
-    var rotateRght:CGFloat = 0.5
     @objc
      func rotateRight(_ sender: Any) {
-        self.photoView.changeAngle(radians: rotateRght * CGFloat.pi)
-        rotateRght = rotateRght + 0.5
+        rotate =  rotate + IGRRadianAngle.toRadians(90)
+        self.photoView.changeRotateAngle(radians: rotate) //2(n-1)
     }
 
     @objc
@@ -169,30 +138,12 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
     
     func fetchImagePreview(previewImage : UIImage){
-       // self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame)
-        didFinishCropping?(previewImage)
-        //self.dismiss(animated: true, completion: nil)
+        self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame, image: previewImage)
+       // didFinishCropping?(previewImage)
+        self.dismiss(animated: true, completion: nil)
 
     }
  
-    
-        //FIXME: Themes Preview
-//    override open func customBorderColor() -> UIColor {
-//        return UIColor.red
-//    }
-//
-//    override open func customBorderWidth() -> CGFloat {
-//        return 2.0
-//    }
-//
-//    override open func customCornerBorderWidth() -> CGFloat {
-//        return 4.0
-//    }
-//
-//    override open func customCropLinesCount() -> Int {
-//        return 3
-//    }
-//
     override open func customGridLinesCount() -> Int {
         return 4
     }
@@ -210,9 +161,9 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
 
     override open func customCanvasInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: UIDevice.current.orientation.isLandscape ? 40.0 : 50.0,
+        return UIEdgeInsets(top: 0.0,
                             left: 0,
-                            bottom: 0,
+                            bottom: 44,
                             right: 0)
     }
 }

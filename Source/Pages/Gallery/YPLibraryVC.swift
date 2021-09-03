@@ -10,12 +10,11 @@ import UIKit
 import Photos
 
 protocol YPLibraryDelegate :AnyObject {
-    func showCroppedImage(rect: CGRect)
+    func showCroppedImage(rect: CGRect,image:UIImage)
 }
 
-public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate,UITextFieldDelegate {
     
-
     internal weak var delegate: YPLibraryViewDelegate?
     internal var v: YPLibraryView!
     internal var isProcessing = false // true if video or image is in processing state
@@ -78,7 +77,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateImageCrop(cropRect:CGRect){
+    var isImageCropped = false
+    func updateImageCrop(cropRect:CGRect,image:UIImage){
        let asset = mediaManager.fetchResult[currentlySelectedIndex]
         selection = [
             YPLibrarySelection(index: currentlySelectedIndex,
@@ -89,7 +89,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                cutWidth: v.leftMaskHeight.constant,
                                cutHeight: v.topMaskHeight.constant)
         ]
-        updateCropInfo()
+        isImageCropped = true
+        isFirstTime = true
+        changeAsset(asset)
+     //  changeAssetDraft(image)
     }
     
     func setAlbum(_ album: YPAlbum) {
@@ -268,6 +271,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             if let image = self?.singleImage{
                 self?.fromCamera = false
                 self?.fromCropClick = true
+                self?.isImageCropped = false
                 self?.didCapturePhoto?(image)
 //                let cropVC = CustomCropViewController(item:image)
 //                self?.present(cropVC, animated: true)
@@ -613,8 +617,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     }
                 }
             }else{
+                        self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
+                        self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
+                        self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
+                        self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                 self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
                 self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
+                self.view.setNeedsLayout()
             }
 
             self.updateCropInfo()
@@ -674,12 +683,20 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         selectedAsset.scrollViewZoomScale = v.assetZoomableView.zoomScale
         selectedAsset.cutWidth = v.leftMaskHeight.constant
         selectedAsset.cutHeight = v.topMaskHeight.constant
+        if multipleSelectionEnabled {
+            if isImageCropped && selectedAssetIndex == 0{
+                selectedAsset.cropRect = selection[selectedAssetIndex].cropRect
+            }else{
+                selectedAsset.cropRect = v.currentCropRect()
+            }
+        }else{
         selectedAsset.cropRect = v.currentCropRect()
-        
+        }
         // Replace
         selection.remove(at: selectedAssetIndex)
         selection.insert(selectedAsset, at: selectedAssetIndex)
     }
+    
     //TGP
     private func multiSelectionCount(){
         if !YPConfig.showDrafts || !v.showDraftImages{
@@ -963,10 +980,10 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
                 loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
                 scrollToTop()
             }else{
-                view.endEditing(true)
                 let alert = UIAlertController(title: "No images available in drafts", message: "Draft gallery is empty.Add some artworks.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
                         alert.dismiss(animated: true, completion: nil)
+                    self.view.endEditing(true)
                     }))
                 self.present(alert, animated: true, completion: nil)
             }

@@ -5,17 +5,18 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="O8O-Yh-D4l" customClass="CustomCropView" customModule="YPImagePicker" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="130"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="170"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G7G-NP-r93">
-                    <rect key="frame" x="0.0" y="40" width="414" height="90"/>
+                    <rect key="frame" x="0.0" y="36" width="414" height="90"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fNe-1t-Jxe">
                             <rect key="frame" x="176.5" y="7" width="61" height="21"/>
@@ -104,14 +105,21 @@
                         <constraint firstItem="RdR-ox-Prb" firstAttribute="top" secondItem="OTr-Kr-ud9" secondAttribute="top" id="yn4-yz-24X"/>
                     </constraints>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j9m-8J-SSc" userLabel="saveButton">
-                    <rect key="frame" x="330" y="19" width="42" height="42"/>
-                    <state key="normal" image="ic_Save"/>
-                </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nux-ux-f6V" userLabel="closeButton">
-                    <rect key="frame" x="42" y="19" width="42" height="42"/>
+                    <rect key="frame" x="42" y="15" width="42" height="42"/>
                     <state key="normal" image="ic_close_red"/>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j9m-8J-SSc" userLabel="saveButton">
+                    <rect key="frame" x="330" y="15" width="42" height="42"/>
+                    <state key="normal" image="ic_Save"/>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T68-pz-Arb">
+                    <rect key="frame" x="0.0" y="126" width="414" height="44"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="r31-mG-zZc"/>
+                    </constraints>
+                </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="f08-wK-1Du"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -121,9 +129,12 @@
                 <constraint firstItem="f08-wK-1Du" firstAttribute="trailing" secondItem="j9m-8J-SSc" secondAttribute="trailing" constant="42" id="KQh-fV-LpX"/>
                 <constraint firstItem="j9m-8J-SSc" firstAttribute="bottom" secondItem="nux-ux-f6V" secondAttribute="bottom" id="N9p-bV-OeP"/>
                 <constraint firstItem="G7G-NP-r93" firstAttribute="leading" secondItem="O8O-Yh-D4l" secondAttribute="leading" id="Vew-Qe-DmU"/>
-                <constraint firstAttribute="bottom" secondItem="G7G-NP-r93" secondAttribute="bottom" id="Xll-S1-52M"/>
+                <constraint firstItem="T68-pz-Arb" firstAttribute="top" secondItem="G7G-NP-r93" secondAttribute="bottom" id="Xll-S1-52M"/>
+                <constraint firstItem="T68-pz-Arb" firstAttribute="leading" secondItem="O8O-Yh-D4l" secondAttribute="leading" id="Ym0-I1-aVR"/>
                 <constraint firstItem="nux-ux-f6V" firstAttribute="leading" secondItem="f08-wK-1Du" secondAttribute="leading" constant="42" id="bmm-ox-HJP"/>
+                <constraint firstAttribute="bottom" secondItem="T68-pz-Arb" secondAttribute="bottom" id="m6K-Wf-ses"/>
                 <constraint firstAttribute="trailing" secondItem="G7G-NP-r93" secondAttribute="trailing" id="sHZ-GM-VUk"/>
+                <constraint firstAttribute="trailing" secondItem="T68-pz-Arb" secondAttribute="trailing" id="vmh-ld-3Hl"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
@@ -142,5 +153,8 @@
         <image name="ic_close_red" width="42" height="42"/>
         <image name="left_Rotate" width="25" height="25"/>
         <image name="right_rotate" width="25" height="25"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

@@ -21,8 +21,8 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
         return .portrait
     }
     
-    func showCroppedImage(rect: CGRect) {
-        self.picker.libraryVC?.updateImageCrop(cropRect: rect)
+    func showCroppedImage(rect: CGRect,image:UIImage) {
+        self.picker.libraryVC?.updateImageCrop(cropRect: rect, image: image)
     }
 
     private var _didFinishPicking: ((Int,[YPMediaItem], Bool) -> Void)?
@@ -172,7 +172,8 @@ override open func viewDidLoad() {
                                 case .video(_):break
                                 }
                                 selectionsGalleryVC.v.collectionView.height(size + 70)
-                                self?.pushViewController(selectionsGalleryVC, animated: true)
+                                self?.present(selectionsGalleryVC, animated: true)
+                               // self?.pushViewController(selectionsGalleryVC, animated: true)
                             }
                             func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
                                     let cropVC = CustomCropViewController(item: photo.image)
@@ -189,7 +190,7 @@ override open func viewDidLoad() {
                                 navVC.navigationBar.backgroundColor = .white
                                 navVC.navigationBar.shadowImage = UIImage()
                                 navVC.navigationBar.isTranslucent = false
-                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
+                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)                                
                                 navVC.modalPresentationStyle = .fullScreen
                                 self?.present(navVC, animated: true, completion: nil)
                             }

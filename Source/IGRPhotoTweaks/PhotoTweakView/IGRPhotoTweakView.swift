@@ -76,7 +76,7 @@ public class IGRPhotoTweakView: UIView {
     
     internal lazy var scrollView: IGRPhotoScrollView! = { [unowned self] by in
         
-        let maxBounds = self.maxBounds()
+        let maxBounds = maxBounds()
         self.originalSize = maxBounds.size
         
         let scrollView = IGRPhotoScrollView(frame: maxBounds)
@@ -180,7 +180,7 @@ public class IGRPhotoTweakView: UIView {
     fileprivate func maxBounds() -> CGRect {
         // scale the image
         let insets = canvasInsets()
-        self.maximumCanvasSize = frame.inset(by: insets).size
+        self.maximumCanvasSize = self.frame.inset(by: insets).size
         self.centerPoint = CGPoint(x: maximumCanvasSize.width.half + insets.left, y: maximumCanvasSize.height.half + insets.top)
 
         let scaleX: CGFloat = self.image.size.width / self.maximumCanvasSize.width
@@ -212,6 +212,61 @@ public class IGRPhotoTweakView: UIView {
         // scale scroll view
         let shouldScale: Bool = self.scrollView.contentSize.width / self.scrollView.bounds.size.width <= 1.0 ||
             self.scrollView.contentSize.height / self.scrollView.bounds.size.height <= 1.0
+        if !self.manualZoomed || shouldScale {
+            let zoom = self.scrollView.zoomScaleToBound()
+            self.scrollView.setZoomScale(zoom, animated: false)
+            self.scrollView.minimumZoomScale = zoom
+            self.manualZoomed = false
+        }
+        
+        self.scrollView.checkContentOffset()
+    }
+    internal func updatePositionn() {
+        // position scroll view
+        let width: CGFloat = abs(cos(self.radians)) * self.cropView.frame.size.width + abs(sin(self.radians)) * self.cropView.frame.size.height
+        let height: CGFloat = abs(sin(self.radians)) * self.cropView.frame.size.width + abs(cos(self.radians)) * self.cropView.frame.size.height
+        let center: CGPoint = self.scrollView.center
+        let contentOffset: CGPoint = self.scrollView.contentOffset
+        let contentOffsetCenter = CGPoint(x: (contentOffset.x + self.scrollView.bounds.size.width.half),
+                                          y: (contentOffset.y + self.scrollView.bounds.size.height.half))
+        self.scrollView.bounds = CGRect(x: CGFloat.zero, y: CGFloat.zero, width: width, height: height)
+        let newContentOffset = CGPoint(x: (contentOffsetCenter.x - self.scrollView.bounds.size.width.half),
+                                       y: (contentOffsetCenter.y - self.scrollView.bounds.size.height.half))
+        self.scrollView.contentOffset = newContentOffset
+        self.scrollView.center = center
+
+        // scale scroll view
+        let minimumZoomScale = self.scrollView.zoomScaleToBound()
+        let shouldUpdateZoomScale = self.scrollView.zoomScale == self.scrollView.minimumZoomScale
+                                     || self.scrollView.zoomScale < minimumZoomScale
+        if self.scrollView.minimumZoomScale != minimumZoomScale {
+            self.scrollView.minimumZoomScale = minimumZoomScale
+        }
+        if shouldUpdateZoomScale {
+            self.scrollView.setZoomScale(minimumZoomScale, animated: false)
+        }
+
+        self.scrollView.checkContentOffset()
+    }
+    internal func updateRotatePosition() {
+        // position scroll view
+
+        let center: CGPoint = self.scrollView.center
+        let contentOffset: CGPoint = self.scrollView.contentOffset
+        let contentOffsetCenter = CGPoint(x: (contentOffset.x + self.scrollView.bounds.size.width.half),
+                                          y: (contentOffset.y + self.scrollView.bounds.size.height.half))
+        //   let width: CGFloat = abs(cos(self.radians)) * self.cropView.frame.size.width + abs(sin(self.radians)) * self.cropView.frame.size.height
+         //  let height: CGFloat = abs(sin(self.radians)) * self.cropView.frame.size.width + abs(cos(self.radians)) * self.cropView.frame.size.height
+     //   self.scrollView.bounds = CGRect(x: CGFloat.zero, y: CGFloat.zero, width: width, height: height)
+        let newContentOffset = CGPoint(x: (contentOffsetCenter.x - self.scrollView.bounds.size.width.half),
+                                       y: (contentOffsetCenter.y - self.scrollView.bounds.size.height.half))
+        self.scrollView.contentOffset = newContentOffset
+        self.scrollView.center = center
+        
+        // scale scroll view
+        let shouldScale: Bool = self.scrollView.contentSize.width / self.scrollView.bounds.size.width <= 1.0 ||
+            self.scrollView.contentSize.height / self.scrollView.bounds.size.height <= 1.0
+        
         if !self.manualZoomed || shouldScale {
             let zoom = self.scrollView.zoomScaleToBound()
             self.scrollView.setZoomScale(zoom, animated: false)

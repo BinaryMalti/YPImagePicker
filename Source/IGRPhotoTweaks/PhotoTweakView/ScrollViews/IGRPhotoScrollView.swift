@@ -38,7 +38,6 @@ public class IGRPhotoScrollView: UIScrollView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setup()
     }
     
