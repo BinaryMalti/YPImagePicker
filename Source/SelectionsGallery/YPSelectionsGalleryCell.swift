@@ -32,7 +32,7 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
             editSquare
         )
         
-        imageView.fillContainer()
+        
         editIcon.size(32).left(12).bottom(12)
         editSquare.size(16)
         editSquare.CenterY == editIcon.CenterY
@@ -42,6 +42,10 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
             c.textColor = YPConfig.colors.grayColor
         }
         countLabel.top(-40)
+        countLabel.height(25)
+        countLabel.Bottom == imageView.Top
+        countLabel.bottom(5)
+        imageView.fillContainer()
         removeButton.top(12).trailing(12)
         removeButton.isHidden = true
 //        layer.shadowColor = UIColor.black.cgColor

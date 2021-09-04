@@ -18,14 +18,16 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
     
-    var v = YPSelectionsGalleryView()
+     var v = YPSelectionsGalleryView()
     public var cropHeight : CGFloat = 0.0
     public var cropWidth : CGFloat = 0.0
     var bottomView = YPGalleryBottomView()
     internal var fromSaveAsDraft = false
     public var isFromEdit = false
+    public var fromCamera = false
     public var targetHeight : CGFloat = 200.0
-    var isReorderPerformed = false
+    public var isReorderPerformed = false
+    public var collectioViewHeight : CGFloat = 0.0
     public override func loadView() { view = v }
 
     public required init(items: [YPMediaItem],
@@ -43,10 +45,14 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     }
     
     override func saveAsDraftClick(sender: UIButton) {
-        if isFromEdit {
-            didFinishHandler?(5,self, items)
+        if fromCamera {
+            didFinishHandler?(4,self, finalItems)
         }else{
-            didFinishHandler?(4,self, items)
+            if isFromEdit {
+                didFinishHandler?(5,self, items)
+            }else{
+                didFinishHandler?(4,self, items)
+            }
         }
     }
 
@@ -67,6 +73,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
         if isFromEdit{
             v.collectionView.height(cropHeight + 70)
+        }
+        if collectioViewHeight  != 0.0{
+            v.collectionView.height(collectioViewHeight)
         }
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
@@ -146,6 +155,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                                     photo.url = saved
                                     self.items.remove(at: i)
                                     self.items.insert(selectedItem, at: i)
+                                    self.isReorderPerformed = true
                                     self.v.collectionView.performBatchUpdates {
                                         let cell = self.v.collectionView.cellForItem(at: indexPathCenter) as! YPSelectionsGalleryCell
                                         cell.imageView.image = editedImage
@@ -227,6 +237,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             }))
             self.present(alert, animated: true, completion: nil)
         }else{
+           // self.dismiss(animated: true, completion: nil)
             self.navigationController?.popViewController(animated: true)
         }
     }

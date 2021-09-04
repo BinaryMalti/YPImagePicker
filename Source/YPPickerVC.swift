@@ -76,8 +76,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         if YPConfig.screens.contains(.library) {
             libraryVC = YPLibraryVC()
             libraryVC?.didCapturePhoto = { [weak self] img in
-                self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
-                                                                        fromCamera: true))])
+                self?.didSelectItems?([img])
             }
         }
         

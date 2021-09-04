@@ -112,35 +112,12 @@ override open func viewDidLoad() {
                         return
                     }else if self?.picker.libraryVC?.fromCamera == true{
                         let item = items.first!
-                        switch item {
-                        case .photo(let photo):
-                            let completion = { (photo: YPMediaPhoto) in
-                                let mediaItem = YPMediaItem.photo(p: photo)
-                                self?.didSelect(items: [mediaItem], draftItem: nil, clickType: 3)
-                            }
-                            func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
-                                    let cropVC = CustomCropViewController(item: photo.image)
-                                cropVC.fromCamera = true
-                                    cropVC.didFinishCropping = { croppedImage in
-                                        photo.modifiedImage = croppedImage
-                                        completion(photo)
-                                    }
-                                cropVC.delegateYP = self
-                                let navVC = UINavigationController(rootViewController: cropVC)
-                                navVC.view.backgroundColor = .white
-                                navVC.toolbar.isHidden = true
-                                navVC.navigationBar.tintColor = .black
-                                navVC.navigationBar.backgroundColor = .white
-                                navVC.navigationBar.shadowImage = UIImage()
-                                navVC.navigationBar.isTranslucent = false
-                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
-                                navVC.modalPresentationStyle = .fullScreen
-                                self?.present(navVC, animated: true, completion: nil)
-                            }
-                            showCropVC(photo: photo, completion: completion)
-                        case .video(_):
-                            break
-                        }
+                        self?.didSelect(items: [item], draftItem: nil, clickType: 3)
+//                        if self?.picker.libraryVC?.isSaveAsDraft == true{
+//                            self?.didSelect(items: [item], draftItem: nil, clickType: 4)
+//                        }else{
+//                            self?.didSelect(items: [item], draftItem: nil, clickType: 2)
+//                        }
                         return
                     }
                     else if self?.picker.libraryVC?.fromCropClick == true{
@@ -201,81 +178,73 @@ override open func viewDidLoad() {
                         return
                     }
                     else{
-                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { clickTyp, _, items in
-                            self?.didSelect(items: items, draftItem:nil, clickType: clickTyp)
-                        }
-                        
-                        let item = items.first!
-                        var size = CGSize()
-                        switch item {
-                        case .photo(let photo):
-                            let sideMargin: CGFloat = 24
-                            let overlapppingNextPhoto: CGFloat = 37
-                            let screenWidth = YPImagePickerConfiguration.screenWidth
-                            let s = screenWidth - (sideMargin + overlapppingNextPhoto)
-                            if items.count > 1 {
-                                size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
-                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
-                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
-                                    selectionsGalleryVC.cropWidth = s
-                                    selectionsGalleryVC.cropHeight = s * ratio
-                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
-                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
-                                    if ratio < 1.25 {
-                                        selectionsGalleryVC.cropWidth = s
-                                        selectionsGalleryVC.cropHeight = s
-                                        selectionsGalleryVC.v.collectionView.height(s + 70)
-                                    }else if ratio == 1.25 {
-                                        selectionsGalleryVC.cropWidth = s
-                                        selectionsGalleryVC.cropHeight = s
-                                        selectionsGalleryVC.v.collectionView.height(s + 70)
-                                    }else{
-                                        selectionsGalleryVC.cropWidth = s
-                                        selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetWidth)!
-                                        selectionsGalleryVC.v.collectionView.height((self?.picker.libraryVC?.targetWidth)! + 70)
-                                    }
-                                }else{
-                                    selectionsGalleryVC.cropWidth = s
-                                    selectionsGalleryVC.cropHeight = s
-                                    selectionsGalleryVC.v.collectionView.height(s + 70)
-                                }
-                            }else{
-                                size = self!.calculateSingleImageSize(image: photo.image, size: s)
-                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
-                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
-                                    selectionsGalleryVC.cropWidth = s
-                                    selectionsGalleryVC.cropHeight = s * ratio
-                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
-                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
-                                    selectionsGalleryVC.cropWidth = size.width
-                                    selectionsGalleryVC.cropHeight = size.height
-                                    selectionsGalleryVC.v.collectionView.height(size.height + 70)
-                                }else{
-                                    selectionsGalleryVC.cropWidth = s
-                                    selectionsGalleryVC.cropHeight = s
-                                    selectionsGalleryVC.v.collectionView.height(s + 70)
-                                }
+                        let images = self!.arrangeArtworkData(items: items)
+                        self?.didSelect(items: images, draftItem:nil, clickType: 3)
+//                        let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: items)) { clickTyp, _, items in
+//                            self?.didSelect(items: items, draftItem:nil, clickType: clickTyp)
+//                        }
+//
+//                        let item = items.first!
+//                        var size = CGSize()
+//                        switch item {
+//                        case .photo(let photo):
+//                            let sideMargin: CGFloat = 24
+//                            let overlapppingNextPhoto: CGFloat = 37
+//                            let screenWidth = YPImagePickerConfiguration.screenWidth
+//                            let s = screenWidth - (sideMargin + overlapppingNextPhoto)
+//                            if items.count > 1 {
+//                                if photo.asset == nil{
+//                                    size = self!.calculateSize(width: Int(photo.image.size.width), height: Int(photo.image.size.height))
+//                                }else{
+//                                    size = self!.calculateSize(width: photo.asset!.pixelWidth, height: photo.asset!.pixelHeight)
+//                                }
+//
 //                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
-//                                size = self!.calculateSingleImageSize(image: photo.image, size: s)
 //                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
-//                                    selectionsGalleryVC.cropWidth = size.width
-//                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC!.targetHeight)! - 34
-//                                    selectionsGalleryVC.v.collectionView.height((self?.picker.libraryVC?.targetHeight)! + 70)
+//                                    selectionsGalleryVC.cropWidth = s
+//                                    selectionsGalleryVC.cropHeight = s * ratio
+//                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
+//                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
+//                                    if ratio < 1.25 {
+//                                        selectionsGalleryVC.cropWidth = s
+//                                        selectionsGalleryVC.cropHeight = s
+//                                        selectionsGalleryVC.v.collectionView.height(s + 70)
+//                                    }else if ratio == 1.25 {
+//                                        selectionsGalleryVC.cropWidth = s
+//                                        selectionsGalleryVC.cropHeight = s
+//                                        selectionsGalleryVC.v.collectionView.height(s + 70)
+//                                    }else{
+//                                        selectionsGalleryVC.cropWidth = s
+//                                        selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetWidth)!
+//                                        selectionsGalleryVC.v.collectionView.height((self?.picker.libraryVC?.targetWidth)! + 70)
+//                                    }
+//                                }else{
+//                                    selectionsGalleryVC.cropWidth = s
+//                                    selectionsGalleryVC.cropHeight = s
+//                                    selectionsGalleryVC.v.collectionView.height(s + 70)
+//                                }
+//                            }else{
+//                                size = self!.calculateSingleImageSize(image: photo.image, size: s)
+//                                let ratio = CGFloat(Double((self?.picker.libraryVC?.targetHeight)!) / Double((self?.picker.libraryVC?.targetWidth)!))
+//                                if (self?.picker.libraryVC?.targetWidth)! > (self?.picker.libraryVC?.targetHeight)!{
+//                                    selectionsGalleryVC.cropWidth = s
+//                                    selectionsGalleryVC.cropHeight = s * ratio
+//                                    selectionsGalleryVC.v.collectionView.height((s * ratio) + 70)
 //                                }else if (self?.picker.libraryVC?.targetWidth)! < (self?.picker.libraryVC?.targetHeight)!{
 //                                    selectionsGalleryVC.cropWidth = size.width
 //                                    selectionsGalleryVC.cropHeight = size.height
 //                                    selectionsGalleryVC.v.collectionView.height(size.height + 70)
 //                                }else{
-//                                    selectionsGalleryVC.cropWidth = (self?.picker.libraryVC?.targetWidth)! - 52
-//                                    selectionsGalleryVC.cropHeight = (self?.picker.libraryVC?.targetHeight)! - 52
-//                                    selectionsGalleryVC.v.collectionView.heightEqualsWidth()
+//                                    selectionsGalleryVC.cropWidth = s
+//                                    selectionsGalleryVC.cropHeight = s
+//                                    selectionsGalleryVC.v.collectionView.height(s + 70)
 //                                }
-                            }
-                          
-                        case .video(_):break
-                        }
-
-                        self?.pushViewController(selectionsGalleryVC, animated: true)
+//                            }
+//
+//                        case .video(_):break
+//                        }
+//
+//                        self?.pushViewController(selectionsGalleryVC, animated: true)
                         return
                     }
                     

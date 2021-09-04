@@ -34,7 +34,6 @@ extension CGImage {
                                          y: outputSize.height / cropSize.height)
         uiCoords = uiCoords.translatedBy(x: cropSize.width.half, y: cropSize.height.half)
         uiCoords = uiCoords.scaledBy(x: 1.0, y: -1.0)
-        
         context?.concatenate(uiCoords)
         context?.concatenate(transform)
         context?.scaleBy(x: 1.0, y: -1.0)

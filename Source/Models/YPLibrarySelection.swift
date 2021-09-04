@@ -12,6 +12,7 @@ struct YPLibrarySelection {
     let index: Int
     var cropRect: CGRect?
     var cutWidth: CGFloat
+    var croppedImage: UIImage?
     var cutHeight: CGFloat
     var scrollViewContentOffset: CGPoint?
     var scrollViewZoomScale: CGFloat?
@@ -21,7 +22,7 @@ struct YPLibrarySelection {
          cropRect: CGRect? = nil,
          scrollViewContentOffset: CGPoint? = nil,
          scrollViewZoomScale: CGFloat? = nil,
-         assetIdentifier: String?,cutWidth: CGFloat, cutHeight:CGFloat) {
+         assetIdentifier: String?,cutWidth: CGFloat, cutHeight:CGFloat, croppedImage: UIImage? = nil) {
         self.index = index
         self.cropRect = cropRect
         self.scrollViewContentOffset = scrollViewContentOffset
@@ -29,5 +30,6 @@ struct YPLibrarySelection {
         self.assetIdentifier = assetIdentifier
         self.cutWidth = cutWidth
         self.cutHeight = cutHeight
+        self.croppedImage = croppedImage
     }
 }

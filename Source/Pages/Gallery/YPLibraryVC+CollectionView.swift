@@ -77,7 +77,11 @@ extension YPLibraryVC {
         multipleSelectionButtonTapped()
         
         // Update preview.
-        changeAsset(mediaManager.fetchResult[indexPath.row])
+        if indexPath.row == 0{
+            changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: croppedimage)
+        }else{
+            changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: nil)
+        }
         
         // Bring preview down and keep selected cell visible.
         panGestureHelper.resetToOriginalState()
@@ -212,6 +216,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                     if cell.representedAssetIdentifier == asset.localIdentifier && image != nil {
                                         cell.imageView.image = image
                                     }
+
             }
    
         let isVideo = (asset.mediaType == .video)
@@ -230,7 +235,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
                                                       assetIdentifier: currentSelection.assetIdentifier,
                                                       cutWidth: v.leftMaskHeight.constant,
-                                                      cutHeight: v.topMaskHeight.constant)
+                                                      cutHeight: v.topMaskHeight.constant,
+                                                      croppedImage: currentSelection.croppedImage)
             }
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
         } else {

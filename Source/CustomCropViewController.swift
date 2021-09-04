@@ -123,21 +123,22 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func showArtworks(imageCrop : UIImage){
-        var artworkSetArray : [YPMediaItem] = []
-        artworkSetArray.append(YPMediaItem.photo(p: YPMediaPhoto(image: imageCrop)))
-        if artworkSetArray.count > 0 {
-            let gallery = YPSelectionsGalleryVC(items: artworkSetArray) { _, g, _ in
-                g.dismiss(animated: true, completion: nil)
-            }
-            let navC = UINavigationController(rootViewController: gallery)
-            self.present(navC, animated: true, completion: nil)
-        } else {
-            print("No items selected yet.")
-        }
-    }
+//    func showArtworks(imageCrop : UIImage){
+//        var artworkSetArray : [YPMediaItem] = []
+//        artworkSetArray.append(YPMediaItem.photo(p: YPMediaPhoto(image: imageCrop)))
+//        if artworkSetArray.count > 0 {
+//            let gallery = YPSelectionsGalleryVC(items: artworkSetArray) { _, g, _ in
+//                g.dismiss(animated: true, completion: nil)
+//            }
+//            let navC = UINavigationController(rootViewController: gallery)
+//            self.present(navC, animated: true, completion: nil)
+//        } else {
+//            print("No items selected yet.")
+//        }
+//    }
     
-    func fetchImagePreview(previewImage : UIImage){
+
+    func fetchImagePreview(previewImage: UIImage) {
         self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame, image: previewImage)
        // didFinishCropping?(previewImage)
         self.dismiss(animated: true, completion: nil)
@@ -161,9 +162,9 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
 
     override open func customCanvasInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0.0,
+        return UIEdgeInsets(top: 44,
                             left: 0,
-                            bottom: 44,
+                            bottom: 0,
                             right: 0)
     }
 }
@@ -187,7 +188,8 @@ extension CustomCropViewController: HorizontalDialDelegate {
 extension CustomCropViewController: IGRPhotoTweakViewControllerDelegate{
     func photoTweaksController(_ controller: IGRPhotoTweakViewController, didFinishWithCroppedImage croppedImage: UIImage) {
         if fromCamera {
-            self.showArtworks(imageCrop: croppedImage)
+            self.didFinishCropping?(croppedImage)
+           // self.showArtworks(imageCrop: croppedImage)
         }else{
             self.fetchImagePreview(previewImage: croppedImage)
         }
