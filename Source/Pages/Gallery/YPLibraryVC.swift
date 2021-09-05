@@ -310,35 +310,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     func openCameraButtonTapped() {
          doAfterPermissionCheck { [weak self] in
             if self != nil {
-                self?.fromCamera = true
-//                self!.didCapturePhoto?(UIImage(named: "img_dummy")!)
-                let selectedAssets: [(asset: PHAsset, cropRect: CGRect?, cutHeight:CGFloat, cutWidth:CGFloat?)] = self!.selection.map {
-                    guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
-                                                          options: PHFetchOptions()).firstObject else { fatalError() }
-                    return (asset, $0.cropRect,$0.cutHeight,$0.cutWidth)
+                let sourceType:UIImagePickerController.SourceType = UIImagePickerController.SourceType.camera
+                if UIImagePickerController.isSourceTypeAvailable(
+                    UIImagePickerController.SourceType.camera){
+                    self!.cameraPicker.sourceType = sourceType
+                    self!.cameraPicker.delegate = self
+                    self!.cameraPicker.modalPresentationStyle = .fullScreen
+                    self?.present(self!.cameraPicker, animated: false)
                 }
-                var imageCrop = UIImage()
-                self?.fetchImageAndCrop(for: selectedAssets[0].asset,
-                                        withCropRect: selectedAssets[0].cropRect,
-                                        cutWidth: selectedAssets[0].cutWidth!,
-                                        cutHeight: selectedAssets[0].cutHeight,
-                                        callback: { image, exifMeta in
-                    imageCrop = image
-                })
-                let cropVC = CustomCropViewController(item:imageCrop)
-                cropVC.fromCamera = true
-                cropVC.didFinishCropping = { croppedImage in
-                    self?.showArtworks(imageCrop: croppedImage)
-                }
-                self?.navigationController?.pushViewController(cropVC, animated: true)
-//                let sourceType:UIImagePickerController.SourceType = UIImagePickerController.SourceType.camera
-//                if UIImagePickerController.isSourceTypeAvailable(
-//                    UIImagePickerController.SourceType.camera){
-//                    self!.cameraPicker.sourceType = sourceType
-//                    self!.cameraPicker.delegate = self
-//                    self!.cameraPicker.modalPresentationStyle = .fullScreen
-//                    self?.present(self!.cameraPicker, animated: false)
-//                }
             }
         }
     }
@@ -347,10 +326,26 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         if let pickedImage = info[.originalImage] as? UIImage {
             self.fromCamera = true
             self.fromCropClick = false
-   //         self.didCapturePhoto?(pickedImage)
-//            let cropVC = CustomCropViewController(item:pickedImage)
-//            cropVC.fromCamera = true
-//            self.navigationController?.pushViewController(cropVC, animated: true)
+//                self!.didCapturePhoto?(UIImage(named: "img_dummy")!)
+//            let selectedAssets: [(asset: PHAsset, cropRect: CGRect?, cutHeight:CGFloat, cutWidth:CGFloat?)] = self.selection.map {
+//                guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
+//                                                      options: PHFetchOptions()).firstObject else { fatalError() }
+//                return (asset, $0.cropRect,$0.cutHeight,$0.cutWidth)
+//            }
+//            var imageCrop = UIImage()
+//            self.fetchImageAndCrop(for: selectedAssets[0].asset,
+//                                    withCropRect: selectedAssets[0].cropRect,
+//                                    cutWidth: selectedAssets[0].cutWidth!,
+//                                    cutHeight: selectedAssets[0].cutHeight,
+//                                    callback: { image, exifMeta in
+//                imageCrop = image
+//            })
+            let cropVC = CustomCropViewController(item:pickedImage)
+            cropVC.fromCamera = true
+            cropVC.didFinishCropping = { croppedImage in
+                self.showArtworks(imageCrop: croppedImage)
+            }
+            self.navigationController?.pushViewController(cropVC, animated: true)
         }
         self.dismiss(animated: true, completion: nil)
     }
