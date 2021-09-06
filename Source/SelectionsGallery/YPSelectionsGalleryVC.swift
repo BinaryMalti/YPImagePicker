@@ -61,6 +61,14 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         let cropped:UIImage = UIImage(cgImage:imageRef)
         return cropped
     }
+    
+    open override func viewWillAppear(_ animated: Bool) {
+        if isFromEdit {
+            self.addBackButtonItem(title: "My Dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        }else{
+            self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        }
+    }
 
     override open func viewDidLoad() {
         super.viewDidLoad()
