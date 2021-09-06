@@ -35,7 +35,7 @@ class YPSelectionsGalleryView: UIView {
             |collectionView|
             |viewB|
         }
-        collectionView.CenterY == CenterY - 50
+        collectionView.CenterY == CenterY - 60
         alignVertically(viewB, with: collectionView)
         viewB.backgroundColor = UIColor.red
         // Apply style
