@@ -17,5 +17,6 @@ class YPGalleryBottomView: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        pictureLabel.font = YPConfig.fonts.galleryNoteFont
     }
 }

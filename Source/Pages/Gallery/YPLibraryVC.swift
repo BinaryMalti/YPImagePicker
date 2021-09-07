@@ -192,6 +192,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        v.imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         v.cropImageButton.addTarget(self,
                                     action: #selector(cropButtonTapped),
                                     for: .touchUpInside)
@@ -1102,6 +1103,7 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
     return YPConfig.dropdownArray.count
 }
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.v.imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         self.v.imageDropDownTextField.text = YPConfig.dropdownArray[row]
         if (YPConfig.dropdownArray[row] == "Draft"){
             isFirstTime = true

@@ -7,6 +7,11 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Barlow-Medium.ttf">
+            <string>Barlow-Medium</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -111,7 +116,7 @@
                             <constraints>
                                 <constraint firstAttribute="width" constant="80" id="mAL-iE-nqC"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <fontDescription key="fontDescription" name="Barlow-Medium" family="Barlow" pointSize="14"/>
                             <textInputTraits key="textInputTraits"/>
                         </textField>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_down_black_Arrow" translatesAutoresizingMaskIntoConstraints="NO" id="7Uo-5b-dtc">
@@ -170,10 +175,10 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bjP-gr-9v3">
-                    <rect key="frame" x="0.0" y="500" width="400" height="50"/>
+                    <rect key="frame" x="0.0" y="490" width="400" height="60"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mDn-6o-JBe" userLabel="back">
-                            <rect key="frame" x="16" y="5" width="40" height="40"/>
+                            <rect key="frame" x="16" y="5" width="40" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="40" id="DN8-qp-0Ze"/>
                             </constraints>
@@ -181,7 +186,7 @@
                             <state key="normal" image="ic_left_arrow"/>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hjm-CE-one" userLabel="forward">
-                            <rect key="frame" x="344" y="5" width="40" height="40"/>
+                            <rect key="frame" x="344" y="5" width="40" height="50"/>
                             <color key="tintColor" red="0.3411764706" green="0.4823529412" blue="0.87450980389999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal" image="ic_right_arrow"/>
                         </button>
@@ -195,7 +200,7 @@
                         <constraint firstItem="mDn-6o-JBe" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" constant="5" id="its-AD-TTG"/>
                         <constraint firstItem="hjm-CE-one" firstAttribute="width" secondItem="mDn-6o-JBe" secondAttribute="width" id="olH-uZ-Qth"/>
                         <constraint firstItem="hjm-CE-one" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" constant="5" id="pRj-qV-a7T"/>
-                        <constraint firstAttribute="height" constant="50" id="v3u-Pa-4Cy"/>
+                        <constraint firstAttribute="height" constant="60" id="v3u-Pa-4Cy"/>
                     </constraints>
                 </view>
                 <pickerView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zLo-M9-LhG" userLabel="dropdownPickerView">

@@ -44,7 +44,7 @@ public class YPSelectionsGalleryCell: UICollectionViewCell {
         countLabel.top(-40)
         countLabel.height(25)
         countLabel.Bottom == imageView.Top
-        countLabel.bottom(5)
+        countLabel.bottom(25)
         imageView.fillContainer()
         removeButton.top(12).trailing(12)
         removeButton.isHidden = true

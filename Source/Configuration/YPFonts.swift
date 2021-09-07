@@ -13,6 +13,9 @@ public struct YPFonts {
     /// The font used in the picker title
     public var pickerTitleFont: UIFont = .boldSystemFont(ofSize: 17)
     
+    /// The font used in the galler bottom note
+    public var galleryNoteFont: UIFont = .boldSystemFont(ofSize: 14)
+    
     /// The font used in the picker title
     public var saveAsDraftFont: UIFont = .boldSystemFont(ofSize: 17)
 

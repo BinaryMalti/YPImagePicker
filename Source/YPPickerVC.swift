@@ -436,8 +436,8 @@ extension UIViewController {
         backMenu.sizeToFit()
         backMenu.contentHorizontalAlignment = .left
         backMenu.tintColor = .black
-        backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
+        backMenu.imageEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
+        backMenu.titleEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
         backMenu.setTitleColor(.black, for: .normal)
         backMenu.titleLabel?.font = YPConfig.fonts.leftBarButtonFont
         backMenu.titleLabel!.textColor = .black

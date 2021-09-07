@@ -219,7 +219,7 @@ public struct YPConfigLibrary {
     public var numberOfItemsInRow: Int = 4
 
     /// Set the spacing between items in collection view. Defaults to 1.0.
-    public var spacingBetweenItems: CGFloat = 1.0
+    public var spacingBetweenItems: CGFloat = 1.7
 
     /// Allow to skip the selections gallery when selecting the multiple media items. Defaults to false.
     public var skipSelectionsGallery = false

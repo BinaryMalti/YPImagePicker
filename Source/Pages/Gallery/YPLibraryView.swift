@@ -58,7 +58,6 @@ final class YPLibraryView: UIView {
         )
         
         line.backgroundColor = .ypSystemBackground
-        imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         multiselectCountLabel.font = YPConfig.fonts.multipleSelectionIndicatorFont
         setupMaxNumberOfItemsView()
         setupProgressBarView()
