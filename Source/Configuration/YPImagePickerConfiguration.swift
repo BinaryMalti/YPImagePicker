@@ -27,6 +27,8 @@ public struct YPImagePickerConfiguration {
         return screenWidth
     }
     
+    
+    
     public init() {}
     
     /// Scroll to change modes, defaults to true

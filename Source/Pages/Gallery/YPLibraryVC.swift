@@ -126,39 +126,40 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         createImagePicker()
         v.maxNumberWarningLabel.text = String(format: YPConfig.wordings.warningMaxItemsLimit,
                                               YPConfig.library.maxNumberOfItems)
-        if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
-            selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
-                var itemAsset: PHAsset?
-                switch item {
-                case .photo(let photo):
-                    if photo.asset == nil {
-                        itemAsset =  mediaManager.fetchResult[0]
-                    }else{
-                        itemAsset = photo.asset}
-                    singleImage = photo.image
-                case .video(let video):
-                    itemAsset = video.asset
-                }
-                guard let asset = itemAsset else {
-                    return nil
-                }
-                
-                // The negative index will be corrected in the collectionView:cellForItemAt:
-                return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
-                            }
-            v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
-            v.collectionView.reloadData()
+        if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
+            showMultipleSelection()
+        }
+
+//        if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
+//            selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
+//                var itemAsset: PHAsset?
+//                switch item {
+//                case .photo(let photo):
+//                    if photo.asset == nil {
+//                        itemAsset =  mediaManager.fetchResult[0]
+//                    }else{
+//                        itemAsset = photo.asset}
+//                    singleImage = photo.image
+//                case .video(let video):
+//                    itemAsset = video.asset
+//                }
+//                guard let asset = itemAsset else {
+//                    return nil
+//                }
+//
+//                // The negative index will be corrected in the collectionView:cellForItemAt:
+//                return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
+//                            }
+//            v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
+//            v.collectionView.reloadData()
+//        }
+        if v.showDraftImages || YPConfig.showDrafts{
+            self.multipleSelectionEnabled = false
         }
         guard mediaManager.hasResultItems else {
             return
         }
-        if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
-            showMultipleSelection()
-        }
-        if v.showDraftImages || YPConfig.showDrafts{
-            self.multipleSelectionEnabled = false
-        }
-
+       
     }
     
     let picker = UIPickerView()
@@ -295,12 +296,11 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         doAfterPermissionCheck { [weak self] in
             if let self = self {
                 if !self.multipleSelectionEnabled {
-                    self.v.topMaskHeight.constant = 0
-                    self.v.bottomMaskHeight.constant = 0
-                    self.v.leftMaskHeight.constant = 0
-                    self.v.rightMaskHeight.constant = 0
-                    self.selection.removeAll()
-                }else{
+                                    self.v.topMaskHeight.constant = 0
+                                    self.v.bottomMaskHeight.constant = 0
+                                    self.v.leftMaskHeight.constant = 0
+                                    self.v.rightMaskHeight.constant = 0
+                                    self.selection.removeAll()
                 }
                 self.showMultipleSelection()
             }
@@ -327,20 +327,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         if let pickedImage = info[.originalImage] as? UIImage {
             self.fromCamera = true
             self.fromCropClick = false
-//                self!.didCapturePhoto?(UIImage(named: "img_dummy")!)
-//            let selectedAssets: [(asset: PHAsset, cropRect: CGRect?, cutHeight:CGFloat, cutWidth:CGFloat?)] = self.selection.map {
-//                guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
-//                                                      options: PHFetchOptions()).firstObject else { fatalError() }
-//                return (asset, $0.cropRect,$0.cutHeight,$0.cutWidth)
-//            }
-//            var imageCrop = UIImage()
-//            self.fetchImageAndCrop(for: selectedAssets[0].asset,
-//                                    withCropRect: selectedAssets[0].cropRect,
-//                                    cutWidth: selectedAssets[0].cutWidth!,
-//                                    cutHeight: selectedAssets[0].cutHeight,
-//                                    callback: { image, exifMeta in
-//                imageCrop = image
-//            })
             let cropVC = CustomCropViewController(item:pickedImage)
             cropVC.fromCamera = true
             cropVC.didFinishCropping = { croppedImage in
@@ -368,39 +354,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         artworkSetArray.append(YPMediaItem.photo(p: ypImage))
         if artworkSetArray.count > 0 {
             self.didCapturePhoto?(artworkSetArray.first!)
-//            let gallery = YPSelectionsGalleryVC(items: artworkSetArray) { clickType, g, item in
-//                if clickType == 4 {
-//                    self.isSaveAsDraft = true
-//                }else{
-//                    self.isSaveAsDraft = false
-//                }
-//                self.didCapturePhoto?(item.first!)
-//
-//                // navigation stack
-//                // dashboard . reorder
-//                // titlle
-//            }
-//            let sideMargin: CGFloat = 20
-//            let overlapppingNextPhoto: CGFloat = 37
-//            let screenWidth = YPImagePickerConfiguration.screenWidth
-//            let s = screenWidth - (sideMargin + overlapppingNextPhoto)
-//           let  size = calculateSingleImageSize(image: ypImage.image, size: s)
-//            let ratio =  ypImage.image.size.height /  ypImage.image.size.width
-//            if ypImage.image.size.width > ypImage.image.size.height{
-//                gallery.cropWidth = s + 20
-//                gallery.cropHeight = s * ratio
-//                gallery.v.collectionView.height((s * ratio) + 70)
-//            }else if ypImage.image.size.width < ypImage.image.size.height{
-//                gallery.cropWidth = size.width
-//                gallery.cropHeight = size.height
-//                gallery.v.collectionView.height(size.height + 70)
-//            }else{
-//                gallery.cropWidth = s
-//                gallery.cropHeight = s
-//                gallery.v.collectionView.height(s + 70)
-//            }
-//            gallery.fromCamera = true
-//            self.navigationController?.pushViewController(gallery, animated: true)
         } else {
             print("No items selected yet.")
         }
@@ -450,6 +403,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
 
             }
         } else {
+            self.v.topMaskHeight.constant = 0
+            self.v.bottomMaskHeight.constant = 0
+            self.v.leftMaskHeight.constant = 0
+            self.v.rightMaskHeight.constant = 0
             self.isFirstTime = true
             selection.removeAll()
             if !YPConfig.showDrafts{
@@ -585,6 +542,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     }
     
     var isFirstTime = true
+    var calledOnce = false
     func changeAsset(_ asset: PHAsset,cropImage: UIImage? = nil) {
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
@@ -594,41 +552,50 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             self.singleImage = self.v.assetZoomableView.assetImageView.image
             if self.multipleSelectionEnabled{
                 if self.isFirstTime{
+                    self.calledOnce = true
                     self.isFirstTime = false
+                    self.v.assetZoomableView.fitImage(false)
                 self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                 self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
-                    if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
-                    {
-//                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-//                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                        let ratio = self.v.assetZoomableView.assetImageView.frame.width / self.v.assetZoomableView.assetImageView.frame.height
-                        if ratio < 1.25 {
-                            self.targetWidth = self.v.assetZoomableView.frame.width
-                            self.targetHeight = self.v.assetZoomableView.frame.width * 1.25
-                        }else{
-                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
-                        }
-                    }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
-                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    }else{
-                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    }
-                self.view.setNeedsLayout()
+                    let targetSize =  self.calculateSingleImageSize(imageWidth: self.v.assetZoomableView.assetImageView.frame.width, imageHeight: self.v.assetZoomableView.assetImageView.frame.height, size: self.v.assetZoomableView.assetImageView.frame.width)
+                      self.targetWidth = targetSize.width
+                      self.targetHeight = targetSize.height
                 }else{
                     if self.selection.count > 1{
                             self.v.assetZoomableView.fitImage(true)
                             self.v.assetZoomableView.layoutSubviews()
+                    }else{
+                        if !self.calledOnce{
+                        self.v.leftMaskHeight.constant = 0
+                        self.v.rightMaskHeight.constant = 0
+                        self.v.bottomMaskHeight.constant = 0
+                        self.v.topMaskHeight.constant = 0
+                        self.v.assetZoomableView.fitImage(false)
+                        self.v.assetZoomableView.layoutSubviews()
+                        self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
+                        self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
+                        }else{
+                            self.v.assetZoomableView.fitImage(false)
+                            self.v.assetZoomableView.layoutSubviews()
+                            self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
+                            self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
+                            
+                        }
                     }
                 }
             }else{
+                self.v.leftMaskHeight.constant = 0
+                self.v.rightMaskHeight.constant = 0
+                self.v.bottomMaskHeight.constant = 0
+                self.v.topMaskHeight.constant = 0
+                self.v.assetZoomableView.fitImage(false)
+                self.v.assetZoomableView.layoutSubviews()
                 self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
                 self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
             }
+            self.view.setNeedsLayout()
 
             self.updateCropInfo()
             if !isLowResIntermediaryImage {
@@ -645,7 +612,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         DispatchQueue.global(qos: .userInitiated).async {
             switch asset.mediaType {
             case .image:
-                if cropImage != nil{
+                if cropImage != nil {
                     DispatchQueue.main.async {
                         self.v.assetZoomableView.setDraftImage(cropImage!, completion: completion, updateCropInfo: updateCropInfo)}
                 }else{
@@ -669,6 +636,32 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
     }
     
+    func calculateSingleImageSize(imageWidth: CGFloat,imageHeight:CGFloat,size: CGFloat) -> CGSize {
+        var width: CGFloat = 0.0
+        var height: CGFloat = 0.0
+        if imageWidth < imageHeight {
+            let requireHeight = view.frame.height/2.0
+            let requireWidth  = (requireHeight * imageWidth) / imageHeight
+            let ratio = imageWidth/imageHeight
+            if ratio < 0.8{
+                width = requireWidth
+                height = CGFloat(requireHeight)
+            }else{
+                width = requireWidth
+                height = CGFloat(requireHeight)
+            }
+        } else if imageWidth > imageHeight {
+            let requireWidth  = size - 75.0
+            let requireHeight = (requireWidth * imageHeight) / imageWidth
+            width = CGFloat(requireWidth)
+            height =  requireHeight
+        } else {
+            width = size
+            height = size
+        }
+        return CGSize(width: width, height: height)
+    }
+    
     func changeAssetDraft(_ asset: UIImage) {
        // latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
@@ -685,25 +678,26 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                 self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
-                    if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
-                    {
+                  let targetSize =  self.calculateSingleImageSize(imageWidth: self.v.assetZoomableView.assetImageView.frame.width, imageHeight: self.v.assetZoomableView.assetImageView.frame.height, size: self.v.assetZoomableView.assetImageView.frame.width)
+                    self.targetWidth = targetSize.width
+                    self.targetHeight = targetSize.height
+//                    if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
+//                    {
+//                        let ratio = self.v.assetZoomableView.assetImageView.frame.width / self.v.assetZoomableView.assetImageView.frame.height
+//                        if ratio < 0.8 {
+//                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+//                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * 1.25
+//                        }else{
+//                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+//                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
+//                        }
+//                    }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
 //                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
 //                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                        let ratio = self.v.assetZoomableView.assetImageView.frame.width / self.v.assetZoomableView.assetImageView.frame.height
-                        if ratio < 1.25 {
-                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * 1.25
-                        }else{
-                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
-                        }
-                    }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
-                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    }else{
-                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    }
+//                    }else{
+//                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
+//                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
+//                    }
   
                 self.view.setNeedsLayout()
                 }else{

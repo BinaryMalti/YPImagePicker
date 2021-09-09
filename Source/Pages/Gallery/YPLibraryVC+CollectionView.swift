@@ -77,11 +77,7 @@ extension YPLibraryVC {
         multipleSelectionButtonTapped()
         
         // Update preview.
-        if indexPath.row == 0{
             changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: croppedimage)
-        }else{
-            changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: nil)
-        }
         
         // Bring preview down and keep selected cell visible.
         panGestureHelper.resetToOriginalState()
@@ -110,16 +106,18 @@ extension YPLibraryVC {
             v.collectionView.reloadItems(at: selectedIndexPaths)
             
             // Replace the current selected image with the previously selected one
-            if let previouslySelectedIndexPath = selectedIndexPaths.last {
-                v.collectionView.deselectItem(at: indexPath, animated: false)
-                v.collectionView.selectItem(at: previouslySelectedIndexPath, animated: false, scrollPosition: [])
-                currentlySelectedIndex = previouslySelectedIndexPath.row
-                changeAsset(mediaManager.fetchResult[previouslySelectedIndexPath.row])
-            }
+            if let lastIndex = selection.last?.index {
+                            let previousIndexPath = IndexPath(item: lastIndex, section: 0)
+                            v.collectionView.deselectItem(at: indexPath, animated: false)
+                            v.collectionView.selectItem(at: previousIndexPath, animated: false, scrollPosition: [])
+                            currentlySelectedIndex = previousIndexPath.row
+                            changeAsset(mediaManager.fetchResult[previousIndexPath.row])
+             }
 
             checkLimit()
         }
     }
+    
     
     /// Adds cell to selection
     func addToSelection(indexPath: IndexPath) {
@@ -241,6 +239,10 @@ extension YPLibraryVC: UICollectionViewDelegate {
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
         } else {
             cell.multipleSelectionIndicator.set(number: nil)
+            if  multipleSelectionEnabled && selection.count < 1
+              {
+                  multipleSelectionButtonTapped()
+              }
         }
         }
         // Prevent weird animation where thumbnail fills cell on first scrolls.
@@ -258,7 +260,9 @@ extension YPLibraryVC: UICollectionViewDelegate {
             self.selectedDraftItem = v.draftItem[indexPath.row]
             changeAssetDraft(v.draftItem[indexPath.row].image)
         }else{
-        changeAsset(mediaManager.fetchResult[indexPath.row])
+            if previouslySelectedIndexPath != indexPath {
+               changeAsset(mediaManager.fetchResult[indexPath.row])
+            }
         }
         panGestureHelper.resetToOriginalState()
         

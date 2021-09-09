@@ -85,6 +85,10 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         if collectioViewHeight  != 0.0{
             v.collectionView.height(collectioViewHeight)
         }
+        if items.count == 1{
+          let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
+            layout?.sectionInset = UIEdgeInsets(top: 0, left: (YPImagePickerConfiguration.screenWidth - cropWidth) * 0.5, bottom: 0, right: (YPImagePickerConfiguration.screenWidth - cropWidth) * 0.5)
+        }
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.dragInteractionEnabled = true
@@ -423,50 +427,4 @@ extension YPSelectionsGalleryVC: UICollectionViewDragDelegate, UICollectionViewD
     }
     
     
-}
-class ScaledHeightImageView: UIImageView {
-
-    override var intrinsicContentSize: CGSize {
-
-        if let myImage = self.image {
-            let myImageWidth = myImage.size.width
-            let myImageHeight = myImage.size.height
-            var myViewWidth = self.frame.size.width
-            if myImageWidth > myImageHeight{
-                myViewWidth = myViewWidth - 24
-            }else if myImageWidth < myImageHeight{
-                myViewWidth = myViewWidth - 24
-            }else{
-                myViewWidth = self.frame.size.width
-            }
- 
-            let ratio = myViewWidth/myImageWidth
-            let scaledHeight = myImageHeight * ratio
-
-            return CGSize(width: myViewWidth, height: scaledHeight)
-        }
-
-        return CGSize(width: -1.0, height: -1.0)
-    }
-
-}
-extension UIImageView {
-    var contentClippingRect: CGRect {
-        guard let image = image else { return bounds }
-        guard contentMode == .scaleAspectFit else { return bounds }
-        guard image.size.width > 0 && image.size.height > 0 else { return bounds }
-
-        let scale: CGFloat
-        if image.size.width > image.size.height {
-            scale = bounds.width / image.size.width
-        } else {
-            scale = bounds.height / image.size.height
-        }
-
-        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
-        let x = (bounds.width - size.width) / 2.0
-        let y = (bounds.height - size.height) / 2.0
-
-        return CGRect(x: x, y: y, width: size.width, height: size.height)
-    }
 }

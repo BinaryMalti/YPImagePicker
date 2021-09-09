@@ -101,11 +101,12 @@ final class YPAssetZoomableView: UIScrollView {
                          storedCropPosition: YPLibrarySelection?,
                          completion: @escaping (Bool) -> Void,
                          updateCropInfo: @escaping () -> Void) {
-//        guard currentAsset != photo else {
-//            DispatchQueue.main.async { completion(false) }
-//            return
-//        }
+        guard currentAsset != photo else {
+            DispatchQueue.main.async { completion(false) }
+            return
+        }
         currentAsset = photo
+        
         
         mediaManager.imageManager?.fetch(photo: photo) { [weak self] image, isLowResIntermediaryImage in
             guard let strongSelf = self else { return }
@@ -185,13 +186,13 @@ final class YPAssetZoomableView: UIScrollView {
             aspectRatio = w / h
             view.frame.size.width = screenWidth * aspectRatio
             view.frame.size.height = screenWidth
-            if aspectRatio < 1.25 {
-                zoomScale = (h / w) * 1.25
+            if aspectRatio < 0.8 { // (1/1.25) to calculate the aspect ratio of 1:1.25
+                zoomScale = (h / w) * 0.8
             }
-            if let minWidth = minWidth {
-                let k = minWidth / screenWidth
-                zoomScale = (h / w) * k
-            }
+//            if let minWidth = minWidth {
+//                let k = minWidth / screenWidth
+//                zoomScale = (h / w) * k
+//            }
         } else { // Square
             view.frame.size.width = screenWidth
             view.frame.size.height = screenWidth

@@ -21,7 +21,8 @@ class CustomCropView: UIView {
         straightenImageSlider.enableRange = true
         straightenImageSlider.maximumValue = 100
         straightenImageSlider.minimumValue = -100
-        straightenImageSlider.migneticOption = .none
+        straightenImageSlider.tick = 1.0
+        straightenImageSlider.migneticOption = .ceil
     }
 }
 
