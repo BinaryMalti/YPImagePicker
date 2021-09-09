@@ -153,7 +153,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                 case .photo(let photo):
                     if let name = photo.imageName{
                         let imageProvidr: ImageProvider = .init(image: photo.image) // url, data supported.
-                        let controller = ClassicImageEditViewController(imageProvider: imageProvidr)
+                        var options = ClassicImageEditOptions()
+                          options.croppingAspectRatio = nil
+                        let controller = ClassicImageEditViewController(imageProvider: imageProvidr,options: options)
                         controller.handlers.didEndEditing = { [weak self] controller, stack in
                           guard let self = self else { return }
                           controller.dismiss(animated: true, completion: nil)

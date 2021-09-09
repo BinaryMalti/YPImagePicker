@@ -1,4 +1,3 @@
-
 //
 //  KCHorizontalDial.swift
 //  KCHorizontalDial
@@ -65,9 +64,9 @@ public final class HorizontalDial: UIControl {
     @IBInspectable public var markColor: UIColor = UIColor.white
     @IBInspectable public var markWidth: CGFloat = 1.0
     @IBInspectable public var markRadius: CGFloat = 1.0
-    @IBInspectable public var markCount: Int = 20
+    @IBInspectable public var markCount: Int = 92
     
-    @IBInspectable public var padding: Double = 10 {
+    @IBInspectable public var padding: Double = 20 {
         didSet {
             setNeedsDisplay()
         }
@@ -79,6 +78,8 @@ public final class HorizontalDial: UIControl {
     } // e.g.: top, middle, bottom
     
     public var lock: Bool = false
+    private var minEndReached = false
+    private var maxEndReached = false
     @IBOutlet public weak var delegate: AnyObject?
     
     public var migneticOption: HorizontalDialMagneticOptions = .round
@@ -102,38 +103,35 @@ public final class HorizontalDial: UIControl {
     
     override public func draw(_ rect: CGRect) {
         super.draw(rect)
-        
         guard let ctx = UIGraphicsGetCurrentContext() else { return }
-        for index in 0...markCount {
-            var relativePosition = (CGFloat((frame.width) / CGFloat(markCount)) * CGFloat(index) + CGFloat(slidePosition) - frame.width/2).truncatingRemainder(dividingBy: frame.width)
-            if relativePosition < 0 {
-                relativePosition += frame.width
+        if(value >= minimumValue && value <= maximumValue){
+            for index in 0...markCount {
+                let relativePosition = (CGFloat((frame.width) / CGFloat(markCount)) * CGFloat(index) + CGFloat(slidePosition) - frame.width/2)
+                let screenWidth = (self.bounds.width / 2.0)
+                let alpha = (1.0 - (abs(relativePosition-screenWidth) / screenWidth) ) - 0.5
+                ctx.setFillColor(self.markColor.withAlphaComponent(alpha).cgColor)
+                
+                let x = relativePosition - markWidth/2
+                let width = markWidth
+                var y: CGFloat = 0
+                var height: CGFloat = 0
+                
+                if verticalAlign.contains("top") {
+                    y = 0
+                    height = frame.height - CGFloat(padding*2)
+                } else if verticalAlign.contains("bottom") {
+                    y += CGFloat(padding*2)
+                    height = frame.height - y
+                } else {
+                    y = CGFloat(padding)
+                    height = frame.height - CGFloat(padding*2)
+                }
+                let rect = CGRect(x: x, y: y, width: width, height: height)
+                
+                let path = UIBezierPath(roundedRect: rect, cornerRadius: markRadius)
+                ctx.addPath(path.cgPath)
+                ctx.fillPath()
             }
-            
-            let screenWidth = self.bounds.width / 2.0
-            let alpha = 1.0 - (abs(relativePosition-screenWidth) / screenWidth)
-            ctx.setFillColor(self.markColor.withAlphaComponent(alpha).cgColor)
-            
-            let x = relativePosition - markWidth/2
-            let width = markWidth
-            var y: CGFloat = 0
-            var height: CGFloat = 0
-            
-            if verticalAlign.contains("top") {
-                y = 0
-                height = frame.height - CGFloat(padding*2)
-            } else if verticalAlign.contains("bottom") {
-                y += CGFloat(padding*2)
-                height = frame.height - y
-            } else {
-                y = CGFloat(padding)
-                height = frame.height - CGFloat(padding*2)
-            }
-            let rect = CGRect(x: x, y: y, width: width, height: height)
-            
-            let path = UIBezierPath(roundedRect: rect, cornerRadius: markRadius)
-            ctx.addPath(path.cgPath)
-            ctx.fillPath()
         }
         
         var centerMarkPositionY: CGFloat = 0
@@ -177,6 +175,21 @@ public final class HorizontalDial: UIControl {
         
         previousLocation = location
         
+        let newValue = self.value - deltaValue
+        if(newValue < minimumValue || newValue > maximumValue){
+            if(newValue < minimumValue){
+                self.minEndReached = false
+                self.maxEndReached = true
+                self.value = minimumValue
+            }else{
+                self.minEndReached = true
+                self.maxEndReached = false
+                self.value = maximumValue
+            }
+            return false
+        }
+        self.minEndReached = false
+        self.maxEndReached = false
         self.value -= deltaValue
         
         return true

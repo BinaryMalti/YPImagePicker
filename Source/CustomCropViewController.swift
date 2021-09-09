@@ -76,7 +76,7 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
     
     fileprivate func setupAngleLabelValue(radians: CGFloat) {
-        let intDegrees: Int = Int(IGRRadianAngle.toDegrees(radians)/0.45)
+        let intDegrees: Int = Int(IGRRadianAngle.toDegrees(radians))
         self.v.angleLabel.text = "\(intDegrees)"
     }
     
@@ -171,7 +171,7 @@ class CustomCropViewController: IGRPhotoTweakViewController {
 
 extension CustomCropViewController: HorizontalDialDelegate {
     func horizontalDialDidValueChanged(_ horizontalDial: HorizontalDial) {
-        let degrees = horizontalDial.value * 0.45
+        let degrees = horizontalDial.value
         let radians = IGRRadianAngle.toRadians(CGFloat(degrees))
         self.setupAngleLabelValue(radians: radians)
         self.changeAngle(radians: radians)

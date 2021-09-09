@@ -19,8 +19,8 @@ class CustomCropView: UIView {
     override func awakeFromNib() {
         super.awakeFromNib()
         straightenImageSlider.enableRange = true
-        straightenImageSlider.maximumValue = 100
-        straightenImageSlider.minimumValue = -100
+        straightenImageSlider.maximumValue = 45
+        straightenImageSlider.minimumValue = -45
         straightenImageSlider.tick = 1.0
         straightenImageSlider.migneticOption = .ceil
     }
