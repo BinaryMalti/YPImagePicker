@@ -545,6 +545,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     var isFirstTime = true
     var calledOnce = false
+    var contentSize : CGSize = CGSize(width: 0, height: 0)
+
     func changeAsset(_ asset: PHAsset,cropImage: UIImage? = nil) {
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
@@ -565,11 +567,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     let targetSize =  self.calculateSingleImageSize(imageWidth: self.v.assetZoomableView.assetImageView.frame.width, imageHeight: self.v.assetZoomableView.assetImageView.frame.height, size: self.v.assetZoomableView.assetImageView.frame.width)
                       self.targetWidth = targetSize.width
                       self.targetHeight = targetSize.height
+                    self.contentSize = self.v.assetZoomableView.contentSize
                 }else{
                     if self.selection.count > 1{
+                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                             self.v.assetZoomableView.fitImage(true)
                             self.v.assetZoomableView.layoutSubviews()
-                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                     }else{
                         if !self.calledOnce{
                         self.v.leftMaskHeight.constant = 0
@@ -842,36 +845,11 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                    callback: @escaping (_ photo: UIImage, _ exif: [String: Any]) -> Void) {
         delegate?.libraryViewDidTapNext()
         let cropRect = withCropRect ?? DispatchQueue.main.sync { v.currentCropRect() }
-        let ts = targetSize(for: asset, cropRect: cropRect)
+        let ts = targetSize(for: asset, cropRect: cropRect,cutWidth: cutWidth,cutHeight: cutHeight)
         mediaManager.imageManager?.fetchImage(for: asset, cropRect: cropRect,cutWidth: cutWidth,cutHeight: cutHeight, targetSize: ts, callback: callback)
     }
     
-    private func fetchVideoAndApplySettings(for asset: PHAsset,
-                                            withCropRect rect: CGRect? = nil,
-                                            callback: @escaping (_ videoURL: URL?) -> Void) {
-        let normalizedCropRect = rect ?? DispatchQueue.main.sync { v.currentCropRect() }
-        let ts = targetSize(for: asset, cropRect: normalizedCropRect)
-        let xCrop: CGFloat = normalizedCropRect.origin.x * CGFloat(asset.pixelWidth)
-        let yCrop: CGFloat = normalizedCropRect.origin.y * CGFloat(asset.pixelHeight)
-        let resultCropRect = CGRect(x: xCrop,
-                                    y: yCrop,
-                                    width: ts.width,
-                                    height: ts.height)
-        
-        guard fitsVideoLengthLimits(asset: asset) else {
-            return
-        }
-        
-        if YPConfig.video.automaticTrimToTrimmerMaxDuration {
-            fetchVideoAndCropWithDuration(for: asset,
-                                          withCropRect: resultCropRect,
-                                          duration: YPConfig.video.trimmerMaxDuration,
-                                          callback: callback)
-        } else {
-            delegate?.libraryViewDidTapNext()
-            mediaManager.fetchVideoUrlAndCrop(for: asset, cropRect: resultCropRect, callback: callback)
-        }
-    }
+  
     
     private func fetchVideoAndCropWithDuration(for asset: PHAsset,
                                                withCropRect rect: CGRect,
@@ -974,17 +952,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                             }
                             
                         case .video:
-                            self.fetchVideoAndApplySettings(for: asset.asset,
-                                                                 withCropRect: asset.cropRect) { videoURL in
-                                if let videoURL = videoURL {
-                                    let videoItem = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
-                                                                 videoURL: videoURL, asset: asset.asset)
-                                    resultMediaItems.append(YPMediaItem.video(v: videoItem))
-                                } else {
-                                    print("YPLibraryVC -> selectedMedia -> Problems with fetching videoURL.")
-                                }
-                                asyncGroup.leave()
-                            }
+                          break
                         default:
                             break
                         }
@@ -1029,18 +997,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     case .audio, .unknown:
                         return
                     case .video:
-                        self.fetchVideoAndApplySettings(for: asset, callback: { videoURL in
-                            DispatchQueue.main.async {
-                                if let videoURL = videoURL {
-                                    self.delegate?.libraryViewFinishedLoading()
-                                    let video = YPMediaVideo(thumbnail: thumbnailFromVideoPath(videoURL),
-                                                             videoURL: videoURL, asset: asset)
-                                    videoCallback(video)
-                                } else {
-                                    print("YPLibraryVC -> selectedMedia -> Problems with fetching videoURL.")
-                                }
-                            }
-                        })
+                        break
                     case .image:
                         self.fetchImageAndCrop(for: asset,
                                                cutWidth: selectedAssets.first!.cutWidth!,
@@ -1067,9 +1024,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     // MARK: - TargetSize
     
-    private func targetSize(for asset: PHAsset, cropRect: CGRect) -> CGSize {
-        var width = (CGFloat(asset.pixelWidth) * cropRect.width).rounded(.toNearestOrEven)
-        var height = (CGFloat(asset.pixelHeight) * cropRect.height).rounded(.toNearestOrEven)
+    private func targetSize(for asset: PHAsset, cropRect: CGRect,cutWidth:CGFloat,cutHeight:CGFloat) -> CGSize {
+        var width = (CGFloat(asset.pixelWidth) * cropRect.width-cutWidth).rounded(.toNearestOrEven)
+        var height = (CGFloat(asset.pixelHeight) * cropRect.height-cutHeight).rounded(.toNearestOrEven)
         // round to lowest even number
         width = (width.truncatingRemainder(dividingBy: 2) == 0) ? width : width - 1
         height = (height.truncatingRemainder(dividingBy: 2) == 0) ? height : height - 1
