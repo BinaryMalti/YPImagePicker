@@ -300,6 +300,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                     self.v.bottomMaskHeight.constant = 0
                                     self.v.leftMaskHeight.constant = 0
                                     self.v.rightMaskHeight.constant = 0
+                    self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                                     self.selection.removeAll()
                 }
                 self.showMultipleSelection()
@@ -407,6 +408,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             self.v.bottomMaskHeight.constant = 0
             self.v.leftMaskHeight.constant = 0
             self.v.rightMaskHeight.constant = 0
+            self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
             self.isFirstTime = true
             selection.removeAll()
             if !YPConfig.showDrafts{
@@ -555,6 +557,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     self.calledOnce = true
                     self.isFirstTime = false
                     self.v.assetZoomableView.fitImage(false)
+                    self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                 self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
@@ -566,6 +569,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     if self.selection.count > 1{
                             self.v.assetZoomableView.fitImage(true)
                             self.v.assetZoomableView.layoutSubviews()
+                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                     }else{
                         if !self.calledOnce{
                         self.v.leftMaskHeight.constant = 0
@@ -574,6 +578,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                         self.v.topMaskHeight.constant = 0
                         self.v.assetZoomableView.fitImage(false)
                         self.v.assetZoomableView.layoutSubviews()
+                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                         self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
                         self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
                         }else{
@@ -592,6 +597,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.v.topMaskHeight.constant = 0
                 self.v.assetZoomableView.fitImage(false)
                 self.v.assetZoomableView.layoutSubviews()
+                self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                 self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
                 self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
             }

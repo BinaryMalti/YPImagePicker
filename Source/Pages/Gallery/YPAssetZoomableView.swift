@@ -117,7 +117,7 @@ final class YPAssetZoomableView: UIScrollView {
                 strongSelf.videoView.showPlayImage(show: false)
                 strongSelf.videoView.deallocate()
                 strongSelf.addSubview(strongSelf.photoImageView)
-                strongSelf.photoImageView.contentMode = .scaleAspectFill
+                strongSelf.photoImageView.contentMode = .scaleAspectFit
                 strongSelf.photoImageView.clipsToBounds = true
             }
             

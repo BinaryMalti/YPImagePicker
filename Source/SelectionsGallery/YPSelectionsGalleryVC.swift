@@ -64,7 +64,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     
     open override func viewWillAppear(_ animated: Bool) {
         if isFromEdit {
-            self.addBackButtonItem(title: "My Dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+            self.addBackButtonItem(title: "My dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
@@ -96,7 +96,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         v.collectionView.dropDelegate = self
         v.collectionView.reloadData()
         if isFromEdit {
-            self.addBackButtonItem(title: "My Dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+            self.addBackButtonItem(title: "My dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
