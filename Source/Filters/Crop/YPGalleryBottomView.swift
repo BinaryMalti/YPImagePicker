@@ -17,8 +17,11 @@ class YPGalleryBottomView: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        let longestWordRange = (pictureLabel.text! as NSString).range(of: "picture (01)")
-        let attributedString = NSMutableAttributedString(string: pictureLabel.text!, attributes: [NSAttributedString.Key.font : YPConfig.fonts.galleryNoteFont])
+        let longString = pictureLabel.text!
+        let longestWord = "picture (01) "
+        let longestWordRange = (longString as NSString).range(of: longestWord)
+        let attributedString = NSMutableAttributedString(string: longString, attributes: [NSAttributedString.Key.font : YPConfig.fonts.galleryNoteFont])
         attributedString.setAttributes([NSAttributedString.Key.font : YPConfig.fonts.pickerTitleFont, NSAttributedString.Key.foregroundColor : UIColor.black], range: longestWordRange)
+        pictureLabel.attributedText = attributedString
     }
 }
