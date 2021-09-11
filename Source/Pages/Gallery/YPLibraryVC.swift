@@ -570,7 +570,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     self.contentSize = self.v.assetZoomableView.contentSize
                 }else{
                     if self.selection.count > 1{
-                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
+                        self.v.assetZoomableView.photoImageView.frame = CGRect(x: 0, y: 0, width:  self.v.assetZoomableView.photoImageView.frame.width + (self.v.leftMaskHeight.constant * 2) , height:  self.v.assetZoomableView.photoImageView.frame.height + (self.v.topMaskHeight.constant * 2))
+                        self.v.assetZoomableView.photoImageView.contentMode = .scaleAspectFit
+                        //                        self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                             self.v.assetZoomableView.fitImage(true)
                             self.v.assetZoomableView.layoutSubviews()
                     }else{
@@ -1025,15 +1027,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     // MARK: - TargetSize
     
     private func targetSize(for asset: PHAsset, cropRect: CGRect,cutWidth:CGFloat,cutHeight:CGFloat) -> CGSize {
-        var width = (CGFloat(asset.pixelWidth) * cropRect.width-cutWidth).rounded(.toNearestOrEven)
-        var height = (CGFloat(asset.pixelHeight) * cropRect.height-cutHeight).rounded(.toNearestOrEven)
+        var width = (CGFloat(asset.pixelWidth) * cropRect.width).rounded(.toNearestOrEven)
+        var height = (CGFloat(asset.pixelHeight) * cropRect.height).rounded(.toNearestOrEven)
         // round to lowest even number
         width = (width.truncatingRemainder(dividingBy: 2) == 0) ? width : width - 1
         height = (height.truncatingRemainder(dividingBy: 2) == 0) ? height : height - 1
-        return CGSize(width: width, height: height)
+        return CGSize(width: width-cutWidth, height: height)
     }
-    
-    
+
     // MARK: - Player
     
     func pausePlayer() {

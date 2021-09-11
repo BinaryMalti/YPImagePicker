@@ -12,7 +12,7 @@ import Brightroom
 open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDelegate {
     
     override public var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
-    
+    public static var contentMode : UIImageView.ContentMode = .scaleAspectFill
     public var items: [YPMediaItem] = []
     public var finalItems: [YPMediaItem] = []
     public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
@@ -114,6 +114,8 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             finalItems.removeAll()
             let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
             let imageView = UIImageView(frame: ivRect)
+            imageView.contentMode = YPSelectionsGalleryVC.contentMode
+            imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleRightMargin, .flexibleLeftMargin, .flexibleTopMargin]
             let ivsize = imageView.bounds.size
             for item in items{
                 switch item {
@@ -257,11 +259,8 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     }
     
     public func selectionsGalleryCellDidTapRemove(cell: YPSelectionsGalleryCell) {
-        let alert = UIAlertController(title: "Do you want to delete this artwork?", message: "You cannot undo this action", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
+        let alert = UIAlertController(title: "Do you want to delete this artwork?", message: "You cannot undo this action", preferredStyle: .actionSheet)
+          alert.addAction(UIAlertAction(title: "Delete", style: .destructive , handler:{ (UIAlertAction)in
             if let indexPath = self.v.collectionView.indexPath(for: cell) {
                 switch self.items[indexPath.row]{
                         case .photo(p: let p):
@@ -281,9 +280,14 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             //            }, completion: { _ in })
                 self.v.collectionView.reloadData()
                     }
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
+            self.dismiss(animated: true, completion: nil)
+          }))
+          
+          alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
+            self.dismiss(animated: true, completion: nil)
+          }))
+          self.present(alert, animated: true, completion: nil)
+        }
 }
 
 // MARK: - Collection View
@@ -308,7 +312,10 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
         case .photo(let photo):
            // cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
            // cell.imageView.backgroundColor = .clear
-            cell.imageView.contentMode = .scaleAspectFill
+            if items.count > 1{
+                cell.imageView.contentMode = YPSelectionsGalleryVC.contentMode}else{
+                    cell.imageView.contentMode = .scaleAspectFill
+                }
             cell.imageView.image = photo.originalImage
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)

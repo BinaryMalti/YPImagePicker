@@ -24,7 +24,7 @@ final class YPAssetZoomableView: UIScrollView {
     public var videoView = YPVideoView()
     public var squaredZoomScale: CGFloat = 1
     public var minWidth: CGFloat? = YPConfig.library.minWidthForItem
-    
+    var multipleSelectionenabled = false
     fileprivate var currentAsset: PHAsset?
     
     // Image view of the asset for convenience. Can be video preview image view or photo image view.
@@ -117,7 +117,7 @@ final class YPAssetZoomableView: UIScrollView {
                 strongSelf.videoView.showPlayImage(show: false)
                 strongSelf.videoView.deallocate()
                 strongSelf.addSubview(strongSelf.photoImageView)
-                strongSelf.photoImageView.contentMode = .scaleAspectFill
+                strongSelf.photoImageView.contentMode = .scaleAspectFit
                 strongSelf.photoImageView.clipsToBounds = true
             }
             
@@ -262,6 +262,9 @@ final class YPAssetZoomableView: UIScrollView {
         super.layoutSubviews()
         myDelegate?.ypAssetZoomableViewDidLayoutSubviews(self)
     }
+    
+    var _lastContentOffset: CGPoint!
+
 }
 
 // MARK: UIScrollViewDelegate Protocol
@@ -294,5 +297,29 @@ extension YPAssetZoomableView: UIScrollViewDelegate {
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         cropAreaDidChange()
+        
+        if _lastContentOffset.x < scrollView.contentOffset.x {
+          NSLog("Scrolled Right")
+            YPSelectionsGalleryVC.contentMode = .right
+        }
+        else if _lastContentOffset.x > scrollView.contentOffset.x {
+          NSLog("Scrolled Left")
+            YPSelectionsGalleryVC.contentMode = .left
+        }
+
+        else if _lastContentOffset.y < scrollView.contentOffset.y {
+          NSLog("Scrolled Down")
+            YPSelectionsGalleryVC.contentMode = .bottom
+        }
+
+        else if _lastContentOffset.y > scrollView.contentOffset.y {
+          NSLog("Scrolled Up")
+            YPSelectionsGalleryVC.contentMode = .top
+        }
     }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        _lastContentOffset = scrollView.contentOffset
+     }
+
+
 }
