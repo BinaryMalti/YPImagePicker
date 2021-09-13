@@ -17,7 +17,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     public var finalItems: [YPMediaItem] = []
     public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
-    
+    public var isFromPublishedArtWork: Bool = false
      var v = YPSelectionsGalleryView()
     public var cropHeight : CGFloat = 0.0
     public var cropWidth : CGFloat = 0.0
@@ -63,7 +63,10 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     }
     
     open override func viewWillAppear(_ animated: Bool) {
-        if isFromEdit {
+        self.isFromPublishedArtWork = UserDefaults.standard.bool(forKey: "artwork_uploaded")
+        if isFromPublishedArtWork == true {
+            self.addBackButtonItem(title: "Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
+        } else if isFromEdit {
             self.addBackButtonItem(title: "My dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
@@ -312,10 +315,11 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
         case .photo(let photo):
            // cell.imageView.frame = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
            // cell.imageView.backgroundColor = .clear
-            if items.count > 1{
-                cell.imageView.contentMode = YPSelectionsGalleryVC.contentMode}else{
-                    cell.imageView.contentMode = .scaleAspectFill
-                }
+           // if items.count > 1{
+               // cell.imageView.contentMode = YPSelectionsGalleryVC.contentMode}else{
+                    cell.imageView.contentMode = .scaleAspectFit
+                
+              //  }
             cell.imageView.image = photo.originalImage
             cell.countLabel.text = String(format: "%02d",indexPath.row+1)
             cell.setEditable(YPConfig.showsPhotoFilters)
