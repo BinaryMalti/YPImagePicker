@@ -126,7 +126,7 @@ override open func viewDidLoad() {
                         case .photo(let photo):
                             let completion = { (photo: YPMediaPhoto) in
                                 let mediaItem = YPMediaItem.photo(p: photo)
-                                let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: [mediaItem])) { _, _, items in
+                                let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: [mediaItem]), config: YPImagePickerConfiguration.shared) { _, _, items in
                                     self?.didSelect(items: items, draftItem:nil, clickType: 2)
                                 }
                                 let sideMargin: CGFloat = 24

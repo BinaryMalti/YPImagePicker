@@ -26,17 +26,19 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     public var isFromEdit = false
     public var fromCamera = false
     public var targetHeight : CGFloat = 200.0
+    var config = YPImagePickerConfiguration.shared
     public var isReorderPerformed = false
     public var collectioViewHeight : CGFloat = 0.0
     public override func loadView() { view = v }
 
     public required init(items: [YPMediaItem],
-                         
+                         config : YPImagePickerConfiguration,
                          didFinishHandler:
                             @escaping ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC,
                                         _ items: [YPMediaItem]) -> Void)) {
         super.init(nibName: nil, bundle: nil)
         self.items = items
+        self.config = config
         self.didFinishHandler = didFinishHandler
     }
     
@@ -46,12 +48,12 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     
     override func saveAsDraftClick(sender: UIButton) {
         if fromCamera {
-            didFinishHandler?(4,self, finalItems)
+            didFinishHandler?(4,self, finalItems)//title view navigation from camera
         }else{
             if isFromEdit {
-                didFinishHandler?(5,self, items)
+                didFinishHandler?(5,self, items)//artwork preview navigation
             }else{
-                didFinishHandler?(4,self, items)
+                didFinishHandler?(4,self, items)//title view navigation
             }
         }
     }
@@ -71,6 +73,22 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
+        if items.count == 1{
+            let totalWidth = cropWidth * CGFloat(items.count)
+            let totalSpacingWidth : CGFloat = 0.0
+            let leftInset = (YPImagePickerConfiguration.screenWidth - CGFloat(totalWidth + totalSpacingWidth)) / 2
+                let rightInset = leftInset
+            let totalHeight = cropHeight * CGFloat(items.count)
+            let topInset = (self.view.frame.height - totalHeight)/2
+          let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
+            layout?.sectionInset = UIEdgeInsets(top: topInset, left: leftInset, bottom: topInset, right: rightInset)
+        }
+        if isFromEdit{
+            v.collectionView.height(cropHeight + 70)
+        }
+        if collectioViewHeight  != 0.0{
+            v.collectionView.height(collectioViewHeight)
+        }
     }
 
     override open func viewDidLoad() {
@@ -80,6 +98,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         bottomView = nib.instantiate(withOwner: self, options: nil)[0] as! YPGalleryBottomView
         self.v.viewB.addSubview(bottomView)
         bottomView.frame = CGRect(x:0, y: 0, width: self.v.viewB.frame.width, height: self.v.viewB.frame.height)
+        if YPImagePickerConfiguration.shared.screens != [.library]{
+            YPImagePickerConfiguration.shared = config
+        }
         // Register collection view cell
         v.collectionView.register(YPSelectionsGalleryCell.self, forCellWithReuseIdentifier: "item")
         if isFromEdit{
@@ -88,16 +109,18 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         if collectioViewHeight  != 0.0{
             v.collectionView.height(collectioViewHeight)
         }
-        if items.count == 1{
-          let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
-            layout?.sectionInset = UIEdgeInsets(top: 0, left: (YPImagePickerConfiguration.screenWidth - cropWidth) * 0.5, bottom: 0, right: (YPImagePickerConfiguration.screenWidth - cropWidth) * 0.5)
-        }
         v.collectionView.dataSource = self
         v.collectionView.delegate = self
         v.collectionView.dragInteractionEnabled = true
         v.collectionView.dragDelegate = self
         v.collectionView.dropDelegate = self
         v.collectionView.reloadData()
+        let longString = bottomView.pictureLabel.text!
+        let longestWord = "picture (01) "
+        let longestWordRange = (longString as NSString).range(of: longestWord)
+        let attributedString = NSMutableAttributedString(string: longString, attributes: [NSAttributedString.Key.font : YPConfig.fonts.galleryNoteFont])
+        attributedString.setAttributes([NSAttributedString.Key.font : YPConfig.fonts.pickerTitleFont, NSAttributedString.Key.foregroundColor : UIColor.black], range: longestWordRange)
+        bottomView.pictureLabel.attributedText = attributedString
         if isFromEdit {
             self.addBackButtonItem(title: "My dashboard", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }else{
@@ -134,6 +157,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                                                y: (imageView.image!.size.height-croppedImsize.height)/2.0),
                                size: croppedImsize)
                     let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: croppedImrect)
+                    YPPhotoSaver.clearAllFile()
                     if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
                    {
                         let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
@@ -147,6 +171,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             
         }
     }
+    
     
     @objc
     private func editImage(){
@@ -217,6 +242,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         let indexPathCenter = findCenterIndex()
         let cellDelete:YPSelectionsGalleryCell = v.collectionView.cellForItem(at: indexPathCenter) as! YPSelectionsGalleryCell
         selectionsGalleryCellDidTapRemove(cell: cellDelete)
+        
     }
     
     private func findCenterIndex() -> IndexPath {
@@ -281,7 +307,17 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             //            v.collectionView.performBatchUpdates({
             //                v.collectionView.deleteItems(at: [indexPath])
             //            }, completion: { _ in })
+                if self.items.count == 1{
+                    let totalWidth = self.cropWidth * CGFloat(self.items.count)
+                    let totalSpacingWidth : CGFloat = 0.0
+                    let leftInset = (self.v.collectionView.frame.width - CGFloat(totalWidth + totalSpacingWidth)) / 2
+                        let rightInset = leftInset
+                    let layout =  self.v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
+                    layout?.sectionInset = UIEdgeInsets(top: 0, left: rightInset, bottom: 0, right: leftInset)
+                }
                 self.v.collectionView.reloadData()
+             
+                
                     }
             self.dismiss(animated: true, completion: nil)
           }))
@@ -317,7 +353,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
            // cell.imageView.backgroundColor = .clear
            // if items.count > 1{
                // cell.imageView.contentMode = YPSelectionsGalleryVC.contentMode}else{
-                    cell.imageView.contentMode = .scaleAspectFit
+                    cell.imageView.contentMode = .scaleAspectFill
                 
               //  }
             cell.imageView.image = photo.originalImage
