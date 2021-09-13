@@ -81,7 +81,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             let totalHeight = cropHeight * CGFloat(items.count)
             let topInset = (self.view.frame.height - totalHeight)/2
           let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
-            layout?.sectionInset = UIEdgeInsets(top: topInset, left: leftInset, bottom: topInset, right: rightInset)
+            layout?.sectionInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
         }
         if isFromEdit{
             v.collectionView.height(cropHeight + 70)
@@ -89,6 +89,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         if collectioViewHeight  != 0.0{
             v.collectionView.height(collectioViewHeight)
         }
+
     }
 
     override open func viewDidLoad() {
@@ -136,6 +137,10 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         bottomView.deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
+        saveArtwork()
+    }
+    
+    func saveArtwork(){
         if !isFromEdit {
             finalItems.removeAll()
             let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
@@ -146,6 +151,8 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             for item in items{
                 switch item {
                 case .photo(let photo):
+                    if #available(iOS 13.0, *) {
+                        self.showActivityIndicator()}
                     imageView.image = photo.image
                     var scale : CGFloat = ivsize.width / imageView.image!.size.width
                     if imageView.image!.size.height * scale < ivsize.height {
@@ -157,11 +164,14 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                                                y: (imageView.image!.size.height-croppedImsize.height)/2.0),
                                size: croppedImsize)
                     let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: croppedImrect)
-                    YPPhotoSaver.clearAllFile()
+                   // YPPhotoSaver.clearAllFile()
                     if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
                    {
                         let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
                     let artworkMedia = YPMediaItem.photo(p: artwork)
+                        if #available(iOS 13.0, *) {
+                            self.hideActivityIndicator()
+                        }
                     finalItems.append(artworkMedia)
                    }
                 default:
@@ -189,6 +199,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                         controller.handlers.didEndEditing = { [weak self] controller, stack in
                           guard let self = self else { return }
                           controller.dismiss(animated: true, completion: nil)
+                            if #available(iOS 13.0, *) {
+                                self.showActivityIndicator()
+                            }
                           try! stack.makeRenderer().render { result in
                             switch result {
                             case let .success(rendered):
@@ -203,6 +216,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                                     self.v.collectionView.performBatchUpdates {
                                         let cell = self.v.collectionView.cellForItem(at: indexPathCenter) as! YPSelectionsGalleryCell
                                         cell.imageView.image = editedImage
+                                        if #available(iOS 13.0, *) {
+                                            self.hideActivityIndicator()
+                                        }
                                     }
                                 }
                                 
@@ -304,10 +320,14 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                             break
                         }
                 self.items.remove(at: indexPath.row)
+                if self.finalItems.count > 0{
+                    self.finalItems.remove(at: indexPath.row)
+                }
             //            v.collectionView.performBatchUpdates({
             //                v.collectionView.deleteItems(at: [indexPath])
             //            }, completion: { _ in })
                 if self.items.count == 1{
+                    self.bottomView.deleteButton.isHidden = true
                     let totalWidth = self.cropWidth * CGFloat(self.items.count)
                     let totalSpacingWidth : CGFloat = 0.0
                     let leftInset = (self.v.collectionView.frame.width - CGFloat(totalWidth + totalSpacingWidth)) / 2
@@ -316,7 +336,6 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                     layout?.sectionInset = UIEdgeInsets(top: 0, left: rightInset, bottom: 0, right: leftInset)
                 }
                 self.v.collectionView.reloadData()
-             
                 
                     }
             self.dismiss(animated: true, completion: nil)
@@ -475,5 +494,121 @@ extension YPSelectionsGalleryVC: UICollectionViewDragDelegate, UICollectionViewD
         return [dragItem]
     }
     
+    
+}
+
+fileprivate let overlayViewTag = 999
+fileprivate let activityIndicatorTag = 1000
+fileprivate let bgViewTag = 123456
+
+@available(iOS 13.0, *)
+extension UIViewController {
+    
+    func bindKeypad(to constraint: NSLayoutConstraint, constant: CGFloat? = -40) {
+        
+        let bottomConstraintSize: CGFloat = 20
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: OperationQueue.main) { [weak self, weak constraint] notification in
+            
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                
+                let moveSize = keyboardSize.height + bottomConstraintSize
+                constraint?.constant = -moveSize
+                self?.view.layoutIfNeeded()
+            }
+            
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: OperationQueue.main) { [weak self, weak constraint] _ in
+            
+            constraint?.constant = constant!
+            self?.view.layoutIfNeeded()
+        }
+    }
+    
+    func showActivityIndicator(){
+        guard !isDisplayingActivityIndicatorOverlay() else { return }
+        let keyView = UIApplication.shared.windows.first { $0.isKeyWindow }
+        guard let parentViewForOverlay = keyView ?? navigationController?.view ?? view else { return }
+        
+        //configure transparent bg
+        let bgView = UIView()
+        bgView.translatesAutoresizingMaskIntoConstraints = false
+        bgView.backgroundColor = UIColor.clear
+        bgView.tag = bgViewTag
+        
+        //configure overlay
+        let overlay = UIView()
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        overlay.backgroundColor = UIColor.black
+        overlay.alpha = 0.5
+        overlay.tag = overlayViewTag
+        overlay.layer.cornerRadius = 16.0
+        
+        //configure activity indicator
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = UIColor.white
+        activityIndicator.tag = activityIndicatorTag
+        
+        //add subviews
+        parentViewForOverlay.addSubview(bgView)
+        bgView.addSubview(overlay)
+        bgView.addSubview(activityIndicator)
+        //add overlay constraints
+        bgView.heightAnchor.constraint(equalTo: parentViewForOverlay.heightAnchor).isActive = true
+        bgView.widthAnchor.constraint(equalTo: parentViewForOverlay.widthAnchor).isActive = true
+        overlay.widthAnchor.constraint(equalToConstant: 80.0).isActive = true
+        overlay.heightAnchor.constraint(equalToConstant: 80.0).isActive = true
+        overlay.centerXAnchor.constraint(equalTo: bgView.centerXAnchor).isActive = true
+        overlay.centerYAnchor.constraint(equalTo: bgView.centerYAnchor).isActive = true
+        
+        //add indicator constraints
+        activityIndicator.centerXAnchor.constraint(equalTo: overlay.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: overlay.centerYAnchor).isActive = true
+        
+        //animate indicator
+        activityIndicator.startAnimating()
+    }
+    
+    func hideActivityIndicator() -> Void {
+        let activityIndicator = getActivityIndicator()
+        let bgView = getBgView()
+        if let overlayView = getOverlayView() {
+            UIView.animate(withDuration: 0.2, animations: {
+                overlayView.alpha = 0.0
+                activityIndicator?.stopAnimating()
+            }) { (finished) in
+                activityIndicator?.removeFromSuperview()
+                overlayView.removeFromSuperview()
+                bgView?.removeFromSuperview()
+            }
+        }
+    }
+    
+    func isDisplayingActivityIndicatorOverlay() -> Bool {
+        if let _ = getActivityIndicator(), let _ = getOverlayView() {
+            return true
+        }
+        return false
+    }
+    
+    private func getActivityIndicator() -> UIActivityIndicatorView? {
+        let keyView = UIApplication.shared.windows.first { $0.isKeyWindow }
+        guard let parentViewForOverlay = keyView ?? navigationController?.view ?? view else { return nil}
+        return parentViewForOverlay.viewWithTag(activityIndicatorTag) as? UIActivityIndicatorView
+    }
+    
+    private func getOverlayView() -> UIView? {
+        let keyView = UIApplication.shared.windows.first { $0.isKeyWindow }
+        guard let parentViewForOverlay = keyView ?? navigationController?.view ?? view else { return nil}
+        return parentViewForOverlay.viewWithTag(overlayViewTag)
+    }
+    
+    private func getBgView() -> UIView? {
+        let keyView = UIApplication.shared.windows.first { $0.isKeyWindow }
+        guard let parentViewForOverlay = keyView ?? navigationController?.view ?? view else { return nil}
+        return parentViewForOverlay.viewWithTag(bgViewTag)
+    }
     
 }
