@@ -65,7 +65,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     }
     
     open override func viewWillAppear(_ animated: Bool) {
-        self.isFromPublishedArtWork = UserDefaults.standard.bool(forKey: "artwork_uploaded")
+        self.isFromPublishedArtWork = UserDefaults.standard.bool(forKey: "artwork_published")
         if isFromPublishedArtWork == true {
             self.addBackButtonItem(title: "Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         } else if isFromEdit {
