@@ -137,15 +137,15 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         bottomView.deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
-        saveArtwork()
+        updateArtworkToLocalDirecotry()
     }
     
-    func saveArtwork(){
+    func updateArtworkToLocalDirecotry(){
         if !isFromEdit {
             finalItems.removeAll()
             let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
             let imageView = UIImageView(frame: ivRect)
-            imageView.contentMode = YPSelectionsGalleryVC.contentMode
+            imageView.contentMode = .scaleAspectFit
             imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleRightMargin, .flexibleLeftMargin, .flexibleTopMargin]
             let ivsize = imageView.bounds.size
             for item in items{

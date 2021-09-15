@@ -126,7 +126,7 @@ override open func viewDidLoad() {
                         case .photo(let photo):
                             let completion = { (photo: YPMediaPhoto) in
                                 let mediaItem = YPMediaItem.photo(p: photo)
-                                let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.arrangeArtworkData(items: [mediaItem]), config: YPImagePickerConfiguration.shared) { _, _, items in
+                                let selectionsGalleryVC = YPSelectionsGalleryVC(items: self!.saveArtworkToLocalDirectory(items: [mediaItem]), config: YPImagePickerConfiguration.shared) { _, _, items in
                                     self?.didSelect(items: items, draftItem:nil, clickType: 2)
                                 }
                                 let sideMargin: CGFloat = 24
@@ -167,7 +167,7 @@ override open func viewDidLoad() {
                                 navVC.navigationBar.backgroundColor = .white
                                 navVC.navigationBar.shadowImage = UIImage()
                                 navVC.navigationBar.isTranslucent = false
-                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)                                
+                                navVC.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
                                 navVC.modalPresentationStyle = .fullScreen
                                 self?.present(navVC, animated: true, completion: nil)
                             }
@@ -178,7 +178,8 @@ override open func viewDidLoad() {
                         return
                     }
                     else{
-                        let images = self!.arrangeArtworkData(items: items)
+                        //TGP - next click from upload artwork
+                        let images = self!.saveArtworkToLocalDirectory(items: items)
                         self?.didSelect(items: images, draftItem:nil, clickType: 3)
                         return
                     }
@@ -247,7 +248,8 @@ override open func viewDidLoad() {
         print("Picker deinited 👍")
     }
 
-    private func arrangeArtworkData(items:[YPMediaItem]) -> [YPMediaItem]{
+    //TGP - save image to app directory and fetch urls
+    private func saveArtworkToLocalDirectory(items:[YPMediaItem]) -> [YPMediaItem]{
         var artworkArray : [YPMediaItem] = []
         YPPhotoSaver.clearAllFile()
         for (position,item) in items.enumerated(){
