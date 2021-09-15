@@ -52,9 +52,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         if YPConfig.showDrafts{
             v.cropImageButton.isHidden = true
-            v.clickImageButton.isHidden = true
+            v.cameraButton.isHidden = true
             v.assetZoomableView.photoImageView.image = YPConfig.draftImages[0].image
-                self.v.imageDropDownTextField.text = YPConfig.dropdownArray[1]
+                self.v.postTypeDropDownTextField.text = YPConfig.dropdownArray[1]
                 if (YPConfig.dropdownArray[1] == "Draft"){
                     isFirstTime = true
                     if (YPConfig.draftImages.count > 0){
@@ -123,36 +123,36 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         v.assetViewContainer.multipleSelectionButton.isHidden = !(YPConfig.library.maxNumberOfItems > 1)
         v.assetViewContainer.squareCropButton.isHidden = true
         v.assetViewContainer.multipleSelectionButton.isHidden = true
-        createImagePicker()
+        createPostTypeDropDown()
         v.maxNumberWarningLabel.text = String(format: YPConfig.wordings.warningMaxItemsLimit,
                                               YPConfig.library.maxNumberOfItems)
         if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
             showMultipleSelection()
         }
 
-//        if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
-//            selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
-//                var itemAsset: PHAsset?
-//                switch item {
-//                case .photo(let photo):
-//                    if photo.asset == nil {
-//                        itemAsset =  mediaManager.fetchResult[0]
-//                    }else{
-//                        itemAsset = photo.asset}
-//                    singleImage = photo.image
-//                case .video(let video):
-//                    itemAsset = video.asset
-//                }
-//                guard let asset = itemAsset else {
-//                    return nil
-//                }
-//
-//                // The negative index will be corrected in the collectionView:cellForItemAt:
-//                return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
-//                            }
-//            v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
-//            v.collectionView.reloadData()
-//        }
+        if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
+            selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
+                var itemAsset: PHAsset?
+                switch item {
+                case .photo(let photo):
+                    if photo.asset == nil {
+                        itemAsset =  mediaManager.fetchResult[0]
+                    }else{
+                        itemAsset = photo.asset}
+                    singleImage = photo.image
+                case .video(let video):
+                    itemAsset = video.asset
+                }
+                guard let asset = itemAsset else {
+                    return nil
+                }
+
+                // The negative index will be corrected in the collectionView:cellForItemAt:
+                return YPLibrarySelection(index: -1, assetIdentifier: asset.localIdentifier, cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
+                            }
+            v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
+            v.collectionView.reloadData()
+        }
         if v.showDraftImages || YPConfig.showDrafts{
             self.multipleSelectionEnabled = false
         }
@@ -162,12 +162,13 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
        
     }
     
+    //TGP - Post Type DropDown
     let picker = UIPickerView()
-    func createImagePicker() {
-        v.imageDropDownTextField.tintColor = UIColor.clear
+    func createPostTypeDropDown() {
+        v.postTypeDropDownTextField.tintColor = UIColor.clear
         picker.dataSource = self
         picker.delegate = self
-        v.imageDropDownTextField.inputView = picker
+        v.postTypeDropDownTextField.inputView = picker
     }
     
     // MARK: - View Lifecycle
@@ -193,7 +194,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        v.imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
+        v.postTypeDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         v.cropImageButton.addTarget(self,
                                     action: #selector(cropButtonTapped),
                                     for: .touchUpInside)
@@ -208,7 +209,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             .addTarget(self,
                        action: #selector(multipleSelectionButtonTapped),
                        for: .touchUpInside)
-        v.clickImageButton.addTarget(self,
+        v.cameraButton.addTarget(self,
                                        action: #selector(openCameraButtonTapped),
                                        for: .touchUpInside)
         // Forces assetZoomableView to have a contentSize.
@@ -413,7 +414,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             selection.removeAll()
             if !YPConfig.showDrafts{
             self.v.cropImageButton.isHidden = false
-            self.v.clickImageButton.isHidden = false
+            self.v.cameraButton.isHidden = false
             }
             addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
             self.v.multiselectCountLabel.text = ""
@@ -559,7 +560,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     self.calledOnce = true
                     self.isFirstTime = false
                     self.v.assetZoomableView.fitImage(false)
-                    self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
+                   // self.v.assetZoomableView.contentInset = UIEdgeInsets(top: self.v.topMaskHeight.constant, left: self.v.leftMaskHeight.constant, bottom: self.v.topMaskHeight.constant, right: self.v.leftMaskHeight.constant)
                 self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
                 self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
@@ -806,16 +807,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 if self.selection.count > 1
                 {
                     self.v.cropImageButton.isHidden = true
-                    self.v.clickImageButton.isHidden = true
+                    self.v.cameraButton.isHidden = true
                     self.v.multiselectCountLabel.text = String(format: "%02d", self.selection.count)
                 }else{
                     self.v.cropImageButton.isHidden = false
-                    self.v.clickImageButton.isHidden = false
+                    self.v.cameraButton.isHidden = false
                     self.v.multiselectCountLabel.text = String(format: "%02d", 1)
                 }
             }else{
                 self.v.cropImageButton.isHidden = false
-                self.v.clickImageButton.isHidden = false
+                self.v.cameraButton.isHidden = false
             }
         }
         }
@@ -1061,14 +1062,15 @@ public func numberOfComponents(in pickerView: UIPickerView) -> Int {
     return YPConfig.dropdownArray.count
 }
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.v.imageDropDownTextField.font = YPConfig.fonts.pickerTitleFont
-        self.v.imageDropDownTextField.text = YPConfig.dropdownArray[row]
+        self.v.postTypeDropDownTextField.font = YPConfig.fonts.pickerTitleFont
+        self.v.postTypeDropDownTextField.text = YPConfig.dropdownArray[row]
         if (YPConfig.dropdownArray[row] == "Draft"){
+            
+            //TO DO - TGP Memory Leakage issue & Smooth scrolling
             isFirstTime = true
             if (YPConfig.draftImages.count > 0){
                 multipleSelectionEnabled = false
                 selectedDraftItem = YPConfig.draftImages[0]
-               // panGestureHelper.registerForPanGesture(on: v)
                 registerForTapOnPreview()
                 loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
                 scrollToTop()

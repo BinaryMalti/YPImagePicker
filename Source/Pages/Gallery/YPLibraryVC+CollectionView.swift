@@ -11,12 +11,13 @@ import Photos
 
 extension YPLibraryVC {
     
+    //TGP - To hide and show draft options and New Post options
     func loadDrafts(draftItem:[DraftItems],showDraft:Bool){
         v.draftItem = draftItem
         v.showDraftImages = showDraft
         setupCollectionView()
         if showDraft{
-            v.clickImageButton.isHidden = true
+            v.cameraButton.isHidden = true
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
@@ -31,7 +32,7 @@ extension YPLibraryVC {
             currentlySelectedIndex = 0
         }else{
             currentlySelectedIndex = 0
-            v.clickImageButton.isHidden = false
+            v.cameraButton.isHidden = false
             v.cropImageButton.isHidden = false
             v.multiselectImageButton.isHidden = false
             v.collectionView.reloadData()

@@ -236,17 +236,17 @@
                 <outlet property="backButton" destination="mDn-6o-JBe" id="spw-Jd-Ur9"/>
                 <outlet property="bottomMask" destination="fY4-rn-jEa" id="Ccd-m7-gAc"/>
                 <outlet property="bottomMaskHeight" destination="FZf-Uv-xbJ" id="ARV-Me-I73"/>
-                <outlet property="clickImageButton" destination="ibr-pU-YZj" id="gx4-BS-qbx"/>
+                <outlet property="cameraButton" destination="ibr-pU-YZj" id="gx4-BS-qbx"/>
                 <outlet property="collectionView" destination="zEE-ji-UFo" id="Ji3-oJ-elj"/>
                 <outlet property="cropImageButton" destination="cND-XS-PtA" id="mCt-UV-HpO"/>
                 <outlet property="cropRect" destination="bAn-iC-mmF" id="1SL-Qs-VkX"/>
                 <outlet property="dropdownPickerView" destination="zLo-M9-LhG" id="Umr-fo-493"/>
                 <outlet property="forwardbutton" destination="hjm-CE-one" id="FT8-QA-aGV"/>
-                <outlet property="imageDropDownTextField" destination="dtQ-1X-iMo" id="4bD-Vt-j2G"/>
                 <outlet property="leftMask" destination="w9i-p2-efm" id="8rk-Hr-ipc"/>
                 <outlet property="leftMaskHeight" destination="JL5-uE-6Lq" id="1M8-3l-efI"/>
                 <outlet property="multiselectCountLabel" destination="xBo-Jf-jUi" id="0b1-oA-aMI"/>
                 <outlet property="multiselectImageButton" destination="GUu-cJ-MDB" id="ZUa-zH-HPU"/>
+                <outlet property="postTypeDropDownTextField" destination="dtQ-1X-iMo" id="4bD-Vt-j2G"/>
                 <outlet property="rightMask" destination="TJo-hT-cXu" id="yep-es-fM8"/>
                 <outlet property="rightMaskHeight" destination="AqQ-Yd-FE9" id="rZf-5C-pT7"/>
                 <outlet property="topMask" destination="Ncf-s3-D8c" id="trI-V4-5ri"/>

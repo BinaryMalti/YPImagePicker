@@ -42,6 +42,7 @@ public class YPPhotoSaver {
         }
     }
     
+    // TGP - Clear Upload Artwork folder if already exists
    class func clearAllFile() {
         let fileManager = FileManager.default
 
@@ -62,7 +63,7 @@ public class YPPhotoSaver {
         }
     }
 
-
+// TGP - save image to App Directory
     class func saveImageToDirectory(imageName: String, image: UIImage, folderName: String) -> URL? {
          guard var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil}
         let fileName = imageName
@@ -97,6 +98,7 @@ public class YPPhotoSaver {
         }
     }
    
+    // TGP - Get Image URL after saving to Folder
    static func getImageURL(imageName:String,folderName:String) -> URL?{
         let fileManager = FileManager.default
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first

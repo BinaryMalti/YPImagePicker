@@ -268,12 +268,11 @@ override open func viewDidLoad() {
     }
     
     private func saveImage(image:UIImage,imageName:String) -> URL?{
-        if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: YPConfig.albumName)
-      {
-        return imagePath
-      }else{
-        return nil
-      }
+        if let imagePath = YPPhotoSaver.saveImageToDirectory(imageName: imageName, image: image, folderName: YPConfig.albumName){
+            return imagePath
+        } else {
+            return nil
+        }
     }
     
     private func setupLoadingView() {

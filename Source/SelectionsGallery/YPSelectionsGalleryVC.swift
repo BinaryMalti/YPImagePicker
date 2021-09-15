@@ -182,9 +182,8 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         }
     }
     
-    
-    @objc
-    private func editImage(){
+    //TGP -Find & Edit center image in collection view using Brightroom Library
+    @objc private func editImage(){
         let indexPathCenter = findCenterIndex()
         for i in 0..<items.count {
             if (i == indexPathCenter.row){

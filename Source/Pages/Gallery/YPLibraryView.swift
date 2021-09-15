@@ -19,14 +19,14 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var assetZoomableView: YPAssetZoomableView!
     @IBOutlet weak var assetViewContainer: YPAssetViewContainer!
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
+    //TGP - Custom Added UI
+    @IBOutlet weak var cameraButton: UIButton!
     @IBOutlet weak var dropdownPickerView: UIPickerView!
-    @IBOutlet weak var clickImageButton: UIButton!
-    @IBOutlet weak var imageDropDownTextField: UITextField!
+    @IBOutlet weak var postTypeDropDownTextField: UITextField!
     @IBOutlet weak var cropImageButton: UIButton!
     @IBOutlet weak var forwardbutton: UIButton!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var multiselectCountLabel: UILabel!
-   // @IBOutlet weak var cropRect: UIView!
     @IBOutlet weak var multiselectImageButton: UIButton!
     @IBOutlet weak var topMask: UIView!
     @IBOutlet weak var bottomMask: UIView!

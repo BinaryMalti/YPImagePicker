@@ -427,7 +427,7 @@ extension YPPickerVC: YPLibraryViewDelegate {
     }
 }
 extension UIViewController {
-
+//TGP - Top Left Bar Button & Right Bar Button
     func addBackButtonItem(title:String,saveAsDraft:Bool,isFromcrop:Bool,isForEdit:Bool) {
         navigationController?.isNavigationBarHidden = false
         let backMenu: UIButton = UIButton()
@@ -447,7 +447,10 @@ extension UIViewController {
             backMenu.addTarget(self, action: #selector (backButtonClick(sender:)), for: .touchUpInside)
         }
         let barButton = UIBarButtonItem(customView: backMenu)
+        
+        //saveAsDraft is Boolean - used to add right bar button or hide it
         if(saveAsDraft){
+            //isForEdit is Boolean - used to change titles of Artwork Rearrange Screen
             addSaveAsDraftButton(isForEdit: isForEdit)
         }
         self.navigationItem.leftBarButtonItem = barButton
@@ -458,6 +461,7 @@ extension UIViewController {
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.compact)
     }
     
+    //TGP - Save as Draft (used for ArtworkRearrange Screen)
     func addSaveAsDraftButton(isForEdit:Bool){
         let saveDraftMenu: UIButton = UIButton()
         let image = YPConfig.icons.saveAsDratButtonIcon;
@@ -497,6 +501,7 @@ extension UIViewController {
     }
     
     @objc func backButtonClick(sender : UIButton) {
+        //TGP - Go To Dashboard
         self.navigationController?.popViewController(animated: true);
     }
     @objc func saveAsDraftClick(sender : UIButton) {
