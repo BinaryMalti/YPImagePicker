@@ -28,14 +28,8 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var multiselectCountLabel: UILabel!
     @IBOutlet weak var multiselectImageButton: UIButton!
-    @IBOutlet weak var topMask: UIView!
-    @IBOutlet weak var bottomMask: UIView!
-    @IBOutlet weak var rightMask: UIView!
-    @IBOutlet weak var leftMask: UIView!
-    @IBOutlet weak var leftMaskHeight: NSLayoutConstraint!
-    @IBOutlet weak var rightMaskHeight: NSLayoutConstraint!
-    @IBOutlet weak var topMaskHeight: NSLayoutConstraint!
-    @IBOutlet weak var bottomMaskHeight: NSLayoutConstraint!
+    var zoomableHeightConstraint: NSLayoutConstraint?
+    var zoomableWidthConstraint: NSLayoutConstraint?
     
     let maxNumberWarningView = UIView()
     let maxNumberWarningLabel = UILabel()

@@ -21,10 +21,10 @@ extension YPLibraryVC {
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
-            v.leftMaskHeight.constant = 0
-            v.rightMaskHeight.constant = 0
-            v.bottomMaskHeight.constant = 0
-            v.topMaskHeight.constant = 0
+//            v.leftMaskHeight.constant = 0
+//            v.rightMaskHeight.constant = 0
+//            v.bottomMaskHeight.constant = 0
+//            v.topMaskHeight.constant = 0
             if self.selectedDraftItem?.image != nil {
                 changeAssetDraft(self.selectedDraftItem!.image)
             }
@@ -128,9 +128,7 @@ extension YPLibraryVC {
         if v.showDraftImages {
             let draftImage = v.draftItem[indexPath.row]
             selection.append(YPLibrarySelection(index: indexPath.row,
-                                                assetIdentifier: nil,
-                                                cutWidth: v.leftMaskHeight.constant,
-                                                cutHeight: v.topMaskHeight.constant
+                                                assetIdentifier: nil
             )
         )
         }else{
@@ -138,9 +136,7 @@ extension YPLibraryVC {
         selection.append(
             YPLibrarySelection(
                 index: indexPath.row,
-                assetIdentifier: asset.localIdentifier,
-                cutWidth: v.leftMaskHeight.constant,
-                cutHeight: v.topMaskHeight.constant
+                assetIdentifier: asset.localIdentifier
             )
         )
             checkLimit()
@@ -196,8 +192,8 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                           cropRect: currentSelection.cropRect,
                                                            scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                           scrollViewZoomScale: currentSelection.scrollViewZoomScale,
-                                                          assetIdentifier: currentSelection.assetIdentifier,
-                                                          cutWidth: v.leftMaskHeight.constant, cutHeight: v.topMaskHeight.constant)
+                                                          assetIdentifier: currentSelection.assetIdentifier
+                                                          )
                 }
                 cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0
             } else {
@@ -233,8 +229,6 @@ extension YPLibraryVC: UICollectionViewDelegate {
                                                       scrollViewContentOffset: currentSelection.scrollViewContentOffset,
                                                       scrollViewZoomScale: currentSelection.scrollViewZoomScale,
                                                       assetIdentifier: currentSelection.assetIdentifier,
-                                                      cutWidth: v.leftMaskHeight.constant,
-                                                      cutHeight: v.topMaskHeight.constant,
                                                       croppedImage: currentSelection.croppedImage)
             }
             cell.multipleSelectionIndicator.set(number: index + 1) // start at 1, not 0

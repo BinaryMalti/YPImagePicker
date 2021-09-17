@@ -30,7 +30,7 @@ class YPAssetViewContainer: UIView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.backgroundColor = .offWhiteOrBlack
+//        self.backgroundColor = .offWhiteOrBlack
         
         switch itemOverlayType {
         case .grid:

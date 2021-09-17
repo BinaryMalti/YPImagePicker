@@ -14,7 +14,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     override public var prefersStatusBarHidden: Bool { return YPConfig.hidesStatusBar }
     public static var contentMode : UIImageView.ContentMode = .scaleAspectFill
     public var items: [YPMediaItem] = []
-    public var finalItems: [YPMediaItem] = []
+   // public var finalItems: [YPMediaItem] = []
     public var didFinishHandler: ((_ clickType:Int,_ gallery: YPSelectionsGalleryVC, _ items: [YPMediaItem]) -> Void)?
     private var lastContentOffsetX: CGFloat = 0
     public var isFromPublishedArtWork: Bool = false
@@ -48,7 +48,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     
     override func saveAsDraftClick(sender: UIButton) {
         if fromCamera {
-            didFinishHandler?(4,self, finalItems)//title view navigation from camera
+            didFinishHandler?(4,self, items)//title view navigation from camera
         }else{
             if isFromEdit {
                 didFinishHandler?(5,self, items)//artwork preview navigation
@@ -58,12 +58,12 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         }
     }
 
-    func cropImage(imageToCrop:UIImage, toRect rect:CGRect) -> UIImage{
-        let imageRef:CGImage = imageToCrop.cgImage!.cropping(to: rect)!
-        let cropped:UIImage = UIImage(cgImage:imageRef)
-        return cropped
-    }
-    
+//    func cropImage(imageToCrop:UIImage, toRect rect:CGRect) -> UIImage{
+//        let imageRef:CGImage = imageToCrop.cgImage!.cropping(to: rect)!
+//        let cropped:UIImage = UIImage(cgImage:imageRef)
+//        return cropped
+//    }
+
     open override func viewWillAppear(_ animated: Bool) {
         self.isFromPublishedArtWork = UserDefaults.standard.bool(forKey: "artwork_published")
         if isFromPublishedArtWork == true {
@@ -73,7 +73,24 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         }else{
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
+
+        if isFromEdit{
+            v.collectionView.height(cropHeight + 70)
+        }
+        if collectioViewHeight  != 0.0{
+            v.collectionView.height(collectioViewHeight)
+        }
+ 
+
+    }
+    
+    open override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if items.count == 1{
+//            let sideMargin: CGFloat = 20
+//            let overlapppingNextPhoto: CGFloat = 37
+//            let screenWidth = YPImagePickerConfiguration.screenWidth
+//            let collectionViewScreenWidth = screenWidth - (sideMargin + overlapppingNextPhoto)
             let totalWidth = cropWidth * CGFloat(items.count)
             let totalSpacingWidth : CGFloat = 0.0
             let leftInset = (YPImagePickerConfiguration.screenWidth - CGFloat(totalWidth + totalSpacingWidth)) / 2
@@ -83,13 +100,6 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
           let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
             layout?.sectionInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
         }
-        if isFromEdit{
-            v.collectionView.height(cropHeight + 70)
-        }
-        if collectioViewHeight  != 0.0{
-            v.collectionView.height(collectioViewHeight)
-        }
-
     }
 
     override open func viewDidLoad() {
@@ -137,50 +147,64 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         bottomView.deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
         YPHelper.changeBackButtonIcon(self)
         YPHelper.changeBackButtonTitle(self)
-        updateArtworkToLocalDirecotry()
+        if items.count == 1{
+//            let sideMargin: CGFloat = 20
+//            let overlapppingNextPhoto: CGFloat = 37
+//            let screenWidth = YPImagePickerConfiguration.screenWidth
+//            let collectionViewScreenWidth = screenWidth - (sideMargin + overlapppingNextPhoto)
+            let totalWidth = cropWidth * CGFloat(items.count)
+            let totalSpacingWidth : CGFloat = 0.0
+            let leftInset = (YPImagePickerConfiguration.screenWidth - CGFloat(totalWidth + totalSpacingWidth)) / 2
+                let rightInset = leftInset
+            let totalHeight = cropHeight * CGFloat(items.count)
+            let topInset = (self.view.frame.height - totalHeight)/2
+          let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
+            layout?.sectionInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
+        }
+       // updateArtworkToLocalDirecotry()
     }
     
-    func updateArtworkToLocalDirecotry(){
-        if !isFromEdit {
-            finalItems.removeAll()
-            let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
-            let imageView = UIImageView(frame: ivRect)
-            imageView.contentMode = .scaleAspectFit
-            imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleRightMargin, .flexibleLeftMargin, .flexibleTopMargin]
-            let ivsize = imageView.bounds.size
-            for item in items{
-                switch item {
-                case .photo(let photo):
-                    if #available(iOS 13.0, *) {
-                        self.showActivityIndicator()}
-                    imageView.image = photo.image
-                    var scale : CGFloat = ivsize.width / imageView.image!.size.width
-                    if imageView.image!.size.height * scale < ivsize.height {
-                        scale = ivsize.height / imageView.image!.size.height
-                    }
-                    let croppedImsize = CGSize(width:ivsize.width/scale, height:ivsize.height/scale)
-                    let croppedImrect =
-                        CGRect(origin: CGPoint(x: (imageView.image!.size.width-croppedImsize.width)/2.0,
-                                               y: (imageView.image!.size.height-croppedImsize.height)/2.0),
-                               size: croppedImsize)
-                    let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: croppedImrect)
-                   // YPPhotoSaver.clearAllFile()
-                    if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
-                   {
-                        let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
-                    let artworkMedia = YPMediaItem.photo(p: artwork)
-                        if #available(iOS 13.0, *) {
-                            self.hideActivityIndicator()
-                        }
-                    finalItems.append(artworkMedia)
-                   }
-                default:
-                    break
-                }
-            }
-            
-        }
-    }
+//    func updateArtworkToLocalDirecotry(){
+//        if !isFromEdit {
+//            finalItems.removeAll()
+//            let ivRect = CGRect(x: 0, y: 0, width: cropWidth, height: cropHeight)
+//            let imageView = UIImageView(frame: ivRect)
+//            imageView.contentMode = .scaleAspectFit
+//            imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleRightMargin, .flexibleLeftMargin, .flexibleTopMargin]
+//            let ivsize = imageView.bounds.size
+//            for item in items{
+//                switch item {
+//                case .photo(let photo):
+//                    if #available(iOS 13.0, *) {
+//                        self.showActivityIndicator()}
+//                    imageView.image = photo.image
+//                    var scale : CGFloat = ivsize.width / imageView.image!.size.width
+//                    if imageView.image!.size.height * scale < ivsize.height {
+//                        scale = ivsize.height / imageView.image!.size.height
+//                    }
+//                    let croppedImsize = CGSize(width:ivsize.width/scale, height:ivsize.height/scale)
+//                    let croppedImrect =
+//                        CGRect(origin: CGPoint(x: (imageView.image!.size.width-croppedImsize.width)/2.0,
+//                                               y: (imageView.image!.size.height-croppedImsize.height)/2.0),
+//                               size: croppedImsize)
+//                    let cropImage = cropImage(imageToCrop: photo.originalImage, toRect: croppedImrect)
+//                   // YPPhotoSaver.clearAllFile()
+//                    if let imagePath = saveImage(image: cropImage, imageName: photo.imageName!)
+//                   {
+//                        let artwork = YPMediaPhoto(image: cropImage, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: cropWidth, heightRatio: cropHeight, imageName: photo.imageName)
+//                    let artworkMedia = YPMediaItem.photo(p: artwork)
+//                        if #available(iOS 13.0, *) {
+//                            self.hideActivityIndicator()
+//                        }
+//                    finalItems.append(artworkMedia)
+//                   }
+//                default:
+//                    break
+//                }
+//            }
+//
+//        }
+//    }
     
     //TGP -Find & Edit center image in collection view using Brightroom Library
     @objc private func editImage(){
@@ -281,7 +305,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
         if isFromEdit {
             didFinishHandler?(2,self, items)
         }else{
-            didFinishHandler?(2,self, finalItems)
+            didFinishHandler?(2,self, items)
         }
     }
     
@@ -319,9 +343,9 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
                             break
                         }
                 self.items.remove(at: indexPath.row)
-                if self.finalItems.count > 0{
-                    self.finalItems.remove(at: indexPath.row)
-                }
+//                if self.finalItems.count > 0{
+//                    self.finalItems.remove(at: indexPath.row)
+//                }
             //            v.collectionView.performBatchUpdates({
             //                v.collectionView.deleteItems(at: [indexPath])
             //            }, completion: { _ in })
@@ -371,7 +395,7 @@ extension YPSelectionsGalleryVC: UICollectionViewDataSource, UICollectionViewDel
            // cell.imageView.backgroundColor = .clear
            // if items.count > 1{
                // cell.imageView.contentMode = YPSelectionsGalleryVC.contentMode}else{
-                    cell.imageView.contentMode = .scaleAspectFill
+                    cell.imageView.contentMode = .scaleAspectFit
                 
               //  }
             cell.imageView.image = photo.originalImage

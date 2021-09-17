@@ -10,7 +10,7 @@
 import UIKit
 import Photos
 
-protocol YPAssetZoomableViewDelegate: class {
+protocol YPAssetZoomableViewDelegate: AnyObject {
     func ypAssetZoomableViewDidLayoutSubviews(_ zoomableView: YPAssetZoomableView)
     func ypAssetZoomableViewScrollViewDidZoom()
     func ypAssetZoomableViewScrollViewDidEndZooming()
@@ -23,6 +23,8 @@ final class YPAssetZoomableView: UIScrollView {
     public var photoImageView = UIImageView()
     public var videoView = YPVideoView()
     public var squaredZoomScale: CGFloat = 1
+    public var isMultipleSelectionEnabled = false
+    public var currentImageSelectedIndex = 0
     public var minWidth: CGFloat? = YPConfig.library.minWidthForItem
     
     fileprivate var currentAsset: PHAsset?
@@ -227,17 +229,30 @@ final class YPAssetZoomableView: UIScrollView {
     }
     
     // Centring the image frame
-    fileprivate func centerAssetView() {
+     func centerAssetView() {
         let assetView = isVideoMode ? videoView : photoImageView
         let scrollViewBoundsSize = self.bounds.size
         var assetFrame = assetView.frame
         let assetSize = assetView.frame.size
-        
+//        if self.isMultipleSelectionEnabled{
+//            if assetSize.width > assetSize.height {//landscape
+//                if assetSize.height < scrollViewBoundsSize.height{
+//                    assetFrame.origin.y = (scrollViewBoundsSize.height - assetSize.height) / 2.0
+//                    assetFrame.origin.x = 0
+//                }else{
+//
+//                }
+//            }else if assetSize.width < assetSize.height{//portrait
+//
+//            }else{//square
+//
+//            }
+//        }else{
         assetFrame.origin.x = (assetSize.width < scrollViewBoundsSize.width) ?
             (scrollViewBoundsSize.width - assetSize.width) / 2.0 : 0
         assetFrame.origin.y = (assetSize.height < scrollViewBoundsSize.height) ?
             (scrollViewBoundsSize.height - assetSize.height) / 2.0 : 0.0
-        
+      //  }
         assetView.frame = assetFrame
     }
     
@@ -262,6 +277,36 @@ final class YPAssetZoomableView: UIScrollView {
         super.layoutSubviews()
         myDelegate?.ypAssetZoomableViewDidLayoutSubviews(self)
     }
+    
+    
+    func adjustScrollViewInsets() {
+        let imageWidth = self.photoImageView.image?.size.width
+        let imageHeight = self.photoImageView.image?.size.height
+        let aspect = imageWidth! / imageHeight!
+        let imageViewSize = self.photoImageView.frame.size
+        if imageViewSize.width / aspect <= imageViewSize.height {
+            adjustHorizontalInsetsWithImageWidth(width: imageViewSize.height / 2)
+        } else {
+            adjustVerticalInsetsWithImageHeight(height: imageViewSize.width / 2)
+            
+        }
+    }
+
+    func adjustHorizontalInsetsWithImageWidth(width: CGFloat) {
+        var horizontalInset = (self.contentSize.width - width) / 2
+        if width < self.contentSize.width {
+           horizontalInset = horizontalInset  - (self.frame.size.width - width) / 2
+        }
+        self.contentInset = UIEdgeInsets(top: 0, left: -horizontalInset, bottom: 0, right: -horizontalInset)
+    }
+
+    func adjustVerticalInsetsWithImageHeight(height: CGFloat) {
+        var verticalInset = (self.contentSize.height - height) / 2
+        if height < self.frame.size.height {
+            verticalInset = verticalInset - (self.frame.size.height - height) / 2
+        }
+        self.contentInset = UIEdgeInsets(top: -verticalInset, left: 0, bottom: -verticalInset, right: 0)
+    }
 }
 
 // MARK: UIScrollViewDelegate Protocol
@@ -283,7 +328,6 @@ extension YPAssetZoomableView: UIScrollViewDelegate {
         if YPConfig.library.onlySquare && scale < squaredZoomScale {
             self.fitImage(true, animated: true)
         }
-        
         myDelegate?.ypAssetZoomableViewScrollViewDidEndZooming()
         cropAreaDidChange()
     }

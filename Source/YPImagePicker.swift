@@ -259,7 +259,7 @@ override open func viewDidLoad() {
                 let imageName = "\(position)image\(currentTimeStamp).jpg"
                if let imagePath = saveImage(image: photo.image, imageName: imageName)
                {
-                let artwork = YPMediaPhoto(image: photo.image, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: YPLibraryVC().targetWidth, heightRatio: YPLibraryVC().targetHeight, imageName: imageName)
+                let artwork = YPMediaPhoto(image: photo.image, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: picker.libraryVC?.targetWidth, heightRatio: picker.libraryVC?.targetHeight, imageName: imageName)
                 let artworkMedia = YPMediaItem.photo(p: artwork)
                 artworkArray.append(artworkMedia)
                }
