@@ -364,7 +364,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         
         multipleSelectionEnabled = !multipleSelectionEnabled
-        
+        croppedimage = nil
         if multipleSelectionEnabled {
             if selection.isEmpty, YPConfig.library.preSelectItemOnMultipleSelection,
                delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0),

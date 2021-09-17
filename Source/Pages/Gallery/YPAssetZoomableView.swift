@@ -24,7 +24,7 @@ final class YPAssetZoomableView: UIScrollView {
     public var videoView = YPVideoView()
     public var squaredZoomScale: CGFloat = 1
     public var isMultipleSelectionEnabled = false
-    public var currentImageSelectedIndex = 0
+    public var isFirstImageSelectedMultipleSelection = false
     public var minWidth: CGFloat? = YPConfig.library.minWidthForItem
     
     fileprivate var currentAsset: PHAsset?
@@ -234,26 +234,12 @@ final class YPAssetZoomableView: UIScrollView {
         let scrollViewBoundsSize = self.bounds.size
         var assetFrame = assetView.frame
         let assetSize = assetView.frame.size
-//        if self.isMultipleSelectionEnabled{
-//            if assetSize.width > assetSize.height {//landscape
-//                if assetSize.height < scrollViewBoundsSize.height{
-//                    assetFrame.origin.y = (scrollViewBoundsSize.height - assetSize.height) / 2.0
-//                    assetFrame.origin.x = 0
-//                }else{
-//
-//                }
-//            }else if assetSize.width < assetSize.height{//portrait
-//
-//            }else{//square
-//
-//            }
-//        }else{
-        assetFrame.origin.x = (assetSize.width < scrollViewBoundsSize.width) ?
-            (scrollViewBoundsSize.width - assetSize.width) / 2.0 : 0
         assetFrame.origin.y = (assetSize.height < scrollViewBoundsSize.height) ?
             (scrollViewBoundsSize.height - assetSize.height) / 2.0 : 0.0
-      //  }
+        assetFrame.origin.x = (assetSize.width < scrollViewBoundsSize.width) ?
+            (scrollViewBoundsSize.width - assetSize.width) / 2.0 : 0
         assetView.frame = assetFrame
+
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -323,7 +309,14 @@ extension YPAssetZoomableView: UIScrollViewDelegate {
     
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         guard let view = view, view == photoImageView || view == videoView else { return }
-        
+        if isMultipleSelectionEnabled{
+            if self.frame.height > self.frame.width{
+                if self.photoImageView.frame.height < self.frame.height{
+                    self.fitImage(true, animated: false)
+                }
+            }
+            
+        }
         // prevent to zoom out
         if YPConfig.library.onlySquare && scale < squaredZoomScale {
             self.fitImage(true, animated: true)
