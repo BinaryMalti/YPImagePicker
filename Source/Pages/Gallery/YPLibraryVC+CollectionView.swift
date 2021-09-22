@@ -75,17 +75,32 @@ extension YPLibraryVC {
     
     func startMultipleSelection(at indexPath: IndexPath) {
         currentlySelectedIndex = indexPath.row
-        multipleSelectionButtonTapped()
-        
+        multipleSelectionButtonTapped()//tgp check this
+
         // Update preview.
-            changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: croppedimage)
-        
+        let selectedAsset = selection.filter{$0.index == indexPath.row};
+        if selectedAsset.count > 0 && selectedAsset.first!.croppedImage != nil {
+            changeAsset(mediaManager.fetchResult[indexPath.row],cropImage: selectedAsset.first!.croppedImage)
+        }else{
+            isFirstItemSelectedMultipleSelection = true
+            changeAsset(mediaManager.fetchResult[indexPath.row])
+            let firstSelection = selection.first!
+            let asset = mediaManager.fetchResult[indexPath.item]
+            if selection.first!.assetIdentifier != asset.localIdentifier{
+            selection = [YPLibrarySelection(index: indexPath.row,
+                                            cropRect: firstSelection.cropRect,
+                                            scrollViewContentOffset: firstSelection.scrollViewContentOffset,
+                                            scrollViewZoomScale: firstSelection.scrollViewZoomScale, assetIdentifier: asset.localIdentifier, croppedImage: nil)]
+            }
+        }
         // Bring preview down and keep selected cell visible.
         panGestureHelper.resetToOriginalState()
         if !panGestureHelper.isImageShown {
             v.collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
         }
+       
         v.refreshImageCurtainAlpha()
+        v.collectionView.reloadData()
     }
     
     // MARK: - Library collection view cell managing
@@ -200,7 +215,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
                 cell.multipleSelectionIndicator.set(number: nil)
             }
         }else{
-            let asset = mediaManager.fetchResult[indexPath.item]
+            let asset = mediaManager.fetchResult[indexPath.row]
             cell.representedAssetIdentifier = asset.localIdentifier
         mediaManager.imageManager?.requestImage(for: asset,
                                    targetSize: v.cellSize(),

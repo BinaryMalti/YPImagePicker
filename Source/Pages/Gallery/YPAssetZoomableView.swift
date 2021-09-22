@@ -103,10 +103,10 @@ final class YPAssetZoomableView: UIScrollView {
                          storedCropPosition: YPLibrarySelection?,
                          completion: @escaping (Bool) -> Void,
                          updateCropInfo: @escaping () -> Void) {
-//        guard currentAsset != photo else {
-//            DispatchQueue.main.async { completion(false) }
-//            return
-//        }
+        guard currentAsset != photo else {
+            DispatchQueue.main.async { completion(false) }
+            return
+        }
         currentAsset = photo
         
         
@@ -309,13 +309,25 @@ extension YPAssetZoomableView: UIScrollViewDelegate {
     
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         guard let view = view, view == photoImageView || view == videoView else { return }
-        if isMultipleSelectionEnabled{
-            if self.frame.height > self.frame.width{
-                if self.photoImageView.frame.height < self.frame.height{
-                    self.fitImage(true, animated: false)
-                }
+        if isMultipleSelectionEnabled {
+            if self.photoImageView.frame.height < self.frame.height {
+                self.fitImage(true, animated: false)
+            } else if self.photoImageView.frame.width < self.frame.width {
+                self.fitImage(true, animated: false)
             }
-            
+//            if self.frame.height > self.frame.width {
+//                if self.photoImageView.frame.height < self.frame.height {
+//                    self.fitImage(true, animated: false)
+//                } else if self.photoImageView.frame.width < self.frame.width {
+//                    self.fitImage(true, animated: false)
+//                }
+//            } else {
+//                if self.photoImageView.frame.height < self.frame.height {
+//                    self.fitImage(true, animated: false)
+//                } else if self.photoImageView.frame.width < self.frame.width {
+//                    self.fitImage(true, animated: false)
+//                }
+//            }
         }
         // prevent to zoom out
         if YPConfig.library.onlySquare && scale < squaredZoomScale {

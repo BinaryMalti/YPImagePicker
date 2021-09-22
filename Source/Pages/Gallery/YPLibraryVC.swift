@@ -13,7 +13,11 @@ protocol YPLibraryDelegate: AnyObject {
     func showCroppedImage(rect: CGRect, image: UIImage)
 }
 
-public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, YPLibraryDelegate {
+    func showCroppedImage(rect: CGRect, image: UIImage) {
+        self.updateImageCrop(cropRect: rect, image: image)
+    }
+    
     internal weak var delegate: YPLibraryViewDelegate?
     internal var v: YPLibraryView!
     internal var isProcessing = false // true if video or image is in processing state
@@ -31,6 +35,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     private var cameraPicker: UIImagePickerController
     public var didCapturePhoto: ((YPMediaItem) -> Void)?
     var singleImage: UIImage?
+    var startLongPressMultipleSelection = false
+    var scrollViewSize : CGSize?
     var selectedDraftItem: DraftItems?
     
     // MARK: - Init
@@ -68,6 +74,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         } else {
             checkPermission()
         }
+
         v.zoomableWidthConstraint = v.assetZoomableView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width)
         v.zoomableHeightConstraint = v.assetZoomableView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width)
         v.zoomableWidthConstraint?.isActive = true
@@ -84,7 +91,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     }
     
     var isImageCropped = false
-    var croppedimage: UIImage?
+   // var croppedimage: UIImage?
     func updateImageCrop(cropRect: CGRect, image: UIImage) {
         let asset = mediaManager.fetchResult[currentlySelectedIndex]
         selection = [
@@ -97,7 +104,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         ]
         isImageCropped = true
         isFirstItemSelectedMultipleSelection = true
-        croppedimage = image
+       // croppedimage = image
         changeAsset(asset, cropImage: image)
     }
     
@@ -129,10 +136,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         createPostTypeDropDown()
         v.maxNumberWarningLabel.text = String(format: YPConfig.wordings.warningMaxItemsLimit,
                                               YPConfig.library.maxNumberOfItems)
-        if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
-            showMultipleSelection()
-        }
-        
+
         if let preselectedItems = YPConfig.library.preselectedItems, !preselectedItems.isEmpty {
             selection = preselectedItems.compactMap { item -> YPLibrarySelection? in
                 var itemAsset: PHAsset?
@@ -162,6 +166,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         guard mediaManager.hasResultItems else {
             return
+        }
+        if YPConfig.library.defaultMultipleSelection || selection.count > 1 {
+            showMultipleSelection()
         }
     }
     
@@ -277,10 +284,12 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self?.fromCamera = false
                 self?.fromCropClick = true
                 self?.isImageCropped = false
-                let imageItem = YPMediaItem.photo(p: YPMediaPhoto(image: image))
-                self?.didCapturePhoto?(imageItem)
-                //                let cropVC = CustomCropViewController(item:image)
-                //                self?.present(cropVC, animated: true)
+             //   let imageItem = YPMediaItem.photo(p: YPMediaPhoto(image: image))
+              //  self?.didCapturePhoto?(imageItem)
+                                let cropVC = CustomCropViewController(item:image)
+                            cropVC.delegateYP = self
+                self?.navigationController?.pushViewController(cropVC, animated: true)
+                            //    self?.present(cropVC, animated: true)
             }
         }
     }
@@ -297,7 +306,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
 //                    let defaultAssetZoomableViewSize = UIScreen.main.bounds.width
 //                    self.v.zoomableHeightConstraint?.constant = defaultAssetZoomableViewSize
 //                    self.v.zoomableWidthConstraint?.constant = defaultAssetZoomableViewSize
-                    self.selection.removeAll()
+              //      self.selection.removeAll()
                 }
                 self.showMultipleSelection()
             }
@@ -341,14 +350,18 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         var artworkSetArray: [YPMediaItem] = []
         let currentTimeStamp = NSDate().timeIntervalSince1970.toInt()
         let imageName = "0image\(currentTimeStamp).jpg"
+        let imageSize =  self.calculateSingleImageSize(imageWidth: imageCrop.size.width, imageHeight: imageCrop.size.height, size: YPImagePickerConfiguration.screenWidth)
+        self.targetWidth = imageSize.width
+        self.targetHeight = imageSize.height
         let ypImage = YPMediaPhoto(image: imageCrop,
                                    exifMeta: nil,
                                    fromCamera: true,
                                    asset: nil,
                                    url: nil,
-                                   widthRatio: nil,
-                                   heightRatio: nil,
+                                   widthRatio: imageSize.width,
+                                   heightRatio: imageSize.height,
                                    imageName: imageName)
+        
         artworkSetArray.append(YPMediaItem.photo(p: ypImage))
         if artworkSetArray.count > 0 {
             self.didCapturePhoto?(artworkSetArray.first!)
@@ -357,6 +370,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
     }
     
+    
+    
     func showMultipleSelection() {
         // Prevent desactivating multiple selection when using `minNumberOfItems`
         if YPConfig.library.minNumberOfItems > 1, multipleSelectionEnabled {
@@ -364,7 +379,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         }
         
         multipleSelectionEnabled = !multipleSelectionEnabled
-        croppedimage = nil
         if multipleSelectionEnabled {
             if selection.isEmpty, YPConfig.library.preSelectItemOnMultipleSelection,
                delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0),
@@ -372,16 +386,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             {
                 self.v.assetZoomableView.fitImage(false)
                 let asset = mediaManager.fetchResult[currentlySelectedIndex]
-                if isImageCropped {
-                    selection = [
-                        YPLibrarySelection(index: currentlySelectedIndex,
-                                           cropRect: v.currentCropRect(),
-                                           scrollViewContentOffset: v.assetZoomableView!.contentOffset,
-                                           scrollViewZoomScale: v.assetZoomableView!.zoomScale,
-                                           assetIdentifier: asset.localIdentifier,
-                                           croppedImage: croppedimage)
-                    ]
-                } else {
                     selection = [
                         YPLibrarySelection(index: currentlySelectedIndex,
                                            cropRect: v.currentCropRect(),
@@ -389,17 +393,25 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                                            scrollViewZoomScale: v.assetZoomableView!.zoomScale,
                                            assetIdentifier: asset.localIdentifier)
                     ]
+            }else{
+                if selection.count > 0{
+                    isFirstItemSelectedMultipleSelection = false
                 }
-                v.multiselectCountLabel.text = String(format: "%02d", selection.count)
             }
+            v.multiselectCountLabel.text = String(format: "%02d", selection.count)
         } else {
             // TGP -reset preview scrollview(AssetZoomableView) if multiple selection disabled
             let defaultAssetZoomableViewSize = self.v.assetViewContainer.frame.width
             self.v.zoomableHeightConstraint?.constant = defaultAssetZoomableViewSize
             self.v.zoomableWidthConstraint?.constant = defaultAssetZoomableViewSize
-           // self.v.assetZoomableView.centerAssetView()
+            self.v.layoutIfNeeded()
+            if self.v.isImageViewConstraintUpdated {
+                self.v.assetZoomableView.centerAssetView()
+            }
+            
             self.v.assetZoomableView.fitImage(false)
             self.isFirstItemSelectedMultipleSelection = true
+            self.isImageAlreadySelected = false
             selection.removeAll()
             if !YPConfig.showDrafts {
                 self.v.cropImageButton.isHidden = false
@@ -407,11 +419,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             }
             addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
             self.v.multiselectCountLabel.text = ""
+            v.collectionView.reloadData()
         }
-        
         v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
         v.toggleMultiselectButton(isOn: multipleSelectionEnabled)
-        v.collectionView.reloadData()
         checkLimit()
         delegate?.libraryViewDidToggleMultipleSelection(enabled: false)
     }
@@ -538,6 +549,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     // var contentSize : CGSize = CGSize(width: 0, height: 0)
     
     func changeAsset(_ asset: PHAsset, cropImage: UIImage? = nil) {
+        print("asset.localIdentifier: \(asset.localIdentifier)")
+        print("selections: \(selection)")
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
         let completion = { (isLowResIntermediaryImage: Bool) in
@@ -549,8 +562,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     self.isImageAlreadySelected = true
                     self.isFirstItemSelectedMultipleSelection = false
                     self.v.assetZoomableView.fitImage(false)
-                    let height = self.v.assetZoomableView.assetImageView.frame.height
-                    let width = self.v.assetZoomableView.assetImageView.frame.width
+                    let height = self.v.assetZoomableView.photoImageView.frame.height
+                    let width = self.v.assetZoomableView.photoImageView.frame.width
                     let assetZoomableViewHeight = self.v.assetZoomableView.frame.height
                     if height > width {
                         self.v.zoomableWidthConstraint?.constant = width
@@ -565,15 +578,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                         self.v.assetZoomableView.layoutSubviews()
                         self.v.assetZoomableView.isMultipleSelectionEnabled = true
                     }
-                    // else{
-                    //                        if !self.calledOnce{
-                    //                        self.v.assetZoomableView.fitImage(false)
-                    //                        self.v.assetZoomableView.layoutSubviews()
-                    //                        }else{
-                    // self.v.assetZoomableView.fitImage(false)
-                    // self.v.assetZoomableView.layoutSubviews()
-                    //    }
-                    //   }
                 }
             } else {
                 // TGP -reset preview scrollview(AssetZoomableView) if multiple selection disabled
@@ -590,26 +594,71 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 self.delegate?.libraryViewFinishedLoading()
             }
         }
-        
-        let updateCropInfo = {
-            self.updateCropInfo()
+        var isExist = false
+        for s in selection {
+            if s.assetIdentifier == asset.localIdentifier {
+                isExist = true
+            }
         }
-        
-        // MARK: add a func(updateCropInfo) after crop multiple
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            switch asset.mediaType {
-            case .image:
-                if cropImage != nil {
-                    DispatchQueue.main.async {
-                        self.v.assetZoomableView.setDraftImage(cropImage!, completion: completion, updateCropInfo: updateCropInfo)
-                    }
-                } else {
-                    self.v.assetZoomableView.setImage(asset,
-                                                      mediaManager: self.mediaManager,
-                                                      storedCropPosition: self.fetchStoredCrop(),
-                                                      completion: completion,
-                                                      updateCropInfo: updateCropInfo)
+        if isExist &&
+            !self.isImageAlreadySelected &&
+            multipleSelectionEnabled {
+            
+            self.isImageAlreadySelected = true
+            self.isFirstItemSelectedMultipleSelection = false
+            v.multiselectCountLabel.text = String(format: "%02d", selection.count)
+            
+            let imageHeight = self.v.assetZoomableView.assetImageView.frame.height
+            let imageWidth = self.v.assetZoomableView.assetImageView.frame.width
+            let scrollHeight = self.v.assetZoomableView.frame.height
+            let scrollWidth = self.v.assetZoomableView.frame.width
+            var widthToSet: CGFloat = 0.0
+            var heightToSet: CGFloat = 0.0
+            
+            if imageWidth > scrollWidth && imageHeight > scrollHeight {
+                print("Image Height & Width is higher then scrollview")
+                heightToSet = scrollWidth
+                widthToSet = scrollWidth
+            } else if imageHeight > scrollHeight {
+                print("Image Height is higher then scrollview height")
+                heightToSet = scrollHeight
+                widthToSet = imageWidth
+            } else if imageWidth < scrollWidth {
+                print("Image Width is less then scrollview width")
+                heightToSet = scrollHeight
+                widthToSet = imageWidth
+            } else {
+                print("Image Width is higher then scrollview width")
+                heightToSet = imageHeight
+                widthToSet = scrollWidth
+            }
+            
+            self.v.zoomableWidthConstraint?.constant = widthToSet
+            self.v.zoomableHeightConstraint?.constant = heightToSet
+            self.v.layoutIfNeeded()
+            if self.v.isImageViewConstraintUpdated {
+                self.v.assetZoomableView.centerAssetView()
+            }
+        } else {
+            let updateCropInfo = {
+                self.updateCropInfo()
+            }
+            
+            // MARK: add a func(updateCropInfo) after crop multiple
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                switch asset.mediaType {
+                case .image:
+                    if cropImage != nil {
+                        DispatchQueue.main.async {
+                            self.v.assetZoomableView.setDraftImage(cropImage!, completion: completion, updateCropInfo: updateCropInfo)
+                        }
+                    } else {
+                        self.v.assetZoomableView.setImage(asset,
+                                                          mediaManager: self.mediaManager,
+                                                          storedCropPosition: self.fetchStoredCrop(),
+                                                          completion: completion,
+                                                          updateCropInfo: updateCropInfo)
                 }
             case .video:
                 self.v.assetZoomableView.setVideo(asset,
@@ -622,6 +671,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             @unknown default:
                 fatalError()
             }
+        }
         }
     }
     
@@ -663,30 +713,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             if self.multipleSelectionEnabled {
                 if self.isFirstItemSelectedMultipleSelection {
                     self.isFirstItemSelectedMultipleSelection = false
-                    //                self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
-                    //                self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
-                    //                self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
-                    //                self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                     let targetSize = self.calculateSingleImageSize(imageWidth: self.v.assetZoomableView.assetImageView.frame.width, imageHeight: self.v.assetZoomableView.assetImageView.frame.height, size: self.v.assetZoomableView.assetImageView.frame.width)
                     self.targetWidth = targetSize.width
                     self.targetHeight = targetSize.height
-                    //                    if (self.v.assetZoomableView.assetImageView.frame.width < self.v.assetZoomableView.assetImageView.frame.height)
-                    //                    {
-                    //                        let ratio = self.v.assetZoomableView.assetImageView.frame.width / self.v.assetZoomableView.assetImageView.frame.height
-                    //                        if ratio < 0.8 {
-                    //                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                    //                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * 1.25
-                    //                        }else{
-                    //                            self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                    //                            self.targetHeight = self.v.assetZoomableView.assetImageView.frame.width * ratio
-                    //                        }
-                    //                    }else if  (self.v.assetZoomableView.assetImageView.frame.width > self.v.assetZoomableView.assetImageView.frame.height){
-                    //                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                    //                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    //                    }else{
-                    //                        self.targetWidth = self.v.assetZoomableView.assetImageView.frame.width
-                    //                        self.targetHeight = self.v.assetZoomableView.assetImageView.frame.height
-                    //                    }
                     
                     self.view.setNeedsLayout()
                 } else {
@@ -696,10 +725,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     }
                 }
             } else {
-                //                        self.v.leftMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
-                //                        self.v.rightMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.x
-                //                        self.v.bottomMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
-                //                        self.v.topMaskHeight.constant = self.v.assetZoomableView.assetImageView.frame.origin.y
                 self.targetWidth = self.v.assetZoomableView.photoImageView.frame.width
                 self.targetHeight = self.v.assetZoomableView.photoImageView.frame.height
                 self.view.setNeedsLayout()
@@ -761,8 +786,6 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         var selectedAsset = selection[selectedAssetIndex]
         selectedAsset.scrollViewContentOffset = v.assetZoomableView.contentOffset
         selectedAsset.scrollViewZoomScale = v.assetZoomableView.zoomScale
-        //        selectedAsset.cutWidth = v.leftMaskHeight.constant
-        //        selectedAsset.cutHeight = v.topMaskHeight.constant
         if multipleSelectionEnabled {
             if isImageCropped, selectedAssetIndex == 0 {
                 selectedAsset.cropRect = selection[selectedAssetIndex].cropRect
@@ -850,9 +873,17 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                               multipleItemsCallback: @escaping (_ items: [YPMediaItem]) -> Void)
     {
         DispatchQueue.global(qos: .userInitiated).async {
-            if self.croppedimage != nil {
+            if self.isImageCropped {
                 let selectedAssets: [(asset: UIImage, cropRect: CGRect?)] = self.selection.map {
                     if $0.croppedImage != nil {
+                        self.delegate?.libraryViewDidTapNext()
+                        let croprect = self.v.currentCropRect()
+                        let croppedImageSize = self.calculateSingleImageSize(
+                            imageWidth:$0.croppedImage!.size.width,
+                            imageHeight: $0.croppedImage!.size.height,
+                            size: YPImagePickerConfiguration.screenWidth)
+                        self.targetWidth = croppedImageSize.width
+                        self.targetHeight = croppedImageSize.height
                         return ($0.croppedImage!, $0.cropRect)
                     } else {
                         guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
@@ -897,7 +928,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                 let selectedAssets: [(asset: PHAsset, cropRect: CGRect?)] = self.selection.map {
                     guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
                                                           options: PHFetchOptions()).firstObject else { fatalError() }
-                    return (asset, $0.cropRect)
+                                        return (asset, $0.cropRect)
                 }
                 // Multiple selection
                 if self.multipleSelectionEnabled, self.selection.count > 1 {
@@ -920,7 +951,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                         case .image:
                             self.fetchImageAndCrop(for: asset.asset, withCropRect: asset.cropRect) { image, exifMeta in
                                 let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(),
-                                                         exifMeta: exifMeta, asset: asset.asset)
+                                                         exifMeta: exifMeta,
+                                                         asset: asset.asset)
                                 resultMediaItems.append(YPMediaItem.photo(p: photo))
                                 asyncGroup.leave()
                             }
@@ -961,19 +993,19 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     }
                 } else {
                     if selectedAssets.count > 0 {
-                        let asset = selectedAssets.first!.asset
-                        switch asset.mediaType {
+                        let asset = selectedAssets.first!
+                        switch asset.asset.mediaType {
                         case .audio, .unknown:
                             return
                         case .video:
                             break
                         case .image:
-                            self.fetchImageAndCrop(for: asset) { image, exifMeta in
+                            self.fetchImageAndCrop(for: asset.asset) { image, exifMeta in
                                 DispatchQueue.main.async {
                                     self.delegate?.libraryViewFinishedLoading()
                                     let photo = YPMediaPhoto(image: image.resizedImageIfNeeded(),
                                                              exifMeta: exifMeta,
-                                                             asset: asset)
+                                                             asset: asset.asset)
                                     photoCallback(photo)
                                 }
                             }
@@ -997,6 +1029,18 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         height = (height.truncatingRemainder(dividingBy: 2) == 0) ? height : height - 1
         return CGSize(width: width, height: height)
     }
+    
+    // MARK: - TargetSize
+    
+    private func targetSizeImage(for asset: UIImage, cropRect: CGRect) -> CGSize {
+        var width = (CGFloat(asset.size.width) * cropRect.width).rounded(.toNearestOrEven)
+        var height = (CGFloat(asset.size.height) * cropRect.height).rounded(.toNearestOrEven)
+        // round to lowest even number
+        width = (width.truncatingRemainder(dividingBy: 2) == 0) ? width : width - 1
+        height = (height.truncatingRemainder(dividingBy: 2) == 0) ? height : height - 1
+        return CGSize(width: width, height: height)
+    }
+    
     
     // MARK: - Player
     

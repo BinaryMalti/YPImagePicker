@@ -38,7 +38,8 @@ final class YPLibraryView: UIView {
     var draftItem:[DraftItems] = []
     var showDraftImages = false
     var shouldShowLoader = false
-    
+    var isImageViewConstraintUpdated = true
+
     override func awakeFromNib() {
         super.awakeFromNib()
 

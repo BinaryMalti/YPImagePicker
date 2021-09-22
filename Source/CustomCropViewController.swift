@@ -141,7 +141,8 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     func fetchImagePreview(previewImage: UIImage) {
         self.delegateYP?.showCroppedImage(rect: self.photoView.cropView.frame, image: previewImage)
        // didFinishCropping?(previewImage)
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
+       // self.dismiss(animated: true, completion: nil)
 
     }
  
@@ -193,6 +194,7 @@ extension CustomCropViewController: IGRPhotoTweakViewControllerDelegate{
             self.fetchImagePreview(previewImage: croppedImage)
         }
     }
+    
     
     func photoTweaksControllerDidCancel(_ controller: IGRPhotoTweakViewController) {
         self.dismiss(animated: true, completion: nil)

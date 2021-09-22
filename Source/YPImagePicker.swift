@@ -52,7 +52,7 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
 
     
     let loadingView = YPLoadingView()
-    private let picker: YPPickerVC!
+    public let picker: YPPickerVC!
     
     /// Get a YPImagePicker instance with the default configuration.
     public convenience init() {
@@ -111,8 +111,8 @@ override open func viewDidLoad() {
                       }
                         return
                     }else if self?.picker.libraryVC?.fromCamera == true{
-                        let item = items.first!
-                        self?.didSelect(items: [item], draftItem: nil, clickType: 3)
+                        let itemArray = self!.saveArtworkToLocalDirectory(items: items)
+                        self?.didSelect(items: itemArray, draftItem: nil, clickType: 3)
 //                        if self?.picker.libraryVC?.isSaveAsDraft == true{
 //                            self?.didSelect(items: [item], draftItem: nil, clickType: 4)
 //                        }else{
@@ -259,7 +259,14 @@ override open func viewDidLoad() {
                 let imageName = "\(position)image\(currentTimeStamp).jpg"
                if let imagePath = saveImage(image: photo.image, imageName: imageName)
                {
-                let artwork = YPMediaPhoto(image: photo.image, exifMeta: nil, fromCamera: photo.fromCamera, asset: photo.asset, url: imagePath, widthRatio: picker.libraryVC?.targetWidth, heightRatio: picker.libraryVC?.targetHeight, imageName: imageName)
+                let artwork = YPMediaPhoto(image: photo.image,
+                                           exifMeta: nil,
+                                           fromCamera: photo.fromCamera,
+                                           asset: photo.asset,
+                                           url: imagePath,
+                                           widthRatio: picker.libraryVC?.targetWidth,
+                                           heightRatio: picker.libraryVC?.targetHeight,
+                                           imageName: imageName)
                 let artworkMedia = YPMediaItem.photo(p: artwork)
                 artworkArray.append(artworkMedia)
                }
