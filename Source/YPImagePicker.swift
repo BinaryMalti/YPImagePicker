@@ -112,7 +112,7 @@ override open func viewDidLoad() {
                         return
                     }else if self?.picker.libraryVC?.fromCamera == true{
                         let itemArray = self!.saveArtworkToLocalDirectory(items: items)
-                        self?.didSelect(items: itemArray, draftItem: nil, clickType: 3)
+                        self?.didSelect(items: itemArray, draftItem: nil, clickType: 4)
 //                        if self?.picker.libraryVC?.isSaveAsDraft == true{
 //                            self?.didSelect(items: [item], draftItem: nil, clickType: 4)
 //                        }else{

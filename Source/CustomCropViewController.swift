@@ -29,7 +29,8 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         v.backgroundColor = .black
         v.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          v.topAnchor.constraint(equalTo: photoView.bottomAnchor,constant: 21),
+            self.photoView.topAnchor.constraint(equalTo: view.topAnchor, constant:0),
+            v.topAnchor.constraint(equalTo: photoView.bottomAnchor,constant: 0),
           v.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
           v.bottomAnchor.constraint(equalTo: view.bottomAnchor),
           v.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
@@ -55,7 +56,14 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         super.viewDidLoad()
         self.delegate = self
         self.addBackButtonItem(title: "Select Artwork", saveAsDraft: false, isFromcrop: true, isForEdit: false)
-        self.photoView.scrollView.contentInset.top = self.photoView.scrollView.contentInset.top - 44
+        if UIDevice.current.screenType == UIDevice.ScreenType.iPhones_6_6s_7_8 {
+            self.photoView.scrollView.contentInset.top = self.photoView.scrollView.contentInset.top - 30.0
+        }else if UIDevice.current.screenType == UIDevice.ScreenType.iPhones_12{
+            self.photoView.scrollView.contentInset.top = self.photoView.scrollView.contentInset.top - 64.0
+        }else{
+            self.photoView.scrollView.contentInset.top = self.photoView.scrollView.contentInset.top - 44.0
+        }
+
         self.view.backgroundColor = .black
         //self.lockAspectRatio(true)
         //FIXME: Zoom setup
@@ -163,10 +171,23 @@ class CustomCropViewController: IGRPhotoTweakViewController {
     }
 
     override open func customCanvasInsets() -> UIEdgeInsets {
-        return UIEdgeInsets(top: 44,
-                            left: 0,
-                            bottom: 0,
-                            right: 0)
+        if UIDevice.current.screenType == UIDevice.ScreenType.iPhones_6_6s_7_8 {
+            return UIEdgeInsets(top: 35.0,
+                                left: 0,
+                                bottom: 35.0,
+                                right: 0)
+        }else if UIDevice.current.screenType == UIDevice.ScreenType.iPhones_12{
+            return UIEdgeInsets(top: 69.0,
+                                left: 0,
+                                bottom: 69.0,
+                                right: 0)
+        }else{
+            return UIEdgeInsets(top: 49.0,
+                                left: 0,
+                                bottom: 49.0,
+                                right: 0)
+        }
+        
     }
 }
 
@@ -201,4 +222,28 @@ extension CustomCropViewController: IGRPhotoTweakViewControllerDelegate{
     }
     
     
+}
+extension UIDevice {
+    
+    var iPhone: Bool {
+        return UIDevice.current.userInterfaceIdiom == .phone
+    }
+    enum ScreenType: String {
+        case iPhones_6_6s_7_8 = "iPhone 6, iPhone 6S, iPhone 7 or iPhone 8"
+        case iPhones_6Plus_6sPlus_7Plus_8Plus = "iPhone 6 Plus, iPhone 6S Plus, iPhone 7 Plus or iPhone 8 Plus"
+        case iPhones_12 = "iPhone 12"
+        case unknown
+    }
+    var screenType: ScreenType {
+        switch UIScreen.main.nativeBounds.height {
+        case 1334:
+            return .iPhones_6_6s_7_8
+        case 1920, 2208:
+            return .iPhones_6Plus_6sPlus_7Plus_8Plus
+        case 2532:
+            return .iPhones_12
+        default:
+            return .unknown
+        }
+    }
 }

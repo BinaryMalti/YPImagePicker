@@ -75,7 +75,7 @@ extension YPLibraryVC {
     
     func startMultipleSelection(at indexPath: IndexPath) {
         currentlySelectedIndex = indexPath.row
-        multipleSelectionButtonTapped()//tgp check this
+        multipleSelectioTapped()//tgp check this
 
         // Update preview.
         let selectedAsset = selection.filter{$0.index == indexPath.row};
@@ -251,7 +251,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
             cell.multipleSelectionIndicator.set(number: nil)
             if  multipleSelectionEnabled && selection.count < 1
               {
-                  multipleSelectionButtonTapped()
+                multipleSelectioTapped()
               }
         }
         }

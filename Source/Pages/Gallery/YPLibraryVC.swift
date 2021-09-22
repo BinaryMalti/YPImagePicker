@@ -38,6 +38,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     var startLongPressMultipleSelection = false
     var scrollViewSize : CGSize?
     var selectedDraftItem: DraftItems?
+    internal var isMultipleSelectionButtonTapped = false
     
     // MARK: - Init
 
@@ -230,7 +231,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         
         // Activate multiple selection when using `minNumberOfItems`
         if YPConfig.library.minNumberOfItems > 1 {
-            multipleSelectionButtonTapped()
+            multipleSelectioTapped()
         }
     }
     
@@ -295,9 +296,14 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     }
     
     // MARK: - Multiple Selection
-    
     @objc
     func multipleSelectionButtonTapped() {
+        isMultipleSelectionButtonTapped = true
+        multipleSelectioTapped()
+    }
+
+
+    func multipleSelectioTapped() {
         isFirstItemSelectedMultipleSelection = true
         doAfterPermissionCheck { [weak self] in
             if let self = self {
@@ -312,6 +318,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             }
         }
     }
+    
+    
     
     @objc
     func openCameraButtonTapped() {
@@ -396,19 +404,29 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             }else{
                 if selection.count > 0{
                     isFirstItemSelectedMultipleSelection = false
+                    if isMultipleSelectionButtonTapped{
+                        isMultipleSelectionButtonTapped = false
+                        v.collectionView.reloadData()
+                        let asset = mediaManager.fetchResult[currentlySelectedIndex]
+                        changeAsset(asset)
+                    }
                 }
             }
             v.multiselectCountLabel.text = String(format: "%02d", selection.count)
         } else {
             // TGP -reset preview scrollview(AssetZoomableView) if multiple selection disabled
+            if isMultipleSelectionButtonTapped{
+                let asset = mediaManager.fetchResult[currentlySelectedIndex]
+                changeAsset(asset)
+                isMultipleSelectionButtonTapped = false}
             let defaultAssetZoomableViewSize = self.v.assetViewContainer.frame.width
             self.v.zoomableHeightConstraint?.constant = defaultAssetZoomableViewSize
             self.v.zoomableWidthConstraint?.constant = defaultAssetZoomableViewSize
+            self.v.assetZoomableView.isMultipleSelectionEnabled = false
             self.v.layoutIfNeeded()
             if self.v.isImageViewConstraintUpdated {
                 self.v.assetZoomableView.centerAssetView()
             }
-            
             self.v.assetZoomableView.fitImage(false)
             self.isFirstItemSelectedMultipleSelection = true
             self.isImageAlreadySelected = false
@@ -571,6 +589,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     } else {
                         self.v.zoomableWidthConstraint?.constant = width
                         self.v.zoomableHeightConstraint?.constant = height
+                    }
+                    self.v.layoutIfNeeded()
+                    if self.v.isImageViewConstraintUpdated {
+                        self.v.assetZoomableView.centerAssetView()
                     }
                 } else {
                     if self.selection.count > 1 {
