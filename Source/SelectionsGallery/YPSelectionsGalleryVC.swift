@@ -138,6 +138,7 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             self.addBackButtonItem(title: "Select Artwork", saveAsDraft: true, isFromcrop: false, isForEdit: isFromEdit)
         }
         self.bottomView.forwardButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        self.bottomView.backButton.addTarget(self, action: #selector(backButtonClick(sender:)), for: .touchUpInside)
         if (items.count > 1){
             bottomView.deleteButton.isHidden = false
         }else{

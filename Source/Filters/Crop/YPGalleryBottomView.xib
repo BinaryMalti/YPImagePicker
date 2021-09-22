@@ -42,7 +42,7 @@
                             </constraints>
                         </stackView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CsX-hf-TXX" userLabel="pictureLabel">
-                            <rect key="frame" x="34" y="50" width="346" height="150"/>
+                            <rect key="frame" x="34" y="50" width="346" height="131"/>
                             <attributedString key="attributedText">
                                 <fragment content="Please note that the first ">
                                     <attributes>
@@ -67,32 +67,34 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z2L-dk-1vM">
-                            <rect key="frame" x="0.0" y="200" width="414" height="50"/>
+                            <rect key="frame" x="0.0" y="181" width="414" height="69"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EI9-7C-5EC" userLabel="back">
-                                    <rect key="frame" x="16" y="5" width="40" height="40"/>
+                                    <rect key="frame" x="15" y="0.0" width="44" height="44"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="40" id="7zB-NK-ZBx"/>
+                                        <constraint firstAttribute="width" constant="44" id="7zB-NK-ZBx"/>
+                                        <constraint firstAttribute="height" constant="44" id="E0I-Fc-nue"/>
                                     </constraints>
-                                    <color key="tintColor" red="0.85490196080000003" green="0.85490196080000003" blue="0.85490196080000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="tintColor" red="0.3411764705882353" green="0.4823529411764706" blue="0.87450980392156863" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <state key="normal" image="ic_left_arrow"/>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hI4-E8-T42" userLabel="forward">
-                                    <rect key="frame" x="358" y="5" width="40" height="40"/>
+                                    <rect key="frame" x="355" y="0.0" width="44" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="44" id="gcY-Ao-elo"/>
+                                    </constraints>
                                     <color key="tintColor" red="0.3411764706" green="0.4823529412" blue="0.87450980389999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <state key="normal" image="ic_right_arrow"/>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstItem="EI9-7C-5EC" firstAttribute="top" secondItem="z2L-dk-1vM" secondAttribute="top" constant="5" id="DLp-5l-PCo"/>
-                                <constraint firstAttribute="bottom" secondItem="hI4-E8-T42" secondAttribute="bottom" constant="5" id="F7Z-kw-qtD"/>
-                                <constraint firstItem="hI4-E8-T42" firstAttribute="top" secondItem="z2L-dk-1vM" secondAttribute="top" constant="5" id="Hgr-2G-RwQ"/>
-                                <constraint firstAttribute="height" constant="50" id="QRT-xb-YBd"/>
-                                <constraint firstItem="EI9-7C-5EC" firstAttribute="leading" secondItem="z2L-dk-1vM" secondAttribute="leading" constant="16" id="aGY-3v-UGx"/>
+                                <constraint firstItem="EI9-7C-5EC" firstAttribute="top" secondItem="z2L-dk-1vM" secondAttribute="top" id="DLp-5l-PCo"/>
+                                <constraint firstItem="hI4-E8-T42" firstAttribute="top" secondItem="z2L-dk-1vM" secondAttribute="top" id="Hgr-2G-RwQ"/>
+                                <constraint firstAttribute="height" constant="69" id="QRT-xb-YBd"/>
+                                <constraint firstItem="EI9-7C-5EC" firstAttribute="leading" secondItem="z2L-dk-1vM" secondAttribute="leading" constant="15" id="aGY-3v-UGx"/>
                                 <constraint firstItem="hI4-E8-T42" firstAttribute="width" secondItem="EI9-7C-5EC" secondAttribute="width" id="vG7-QI-vel"/>
-                                <constraint firstAttribute="bottom" secondItem="EI9-7C-5EC" secondAttribute="bottom" constant="5" id="wRS-hz-95e"/>
-                                <constraint firstAttribute="trailing" secondItem="hI4-E8-T42" secondAttribute="trailing" constant="16" id="xdH-fD-RTN"/>
+                                <constraint firstAttribute="trailing" secondItem="hI4-E8-T42" secondAttribute="trailing" constant="15" id="xdH-fD-RTN"/>
                             </constraints>
                         </view>
                     </subviews>
