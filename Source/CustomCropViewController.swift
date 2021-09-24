@@ -121,11 +121,11 @@ class CustomCropViewController: IGRPhotoTweakViewController {
 
     @objc
     func cancelCropArtwork(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Discard Changes", message: "You cannot undo this action", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Discard Changes", message: "You will loose all the edits performed", preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
                 alert.dismiss(animated: true, completion: nil)
             }))
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { (action: UIAlertAction!) in
             self.dismissAction()
         }))
         self.present(alert, animated: true, completion: nil)
@@ -218,7 +218,7 @@ extension CustomCropViewController: IGRPhotoTweakViewControllerDelegate{
     
     
     func photoTweaksControllerDidCancel(_ controller: IGRPhotoTweakViewController) {
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
     

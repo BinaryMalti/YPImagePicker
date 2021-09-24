@@ -21,10 +21,20 @@ extension YPLibraryVC {
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
-//            v.leftMaskHeight.constant = 0
-//            v.rightMaskHeight.constant = 0
-//            v.bottomMaskHeight.constant = 0
-//            v.topMaskHeight.constant = 0
+            let defaultAssetZoomableViewSize = self.v.assetViewContainer.frame.width
+            self.v.zoomableHeightConstraint?.constant = defaultAssetZoomableViewSize
+            self.v.zoomableWidthConstraint?.constant = defaultAssetZoomableViewSize
+            self.v.assetZoomableView.isMultipleSelectionEnabled = false
+            self.v.layoutIfNeeded()
+            if self.v.isImageViewConstraintUpdated {
+                self.v.assetZoomableView.centerAssetView()
+            }
+            self.v.assetZoomableView.fitImage(false)
+            self.isFirstItemSelectedMultipleSelection = true
+            self.isImageAlreadySelected = false
+            selection.removeAll()
+            v.assetViewContainer.setMultipleSelectionMode(on: multipleSelectionEnabled)
+            v.toggleMultiselectButton(isOn: multipleSelectionEnabled)
             if self.selectedDraftItem?.image != nil {
                 changeAssetDraft(self.selectedDraftItem!.image)
             }

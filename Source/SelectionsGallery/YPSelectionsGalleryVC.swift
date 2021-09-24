@@ -99,6 +99,8 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
             let topInset = (self.view.frame.height - totalHeight)/2
           let layout =  v.collectionView.collectionViewLayout as? YPGalleryCollectionViewFlowLayout
             layout?.sectionInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
+        }else{
+            
         }
     }
 

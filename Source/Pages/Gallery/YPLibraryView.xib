@@ -122,32 +122,32 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bjP-gr-9v3">
-                    <rect key="frame" x="0.0" y="490" width="400" height="60"/>
+                    <rect key="frame" x="0.0" y="481" width="400" height="69"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mDn-6o-JBe" userLabel="back">
-                            <rect key="frame" x="16" y="5" width="40" height="50"/>
+                            <rect key="frame" x="15" y="0.0" width="44" height="44"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="40" id="DN8-qp-0Ze"/>
+                                <constraint firstAttribute="height" constant="44" id="9HO-9u-Wq5"/>
+                                <constraint firstAttribute="width" constant="44" id="DN8-qp-0Ze"/>
                             </constraints>
-                            <color key="tintColor" red="0.85490196080000003" green="0.85490196080000003" blue="0.85490196080000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="tintColor" red="0.3411764705882353" green="0.4823529411764706" blue="0.87450980392156863" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal" image="ic_left_arrow"/>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hjm-CE-one" userLabel="forward">
-                            <rect key="frame" x="344" y="5" width="40" height="50"/>
+                            <rect key="frame" x="341" y="0.0" width="44" height="44"/>
                             <color key="tintColor" red="0.3411764706" green="0.4823529412" blue="0.87450980389999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal" image="ic_right_arrow"/>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="mDn-6o-JBe" secondAttribute="bottom" constant="5" id="5Zt-9E-g6w"/>
-                        <constraint firstItem="mDn-6o-JBe" firstAttribute="leading" secondItem="bjP-gr-9v3" secondAttribute="leading" constant="16" id="DlY-5q-WZW"/>
-                        <constraint firstAttribute="trailing" secondItem="hjm-CE-one" secondAttribute="trailing" constant="16" id="MQv-DY-LK6"/>
-                        <constraint firstAttribute="bottom" secondItem="hjm-CE-one" secondAttribute="bottom" constant="5" id="Oyw-jz-8Tb"/>
-                        <constraint firstItem="mDn-6o-JBe" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" constant="5" id="its-AD-TTG"/>
+                        <constraint firstItem="mDn-6o-JBe" firstAttribute="leading" secondItem="bjP-gr-9v3" secondAttribute="leading" constant="15" id="DlY-5q-WZW"/>
+                        <constraint firstItem="hjm-CE-one" firstAttribute="height" secondItem="mDn-6o-JBe" secondAttribute="height" id="LWc-mx-oDI"/>
+                        <constraint firstAttribute="trailing" secondItem="hjm-CE-one" secondAttribute="trailing" constant="15" id="MQv-DY-LK6"/>
+                        <constraint firstItem="mDn-6o-JBe" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" id="its-AD-TTG"/>
                         <constraint firstItem="hjm-CE-one" firstAttribute="width" secondItem="mDn-6o-JBe" secondAttribute="width" id="olH-uZ-Qth"/>
-                        <constraint firstItem="hjm-CE-one" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" constant="5" id="pRj-qV-a7T"/>
-                        <constraint firstAttribute="height" constant="60" id="v3u-Pa-4Cy"/>
+                        <constraint firstItem="hjm-CE-one" firstAttribute="top" secondItem="bjP-gr-9v3" secondAttribute="top" id="pRj-qV-a7T"/>
+                        <constraint firstAttribute="height" constant="69" id="v3u-Pa-4Cy"/>
                     </constraints>
                 </view>
                 <pickerView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zLo-M9-LhG" userLabel="dropdownPickerView">
@@ -197,7 +197,7 @@
     <resources>
         <image name="ic_camera" width="27" height="24"/>
         <image name="ic_count" width="24" height="24"/>
-        <image name="ic_crop" width="20" height="19.333333969116211"/>
+        <image name="ic_crop" width="30" height="29"/>
         <image name="ic_down_black_Arrow" width="9" height="9"/>
         <image name="ic_left_arrow" width="26" height="23"/>
         <image name="ic_right_arrow" width="26" height="23"/>

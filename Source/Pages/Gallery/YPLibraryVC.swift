@@ -205,6 +205,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         v.postTypeDropDownTextField.font = YPConfig.fonts.pickerTitleFont
+        v.backButton.addTarget(self, action: #selector(backButtonClick(sender:)), for: .touchUpInside)
         v.cropImageButton.addTarget(self,
                                     action: #selector(cropButtonTapped),
                                     for: .touchUpInside)
