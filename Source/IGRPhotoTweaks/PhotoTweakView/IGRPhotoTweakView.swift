@@ -31,14 +31,13 @@ public class IGRPhotoTweakView: UIView {
         }(())
     
     public private(set) lazy var photoContentView: IGRPhotoContentView! = { [unowned self] by in
-        
         let photoContentView = IGRPhotoContentView(frame: self.scrollView.bounds)
         photoContentView.isUserInteractionEnabled = true
         self.scrollView.addSubview(photoContentView)
-        
+
         return photoContentView
         }(())
-    
+
     public var photoTranslation: CGPoint {
         get {
             let rect: CGRect = self.photoContentView.convert(self.photoContentView.bounds,
@@ -150,7 +149,6 @@ public class IGRPhotoTweakView: UIView {
                                             height: self.originalSize.height)
             self.scrollView.minimumZoomScale = 1.0
             self.scrollView.setZoomScale(1.0, animated: false)
-            
             self.cropView.frame = self.scrollView.frame
             self.cropView.center = self.scrollView.center
         })

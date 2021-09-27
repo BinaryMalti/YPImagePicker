@@ -33,4 +33,5 @@ extension CustomCropView{
         let xibView = nib.instantiate(withOwner: self, options: nil)[0] as? CustomCropView
         return xibView
     }
+    
 }
