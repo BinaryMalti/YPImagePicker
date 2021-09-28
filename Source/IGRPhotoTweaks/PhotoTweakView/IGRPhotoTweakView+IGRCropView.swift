@@ -31,7 +31,8 @@ extension IGRPhotoTweakView : IGRCropViewDelegate {
         if (cropView.bounds.size.width < cropView.bounds.size.height) {
             let ratio = cropView.bounds.size.width / cropView.bounds.size.height
             if ratio < 0.8{
-                cropView.bounds.size.width = self.originalSize.width
+                cropView.bounds.size.width =  self.originalSize.width * 0.8
+               // cropView.bounds.size.width = self.originalSize.width
                 print("TGP - width cannot be less than height ratio of 1:1.25")
             }
         }

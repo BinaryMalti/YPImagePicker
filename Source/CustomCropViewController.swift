@@ -34,8 +34,8 @@ class CustomCropViewController: IGRPhotoTweakViewController {
         v.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             navbarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            navbarView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            navbarView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            navbarView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            navbarView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             navbarView.heightAnchor.constraint(equalToConstant: 69),
             self.photoView.topAnchor.constraint(equalTo: view.topAnchor),
             v.topAnchor.constraint(equalTo: photoView.bottomAnchor),
