@@ -39,7 +39,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     var scrollViewSize : CGSize?
     var selectedDraftItem: DraftItems?
     internal var isMultipleSelectionButtonTapped = false
-    
+    var isGalleryEmpty = false
     // MARK: - Init
 
     public required init(items: [YPMediaItem]?) {
@@ -221,6 +221,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                        action: #selector(multipleSelectionButtonTapped),
                        for: .touchUpInside)
         v.cameraButton.addTarget(self,
+                                 action: #selector(openCameraButtonTapped),
+                                 for: .touchUpInside)
+        v.emptyStateCameraButton.addTarget(self,
                                  action: #selector(openCameraButtonTapped),
                                  for: .touchUpInside)
         // Forces assetZoomableView to have a contentSize.
@@ -948,6 +951,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
                     return
                 }
             } else {
+                guard self.isGalleryEmpty == false else {
+                    print("Gallery is Empty")
+                    return
+                }
                 let selectedAssets: [(asset: PHAsset, cropRect: CGRect?)] = self.selection.map {
                     guard let asset = PHAsset.fetchAssets(withLocalIdentifiers: [$0.assetIdentifier!],
                                                           options: PHFetchOptions()).firstObject else { fatalError() }
@@ -1071,6 +1078,30 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         v.assetZoomableView.videoView.pause()
     }
     
+    // MARK:- Gallery State
+    func showGalleryEmptyState() {
+        self.v.emptyStateCameraButton.isHidden = false
+        self.v.cameraButton.isHidden = true
+        self.v.cropImageButton.isHidden = true
+        self.v.multiselectImageButton.isHidden = true
+        self.v.assetViewContainer.spinnerView.isHidden = true
+        self.v.assetZoomableView.assetImageView.image = nil
+        self.isGalleryEmpty = true
+        self.v.collectionView.backgroundView = PlaceholderView()
+        self.v.forwardbutton.isUserInteractionEnabled = false
+        self.v.forwardbutton.tintColor = UIColor(r: 218, g: 218, b: 218)
+    }
+    
+    func hideGalleryEmptyState() {
+        self.v.emptyStateCameraButton.isHidden = true
+        self.v.cameraButton.isHidden = false
+        self.v.cropImageButton.isHidden = false
+        self.v.multiselectImageButton.isHidden = false
+        self.v.collectionView.backgroundView = nil
+        self.v.forwardbutton.isUserInteractionEnabled = true
+        self.v.forwardbutton.tintColor = UIColor(r: 87, g: 123, b: 223)
+    }
+    
     // MARK: - Deinit
     
     deinit {
@@ -1117,5 +1148,78 @@ extension YPLibraryVC: UIPickerViewDelegate, UIPickerViewDataSource {
             loadDrafts(draftItem: [], showDraft: false)
         }
         view.endEditing(true)
+    }
+}
+
+//MARK:- Custom Background view for collection view in case of there are no images in gallery
+// created programaticcaly due to storyboard xib had no clear spaces to design
+class PlaceholderView: UIView {
+    
+    let placeholderImageView: UIImageView = {
+       let iv = UIImageView()
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.image = UIImage(named: "img_gallery_placeholder")
+        iv.contentMode = .scaleAspectFit
+        return iv
+    }()
+    
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 2
+        label.font = UIFont(name: YPConfig.fonts.multipleSelectionIndicatorFont.fontName, size: 30)
+        var attrString = NSMutableAttributedString(string: "Looks like your gallery is empty")
+        var style = NSMutableParagraphStyle()
+        let minMaxLineHeight = YPConfig.fonts.multipleSelectionIndicatorFont.pointSize - YPConfig.fonts.multipleSelectionIndicatorFont.ascender + 30
+        let offset = 0
+        let range = NSRange(location: 0, length: attrString.length)
+        style.minimumLineHeight = minMaxLineHeight
+        style.maximumLineHeight = minMaxLineHeight
+        attrString.addAttribute(.paragraphStyle, value: style, range: range)
+        attrString.addAttribute(.baselineOffset, value: offset, range: range)
+        label.attributedText = attrString
+        return label
+    }()
+    
+    let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 2
+        label.text = "Start your journey by clicking some fabulous pictures of your creations."
+        label.font = UIFont(name: YPConfig.fonts.leftBarButtonFont!.fontName, size: 14)
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+        setupConstraints()
+    }
+    
+    func setupView() {
+        addSubview(placeholderImageView)
+        addSubview(titleLabel)
+        addSubview(descriptionLabel)
+    }
+    
+    func setupConstraints() {
+        //ImageView Constraints
+        placeholderImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        placeholderImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        placeholderImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12).isActive = true
+        placeholderImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -6).isActive = true
+        // Title Label Constraints
+        titleLabel.leftAnchor.constraint(equalTo: placeholderImageView.rightAnchor, constant: 10).isActive = true
+        titleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: placeholderImageView.topAnchor, constant: 0).isActive = true
+        // Description Label Constraints
+        descriptionLabel.leftAnchor.constraint(equalTo: titleLabel.leftAnchor, constant: 0).isActive = true
+        descriptionLabel.bottomAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 0).isActive = true
+        descriptionLabel.rightAnchor.constraint(equalTo: titleLabel.rightAnchor, constant: 0).isActive = true
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

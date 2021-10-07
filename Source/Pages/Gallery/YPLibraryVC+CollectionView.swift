@@ -17,7 +17,9 @@ extension YPLibraryVC {
         v.showDraftImages = showDraft
         setupCollectionView()
         if showDraft{
+            hideGalleryEmptyState()
             v.cameraButton.isHidden = true
+            v.emptyStateCameraButton.isHidden = true
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
@@ -188,7 +190,16 @@ extension YPLibraryVC: UICollectionViewDataSource {
             
             return v.draftItem.count
         }
-        return mediaManager.fetchResult.count
+        
+        let galleryCount = mediaManager.fetchResult.count
+        print("mediacount: \(mediaCount)")
+        if galleryCount == 0 {
+            showGalleryEmptyState()
+        } else {
+            hideGalleryEmptyState()
+        }
+        
+        return galleryCount
     }
 }
 

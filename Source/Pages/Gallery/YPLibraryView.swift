@@ -21,6 +21,7 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
     //TGP - Custom Added UI
     @IBOutlet weak var cameraButton: UIButton!
+    @IBOutlet weak var emptyStateCameraButton: UIButton!
     @IBOutlet weak var dropdownPickerView: UIPickerView!
     @IBOutlet weak var postTypeDropDownTextField: UITextField!
     @IBOutlet weak var cropImageButton: UIButton!

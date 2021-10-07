@@ -95,17 +95,28 @@
                             <color key="textColor" red="0.3411764706" green="0.4823529412" blue="0.87450980389999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7dK-6R-PhY" userLabel="emptyStateClickImageButton">
+                            <rect key="frame" x="345" y="5" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="6xs-Ng-zw0"/>
+                                <constraint firstAttribute="width" constant="40" id="Gvr-mQ-I7x"/>
+                            </constraints>
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <state key="normal" image="ic_camera"/>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="cND-XS-PtA" firstAttribute="centerY" secondItem="DYn-Ao-wcG" secondAttribute="centerY" id="1dg-La-F9Y"/>
                         <constraint firstAttribute="trailing" secondItem="GUu-cJ-MDB" secondAttribute="trailing" constant="24" id="1gN-Kz-FpK"/>
                         <constraint firstItem="dtQ-1X-iMo" firstAttribute="leading" secondItem="DYn-Ao-wcG" secondAttribute="leading" constant="24" id="73Y-1w-Fl5"/>
+                        <constraint firstItem="7dK-6R-PhY" firstAttribute="centerY" secondItem="DYn-Ao-wcG" secondAttribute="centerY" id="7fC-bH-jfH"/>
                         <constraint firstItem="cND-XS-PtA" firstAttribute="bottom" secondItem="GUu-cJ-MDB" secondAttribute="bottom" id="Cq5-YU-iJQ"/>
                         <constraint firstAttribute="height" constant="50" id="E3s-sj-lgM"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="trailing" secondItem="xBo-Jf-jUi" secondAttribute="trailing" id="LCt-Wq-nSQ"/>
                         <constraint firstAttribute="bottom" secondItem="ibr-pU-YZj" secondAttribute="bottom" constant="5" id="LEq-ye-y2V"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="leading" secondItem="ibr-pU-YZj" secondAttribute="trailing" constant="12" id="OLa-gW-ldO"/>
+                        <constraint firstAttribute="trailing" secondItem="7dK-6R-PhY" secondAttribute="trailing" constant="15" id="QpG-zH-ytS"/>
                         <constraint firstItem="7Uo-5b-dtc" firstAttribute="bottom" secondItem="dtQ-1X-iMo" secondAttribute="bottom" constant="-15" id="Qwu-nO-z1F"/>
                         <constraint firstItem="cND-XS-PtA" firstAttribute="top" secondItem="GUu-cJ-MDB" secondAttribute="top" id="Tsz-nK-eiV"/>
                         <constraint firstItem="ibr-pU-YZj" firstAttribute="width" secondItem="cND-XS-PtA" secondAttribute="width" id="WUe-om-dU7"/>
@@ -182,10 +193,11 @@
                 <outlet property="assetViewContainerConstraintTop" destination="Skp-fk-ESn" id="hcn-ar-5EB"/>
                 <outlet property="assetZoomableView" destination="SO8-sF-VjT" id="Ngz-Uf-EJV"/>
                 <outlet property="backButton" destination="mDn-6o-JBe" id="spw-Jd-Ur9"/>
-                <outlet property="cameraButton" destination="ibr-pU-YZj" id="gx4-BS-qbx"/>
+                <outlet property="cameraButton" destination="ibr-pU-YZj" id="nir-P4-ZQU"/>
                 <outlet property="collectionView" destination="zEE-ji-UFo" id="Ji3-oJ-elj"/>
                 <outlet property="cropImageButton" destination="cND-XS-PtA" id="mCt-UV-HpO"/>
                 <outlet property="dropdownPickerView" destination="zLo-M9-LhG" id="Umr-fo-493"/>
+                <outlet property="emptyStateCameraButton" destination="7dK-6R-PhY" id="BOJ-9Z-ton"/>
                 <outlet property="forwardbutton" destination="hjm-CE-one" id="FT8-QA-aGV"/>
                 <outlet property="multiselectCountLabel" destination="xBo-Jf-jUi" id="0b1-oA-aMI"/>
                 <outlet property="multiselectImageButton" destination="GUu-cJ-MDB" id="ZUa-zH-HPU"/>
