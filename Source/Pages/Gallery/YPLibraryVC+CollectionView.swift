@@ -192,7 +192,7 @@ extension YPLibraryVC: UICollectionViewDataSource {
         }
         
         let galleryCount = mediaManager.fetchResult.count
-        print("mediacount: \(mediaCount)")
+        print("galleryCount: \(galleryCount)")
         if galleryCount == 0 {
             showGalleryEmptyState()
         } else {
