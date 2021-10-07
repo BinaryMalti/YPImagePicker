@@ -8,7 +8,7 @@
 import UIKit
 
 class CustomCropNavigationBarView: UIView {
-    
+    //
     @IBOutlet weak var backButton: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
