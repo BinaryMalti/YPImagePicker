@@ -17,9 +17,7 @@ extension YPLibraryVC {
         v.showDraftImages = showDraft
         setupCollectionView()
         if showDraft{
-            hideGalleryEmptyState()
             v.cameraButton.isHidden = true
-            v.emptyStateCameraButton.isHidden = true
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
