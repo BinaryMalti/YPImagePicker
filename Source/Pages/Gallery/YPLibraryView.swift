@@ -16,7 +16,7 @@ class TGPPickerTextField: UITextField {
     }
 }
 
-final class YPLibraryView: UIView {
+final class YPLibraryView: UIView, UITextFieldDelegate {
     
     let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
     
