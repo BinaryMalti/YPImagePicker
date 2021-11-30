@@ -580,6 +580,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         let completion = { (isLowResIntermediaryImage: Bool) in
             self.v.hideOverlayView()
             self.v.assetViewContainer.refreshSquareCropButton()
+            self.v.fadeInLoader()
             self.singleImage = self.v.assetZoomableView.assetImageView.image
             if self.multipleSelectionEnabled {
                 if self.isFirstItemSelectedMultipleSelection { // TGP - Firt image in multiple selection is selected. isFirstItem is used to get the height and width of hero image and adjust other selected images as per hero image height-width
@@ -737,6 +738,7 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             DispatchQueue.main.async {
                 self.v.assetViewContainer.refreshSquareCropButton()
             }
+            self.v.fadeInLoader()
             self.singleImage = self.v.assetZoomableView.assetImageView.image
             if self.multipleSelectionEnabled {
                 if self.isFirstItemSelectedMultipleSelection {

@@ -10,6 +10,12 @@ import UIKit
 import Photos
 import Stevia
 
+class TGPPickerTextField: UITextField {
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return false
+    }
+}
+
 final class YPLibraryView: UIView {
     
     let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
@@ -22,7 +28,7 @@ final class YPLibraryView: UIView {
     //TGP - Custom Added UI
     @IBOutlet weak var cameraButton: UIButton!
     @IBOutlet weak var dropdownPickerView: UIPickerView!
-    @IBOutlet weak var postTypeDropDownTextField: UITextField!
+    @IBOutlet weak var postTypeDropDownTextField: TGPPickerTextField!
     @IBOutlet weak var cropImageButton: UIButton!
     @IBOutlet weak var forwardbutton: UIButton!
     @IBOutlet weak var backButton: UIButton!
@@ -56,6 +62,11 @@ final class YPLibraryView: UIView {
         multiselectCountLabel.font = YPConfig.fonts.multipleSelectionIndicatorFont
         setupMaxNumberOfItemsView()
         setupProgressBarView()
+        postTypeDropDownTextField.delegate = self
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return false
     }
 
     /// At the bottom there is a view that is visible when selected a limit of items with multiple selection
