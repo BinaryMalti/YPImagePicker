@@ -227,6 +227,10 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         emptyGalleryView.cameraButton.addTarget(self,
                                                 action: #selector(openCameraButtonTapped),
                                                 for: .touchUpInside)
+        emptyGalleryView.clickButton.addTarget(self,
+                                                action: #selector(openCameraButtonTapped),
+                                                for: .touchUpInside)
+        emptyGalleryView.postTypeDropDownTextField.inputView = picker
         emptyGalleryView.backButton.addTarget(self, action: #selector(backButtonClick(sender:)), for: .touchUpInside)
         // Forces assetZoomableView to have a contentSize.
         // otherwise 0 in first selection triggering the bug : "invalid image size 0x0"
@@ -575,12 +579,16 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     func changeAsset(_ asset: PHAsset, cropImage: UIImage? = nil) {
         print("asset.localIdentifier: \(asset.localIdentifier)")
         print("selections: \(selection)")
+        if #available(iOS 13.0, *) {
+            self.showActivityIndicator()
+        } else {
+            // Fallback on earlier versions
+        }
         latestImageTapped = asset.localIdentifier
         delegate?.libraryViewStartedLoadingImage()
         let completion = { (isLowResIntermediaryImage: Bool) in
             self.v.hideOverlayView()
             self.v.assetViewContainer.refreshSquareCropButton()
-            self.v.fadeInLoader()
             self.singleImage = self.v.assetZoomableView.assetImageView.image
             if self.multipleSelectionEnabled {
                 if self.isFirstItemSelectedMultipleSelection { // TGP - Firt image in multiple selection is selected. isFirstItem is used to get the height and width of hero image and adjust other selected images as per hero image height-width
@@ -620,6 +628,11 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
             self.updateCropInfo()
             if !isLowResIntermediaryImage {
                 self.v.hideLoader()
+                if #available(iOS 13.0, *) {
+                    self.hideActivityIndicator()
+                } else {
+                    // Fallback on earlier versions
+                }
                 self.delegate?.libraryViewFinishedLoading()
             }
         }
@@ -1119,8 +1132,11 @@ extension YPLibraryVC: UIPickerViewDelegate, UIPickerViewDataSource {
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.v.postTypeDropDownTextField.font = YPConfig.fonts.pickerTitleFont
         self.v.postTypeDropDownTextField.text = YPConfig.dropdownArray[row]
+        self.emptyGalleryView.postTypeDropDownTextField.font = YPConfig.fonts.pickerTitleFont
+        self.emptyGalleryView.postTypeDropDownTextField.text = YPConfig.dropdownArray[row]
         if YPConfig.dropdownArray[row] == "Draft" {
             // TO DO - TGP Memory Leakage issue & Smooth scrolling
+            hideGalleryEmptyState()
             isFirstItemSelectedMultipleSelection = true
             if YPConfig.draftImages.count > 0 {
                 multipleSelectionEnabled = false
@@ -1140,6 +1156,7 @@ extension YPLibraryVC: UIPickerViewDelegate, UIPickerViewDataSource {
             isFirstItemSelectedMultipleSelection = true
             var config = YPImagePickerConfiguration()
             config.showDrafts = false
+            v.assetZoomableView.newPostDropdownChanged = true
             loadDrafts(draftItem: [], showDraft: false)
         }
         view.endEditing(true)

@@ -273,6 +273,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
                 multipleSelectioTapped()
               }
         }
+            changeAsset(mediaManager.fetchResult[currentlySelectedIndex])
         }
         // Prevent weird animation where thumbnail fills cell on first scrolls.
         UIView.performWithoutAnimation {

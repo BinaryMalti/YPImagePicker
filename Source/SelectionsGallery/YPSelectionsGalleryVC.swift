@@ -86,6 +86,11 @@ open class YPSelectionsGalleryVC: UIViewController, YPSelectionsGalleryCellDeleg
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if #available(iOS 13.0, *) {
+            hideActivityIndicator()
+        } else {
+            // Fallback on earlier versions
+        }
         if items.count == 1{
 //            let sideMargin: CGFloat = 20
 //            let overlapppingNextPhoto: CGFloat = 37

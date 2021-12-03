@@ -26,6 +26,7 @@ final class YPAssetZoomableView: UIScrollView {
     public var isMultipleSelectionEnabled = false
     public var isFirstImageSelectedMultipleSelection = false
     public var minWidth: CGFloat? = YPConfig.library.minWidthForItem
+    public var newPostDropdownChanged = false
     
     fileprivate var currentAsset: PHAsset?
     
@@ -103,9 +104,11 @@ final class YPAssetZoomableView: UIScrollView {
                          storedCropPosition: YPLibrarySelection?,
                          completion: @escaping (Bool) -> Void,
                          updateCropInfo: @escaping () -> Void) {
-        guard currentAsset != photo else {
-            DispatchQueue.main.async { completion(false) }
-            return
+        if !newPostDropdownChanged {
+            guard currentAsset != photo else {
+                DispatchQueue.main.async { completion(false) }
+                return
+            }
         }
         currentAsset = photo
         

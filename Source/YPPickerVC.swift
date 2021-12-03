@@ -321,6 +321,11 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     @objc
     func done() {
         libraryVC?.fromCropClick = false
+        if #available(iOS 13.0, *) {
+            showActivityIndicator()
+        } else {
+            // Fallback on earlier versions
+        }
         guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
             if mode == .library {
                 libraryVC.doAfterPermissionCheck { [weak self] in
