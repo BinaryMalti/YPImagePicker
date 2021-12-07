@@ -1145,12 +1145,7 @@ extension YPLibraryVC: UIPickerViewDelegate, UIPickerViewDataSource {
                 loadDrafts(draftItem: YPConfig.draftImages, showDraft: true)
                 scrollToTop()
             } else {
-                let alert = UIAlertController(title: "No images available in drafts", message: "Draft gallery is empty.Add some artworks.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                    alert.dismiss(animated: true, completion: nil)
-                    self.view.endEditing(true)
-                }))
-                self.present(alert, animated: true, completion: nil)
+                showGalleryEmptyState()
             }
         } else {
             isFirstItemSelectedMultipleSelection = true

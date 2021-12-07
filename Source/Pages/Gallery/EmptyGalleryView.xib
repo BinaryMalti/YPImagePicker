@@ -100,10 +100,10 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XdG-xM-wI1">
-                            <rect key="frame" x="0.0" y="425" width="375" height="202"/>
+                            <rect key="frame" x="0.0" y="425" width="375" height="168"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oiy-vV-2rM">
-                                    <rect key="frame" x="111.5" y="45.5" width="152.5" height="111"/>
+                                    <rect key="frame" x="111.5" y="28.5" width="152.5" height="111"/>
                                     <color key="tintColor" name="cornflower_blue"/>
                                     <state key="normal" title="Button"/>
                                     <buttonConfiguration key="configuration" style="plain" image="ic_camera_round" imagePlacement="top" imagePadding="10">
@@ -131,10 +131,10 @@
                         <constraint firstItem="XdG-xM-wI1" firstAttribute="leading" secondItem="Ukx-i9-RaZ" secondAttribute="leading" id="KPd-74-V37"/>
                         <constraint firstItem="D5e-eH-4yT" firstAttribute="leading" secondItem="Ukx-i9-RaZ" secondAttribute="leading" id="QuQ-ve-dc5"/>
                         <constraint firstAttribute="trailing" secondItem="Ngd-Zr-7i8" secondAttribute="trailing" id="SQo-XT-CEW"/>
+                        <constraint firstAttribute="bottom" secondItem="XdG-xM-wI1" secondAttribute="bottom" constant="74" id="UhX-w9-9oc"/>
                         <constraint firstAttribute="trailing" secondItem="XdG-xM-wI1" secondAttribute="trailing" id="WGd-jg-hxp"/>
                         <constraint firstItem="XdG-xM-wI1" firstAttribute="top" secondItem="Ngd-Zr-7i8" secondAttribute="bottom" id="cT2-tY-5e5"/>
                         <constraint firstItem="Ngd-Zr-7i8" firstAttribute="leading" secondItem="Ukx-i9-RaZ" secondAttribute="leading" id="jRO-Ka-qVI"/>
-                        <constraint firstAttribute="bottom" secondItem="XdG-xM-wI1" secondAttribute="bottom" constant="40" id="mGc-oG-QVH"/>
                         <constraint firstItem="D5e-eH-4yT" firstAttribute="top" secondItem="Ukx-i9-RaZ" secondAttribute="top" id="sli-fe-W5p"/>
                     </constraints>
                 </view>
