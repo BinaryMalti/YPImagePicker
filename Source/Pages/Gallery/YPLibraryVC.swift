@@ -40,6 +40,8 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
     var selectedDraftItem: DraftItems?
     internal var isMultipleSelectionButtonTapped = false
     internal var emptyGalleryView: EmptyGalleryView!
+    var isSyncDraft = false
+    var isSyncAvailable = false
     // MARK: - Init
 
     public required init(items: [YPMediaItem]?) {
@@ -75,7 +77,9 @@ public class YPLibraryVC: UIViewController, YPPermissionCheckable, UIImagePicker
         } else {
             checkPermission()
         }
-
+        if YPConfig.isSyncAvailable {
+            self.isSyncAvailable = true
+        }
         v.zoomableWidthConstraint = v.assetZoomableView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width)
         v.zoomableHeightConstraint = v.assetZoomableView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width)
         v.zoomableWidthConstraint?.isActive = true

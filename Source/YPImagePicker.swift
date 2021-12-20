@@ -26,11 +26,11 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
     }
 
     private var _didFinishPicking: ((Int,[YPMediaItem], Bool) -> Void)?
-    private var _didLoadDraftImages: ((DraftItems, Bool) -> Void)?
+    private var _didLoadDraftImages: ((DraftItems, Bool, Bool) -> Void)?
     public func didFinishPicking(completion: @escaping (_ clickType: Int,_ items: [YPMediaItem], _ cancelled: Bool) -> Void) {
         _didFinishPicking = completion
     }
-    public func loadDraftImage(completion: @escaping (_ items: DraftItems, _ cancelled: Bool) -> Void) {
+    public func loadDraftImage(completion: @escaping (_ items: DraftItems, _ cancelled: Bool, _ isForSync: Bool) -> Void) {
         _didLoadDraftImages = completion
     }
     public weak var imagePickerDelegate: YPImagePickerDelegate?
@@ -43,8 +43,12 @@ open class YPImagePicker: UINavigationController,YPLibraryDelegate {
     // This keeps the backwards compatibility keeps the api as simple as possible.
     // Multiple selection becomes available as an opt-in.
     private func didSelect(items: [YPMediaItem],draftItem: DraftItems?, clickType:Int) {
-        if clickType == 1{
-            _didLoadDraftImages?(draftItem!,false)
+        if clickType == 1 || clickType == -2 { //-2 is for syncing drafts
+            if clickType == -2 {
+                _didLoadDraftImages?(draftItem!,false, true)
+            } else {
+                _didLoadDraftImages?(draftItem!,false, false)
+            }
         }else{
             _didFinishPicking?(clickType, items, false)
         }
@@ -82,13 +86,17 @@ override open func viewDidLoad() {
         setupLoadingView()
         navigationBar.isTranslucent = false
     
-        picker.didSelectDraftItems = {[weak self] drafts in
+        picker.didSelectDraftItems = {[weak self] (drafts, isForSync) in
             let transition = CATransition()
             transition.duration = 0.3
             transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             transition.type = CATransitionType.fade
             self?.view.layer.add(transition, forKey: nil)
-            self?.didSelect(items: [], draftItem: drafts, clickType: 1)
+            if isForSync {
+                self?.didSelect(items: [], draftItem: drafts, clickType: -2)//for syncing purpose
+            } else {
+                self?.didSelect(items: [], draftItem: drafts, clickType: 1)
+            }
         }
         picker.didSelectItems = { [weak self] items in
             // Use Fade transition instead of default push animation

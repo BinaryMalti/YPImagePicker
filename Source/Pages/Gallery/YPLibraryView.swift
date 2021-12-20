@@ -27,6 +27,7 @@ final class YPLibraryView: UIView, UITextFieldDelegate {
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
     //TGP - Custom Added UI
     @IBOutlet weak var cameraButton: UIButton!
+    @IBOutlet weak var syncButton: UIButton!
     @IBOutlet weak var dropdownPickerView: UIPickerView!
     @IBOutlet weak var postTypeDropDownTextField: TGPPickerTextField!
     @IBOutlet weak var cropImageButton: UIButton!
@@ -92,6 +93,8 @@ final class YPLibraryView: UIView, UITextFieldDelegate {
         maxNumberWarningView.backgroundColor = .ypSecondarySystemBackground
         maxNumberWarningLabel.font = YPConfig.fonts.libaryWarningFont
         maxNumberWarningView.isHidden = true
+        syncButton.titleLabel?.font = YPConfig.fonts.saveAsDraftFont
+        syncButton.tintColor = YPConfig.colors.tintColor
     }
     
     //TGP

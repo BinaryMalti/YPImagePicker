@@ -49,6 +49,9 @@ public struct YPImagePickerConfiguration {
     /// Use this property to modify the default icons provided.
     public var icons = YPIcons()
     
+    /// Use this property to show sync draft butto on draft selected
+    public var isSyncAvailable = false
+    
     /// Use this property to modify the default icons provided.
     public var dropdownArray :[String] = []
     

@@ -29,7 +29,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     /// Private callbacks to YPImagePicker
     public var didClose:(() -> Void)?
     public var didSelectItems: (([YPMediaItem]) -> Void)?
-    public var didSelectDraftItems: ((DraftItems) -> Void)?
+    public var didSelectDraftItems: ((DraftItems, _ isForSync: Bool) -> Void)?
     
     enum Mode {
         case library
@@ -136,6 +136,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         super.viewWillAppear(animated)
         cameraVC?.v.shotButton.isEnabled = true
         libraryVC?.v.forwardbutton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        libraryVC?.v.syncButton.addTarget(self, action: #selector(syncDrafts), for: .touchUpInside)
         updateMode(with: currentController)
     }
     
@@ -201,6 +202,23 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         shouldHideStatusBar = false
         stopAll()
     }
+    
+    @objc
+    func syncDrafts() {
+        libraryVC?.fromCropClick = false
+        guard let libraryVC = libraryVC else { print("⚠️ YPPickerVC >>> YPLibraryVC deallocated"); return }
+            if mode == .library {
+                libraryVC.doAfterPermissionCheck { [weak self] in
+                    if libraryVC.v.showDraftImages{
+                        if let selectedDraft = libraryVC.selectDraftMedia()
+                       {
+                            self?.didSelectDraftItems?(selectedDraft, true)
+                        }
+                    }
+                }
+            }
+    }
+    
     
     @objc
     func navBarTapped() {
@@ -332,7 +350,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
                     if libraryVC.v.showDraftImages{
                        if let selectedDraft = libraryVC.selectDraftMedia()
                        {
-                        self?.didSelectDraftItems?(selectedDraft)
+                        self?.didSelectDraftItems?(selectedDraft, libraryVC.isSyncDraft)
                        }
                     }else{
                         libraryVC.selectedMedia(photoCallback: { photo in

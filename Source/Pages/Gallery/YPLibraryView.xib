@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -95,6 +96,13 @@
                             <color key="textColor" red="0.3411764706" green="0.4823529412" blue="0.87450980389999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WjO-3e-OIF" userLabel="syncButton">
+                            <rect key="frame" x="267" y="14" width="109" height="22"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="6" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title=" Sync drafts" image="ic_arrow_right_small">
+                                <color key="titleColor" name="cornflower_blue"/>
+                            </state>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
@@ -103,6 +111,7 @@
                         <constraint firstItem="dtQ-1X-iMo" firstAttribute="leading" secondItem="DYn-Ao-wcG" secondAttribute="leading" constant="24" id="73Y-1w-Fl5"/>
                         <constraint firstItem="cND-XS-PtA" firstAttribute="bottom" secondItem="GUu-cJ-MDB" secondAttribute="bottom" id="Cq5-YU-iJQ"/>
                         <constraint firstAttribute="height" constant="50" id="E3s-sj-lgM"/>
+                        <constraint firstItem="WjO-3e-OIF" firstAttribute="centerY" secondItem="DYn-Ao-wcG" secondAttribute="centerY" id="G8l-BK-CdB"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="trailing" secondItem="xBo-Jf-jUi" secondAttribute="trailing" id="LCt-Wq-nSQ"/>
                         <constraint firstAttribute="bottom" secondItem="ibr-pU-YZj" secondAttribute="bottom" constant="5" id="LEq-ye-y2V"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="leading" secondItem="ibr-pU-YZj" secondAttribute="trailing" constant="12" id="OLa-gW-ldO"/>
@@ -113,6 +122,7 @@
                         <constraint firstItem="ibr-pU-YZj" firstAttribute="leading" secondItem="cND-XS-PtA" secondAttribute="trailing" constant="18" id="aiO-fm-Wzl"/>
                         <constraint firstItem="cND-XS-PtA" firstAttribute="width" secondItem="GUu-cJ-MDB" secondAttribute="width" id="caw-Y5-9O1"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="top" secondItem="xBo-Jf-jUi" secondAttribute="top" constant="-2" id="dFa-lD-7le"/>
+                        <constraint firstItem="xBo-Jf-jUi" firstAttribute="trailing" secondItem="WjO-3e-OIF" secondAttribute="trailing" id="f1r-pI-FRF"/>
                         <constraint firstItem="GUu-cJ-MDB" firstAttribute="leading" secondItem="xBo-Jf-jUi" secondAttribute="leading" constant="-12" id="jen-P4-EFa"/>
                         <constraint firstItem="dtQ-1X-iMo" firstAttribute="top" secondItem="DYn-Ao-wcG" secondAttribute="top" constant="5" id="jvU-68-q5D"/>
                         <constraint firstItem="ibr-pU-YZj" firstAttribute="top" secondItem="DYn-Ao-wcG" secondAttribute="top" constant="5" id="kRG-RB-43l"/>
@@ -190,17 +200,22 @@
                 <outlet property="multiselectCountLabel" destination="xBo-Jf-jUi" id="0b1-oA-aMI"/>
                 <outlet property="multiselectImageButton" destination="GUu-cJ-MDB" id="ZUa-zH-HPU"/>
                 <outlet property="postTypeDropDownTextField" destination="dtQ-1X-iMo" id="4bD-Vt-j2G"/>
+                <outlet property="syncButton" destination="WjO-3e-OIF" id="CmH-dr-wuc"/>
             </connections>
             <point key="canvasLocation" x="107" y="102"/>
         </view>
     </objects>
     <resources>
+        <image name="ic_arrow_right_small" width="12" height="12"/>
         <image name="ic_camera" width="27" height="24"/>
         <image name="ic_count" width="24" height="24"/>
         <image name="ic_crop" width="30" height="29"/>
         <image name="ic_down_black_Arrow" width="9" height="9"/>
         <image name="ic_left_arrow" width="26" height="23"/>
         <image name="ic_right_arrow" width="26" height="23"/>
+        <namedColor name="cornflower_blue">
+            <color red="0.34099999070167542" green="0.48199999332427979" blue="0.875" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

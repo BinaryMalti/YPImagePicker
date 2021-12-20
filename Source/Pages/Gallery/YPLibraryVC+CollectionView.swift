@@ -21,6 +21,11 @@ extension YPLibraryVC {
             v.cropImageButton.isHidden = true
             v.multiselectImageButton.isHidden = true
             v.multiselectCountLabel.text = ""
+            if isSyncAvailable {
+                v.syncButton.isHidden = false
+            } else {
+                v.syncButton.isHidden = true
+            }
             let defaultAssetZoomableViewSize = self.v.assetViewContainer.frame.width
             self.v.zoomableHeightConstraint?.constant = defaultAssetZoomableViewSize
             self.v.zoomableWidthConstraint?.constant = defaultAssetZoomableViewSize
@@ -41,6 +46,7 @@ extension YPLibraryVC {
             v.collectionView.reloadData()
             currentlySelectedIndex = 0
         }else{
+            v.syncButton.isHidden = true
             currentlySelectedIndex = 0
             v.cameraButton.isHidden = false
             v.cropImageButton.isHidden = false
