@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -102,17 +103,11 @@
                             <rect key="frame" x="0.0" y="425" width="375" height="168"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oiy-vV-2rM">
-                                    <rect key="frame" x="111.5" y="28.5" width="152.5" height="111"/>
+                                    <rect key="frame" x="116.5" y="30.5" width="142" height="107"/>
                                     <color key="tintColor" name="cornflower_blue"/>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="ic_camera_round" imagePlacement="top" imagePadding="10">
-                                        <attributedString key="attributedTitle">
-                                            <fragment content="+ Click a photo">
-                                                <attributes>
-                                                    <font key="NSFont" size="24" name="AvenirNextCondensed-Regular"/>
-                                                </attributes>
-                                            </fragment>
-                                        </attributedString>
+                                    <buttonConfiguration key="configuration" style="plain" image="ic_camera_round" imagePlacement="top" title="+ Click a photo" imagePadding="10">
+                                        <fontDescription key="titleFontDescription" name="BarlowCondensed-ExtraLight" family="Barlow Condensed" pointSize="24"/>
                                     </buttonConfiguration>
                                 </button>
                             </subviews>
