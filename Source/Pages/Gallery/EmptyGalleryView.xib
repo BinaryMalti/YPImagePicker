@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -12,6 +12,9 @@
     <customFonts key="customFonts">
         <array key="Barlow-Medium.ttf">
             <string>Barlow-Medium</string>
+        </array>
+        <array key="BarlowCondensed-ExtraLight.ttf">
+            <string>BarlowCondensed-ExtraLight</string>
         </array>
     </customFonts>
     <objects>
@@ -102,19 +105,36 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XdG-xM-wI1">
                             <rect key="frame" x="0.0" y="425" width="375" height="168"/>
                             <subviews>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="xjg-Fx-JBf">
+                                    <rect key="frame" x="126" y="39.5" width="123" height="89"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_camera_round" translatesAutoresizingMaskIntoConstraints="NO" id="rN2-di-h8O">
+                                            <rect key="frame" x="34.5" y="0.0" width="54" height="54"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" + Click a photo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rVd-Av-faG">
+                                            <rect key="frame" x="0.0" y="60" width="123" height="29"/>
+                                            <fontDescription key="fontDescription" name="BarlowCondensed-ExtraLight" family="Barlow Condensed" pointSize="24"/>
+                                            <color key="textColor" name="cornflower_blue"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </stackView>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oiy-vV-2rM">
-                                    <rect key="frame" x="116.5" y="30.5" width="142" height="107"/>
+                                    <rect key="frame" x="126" y="39.5" width="123" height="89"/>
                                     <color key="tintColor" name="cornflower_blue"/>
-                                    <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="ic_camera_round" imagePlacement="top" title="+ Click a photo" imagePadding="10">
-                                        <fontDescription key="titleFontDescription" name="BarlowCondensed-ExtraLight" family="Barlow Condensed" pointSize="24"/>
-                                    </buttonConfiguration>
+                                    <state key="normal">
+                                        <color key="titleColor" name="cornflower_blue"/>
+                                    </state>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="Oiy-vV-2rM" firstAttribute="centerX" secondItem="XdG-xM-wI1" secondAttribute="centerX" id="0RR-Qw-jlW"/>
                                 <constraint firstItem="Oiy-vV-2rM" firstAttribute="centerY" secondItem="XdG-xM-wI1" secondAttribute="centerY" id="15r-1G-ik3"/>
+                                <constraint firstItem="Oiy-vV-2rM" firstAttribute="leading" secondItem="xjg-Fx-JBf" secondAttribute="leading" id="8xf-Yf-gcj"/>
+                                <constraint firstItem="Oiy-vV-2rM" firstAttribute="top" secondItem="xjg-Fx-JBf" secondAttribute="top" id="JH5-xb-42l"/>
+                                <constraint firstItem="Oiy-vV-2rM" firstAttribute="trailing" secondItem="xjg-Fx-JBf" secondAttribute="trailing" id="NGt-fe-eU1"/>
+                                <constraint firstItem="Oiy-vV-2rM" firstAttribute="bottom" secondItem="xjg-Fx-JBf" secondAttribute="bottom" id="XbJ-lz-fjC"/>
                             </constraints>
                         </view>
                     </subviews>
