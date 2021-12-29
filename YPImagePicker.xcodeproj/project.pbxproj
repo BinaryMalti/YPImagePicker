@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		032189C8277C818700EFDD2F /* EmptyGalleryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 032189C7277C818600EFDD2F /* EmptyGalleryView.xib */; };
 		182BDD5E26CD85270006D166 /* CustomCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182BDD5D26CD85270006D166 /* CustomCropView.swift */; };
 		182BDD6426CD855F0006D166 /* CustomCropView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 182BDD6326CD855F0006D166 /* CustomCropView.xib */; };
 		185622DF26CA1B6F006771C5 /* CGImage+IGRPhotoTweakExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185622B626CA1B6F006771C5 /* CGImage+IGRPhotoTweakExtension.swift */; };
@@ -144,6 +145,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		032189C7277C818600EFDD2F /* EmptyGalleryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmptyGalleryView.xib; sourceTree = "<group>"; };
 		16550C5C214D5EE60090BADF /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		166695DE253EFF0100F6EF9E /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		182BDD5D26CD85270006D166 /* CustomCropView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCropView.swift; sourceTree = "<group>"; };
@@ -565,6 +567,7 @@
 		99C6D69E1F1FB5C100711DB2 /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
+				032189C7277C818600EFDD2F /* EmptyGalleryView.xib */,
 				99C6D69F1F1FB5C100711DB2 /* YPLibraryVC.swift */,
 				99C6D6A51F1FB5C100711DB2 /* YPAssetViewContainer.swift */,
 				99C6D6A41F1FB5C100711DB2 /* YPAssetZoomableView.swift */,
@@ -825,6 +828,7 @@
 				182BDD6426CD855F0006D166 /* CustomCropView.xib in Resources */,
 				99C6D6BD1F1FB5C100711DB2 /* YPLibraryView.xib in Resources */,
 				EB59F453208766B800811B7B /* YPVideoFiltersVC.xib in Resources */,
+				032189C8277C818700EFDD2F /* EmptyGalleryView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
